@@ -1,0 +1,64 @@
+<project name="Morphology" default="clean-dist" basedir=".">
+
+  <description>
+    Build file for Morphology project
+  </description>
+  
+  <!-- set global properties for this build -->
+  <property name="main.src" location="src/main/java"/>
+  <property name="main.resources" location="src/main/resources"/>
+  <property name="build" location="build"/>
+  <property name="dist"  location="dist"/>
+  <property name="morphology.dir" location="../Morphology"/>
+
+  <path id="project.class.path">
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init">
+    <!-- Create the time stamp -->
+    <tstamp/>
+    <!-- Create the build directory structure used by compile -->
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init"
+          description="compile the source " >
+    <!-- Compile the java code from ${src} into ${build} -->
+    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar" destdir="${build}">
+      <classpath refid="project.class.path" />
+  	</javac>
+  	
+  </target>
+
+  <target name="dist" depends="compile"
+          description="generate the distribution" >
+    <!-- Create the distribution directory -->
+    <mkdir dir="${dist}"/>
+
+    <jar jarfile="${dist}/webservices.jar" basedir="${build}"/>
+
+    <copy todir="${dist}">
+      <fileset dir="${main.resources}"/>
+    </copy>
+  	<copy file="${morphology.dir}/dist/morphology.jar" todir="${dist}"/>
+  	<copy file="${morphology.dir}/dist/Exceptions.txt" todir="${dist}"/>
+  	<copy file="${morphology.dir}/dist/Lexicon.xml" todir="${dist}"/>
+  	<copy file="${morphology.dir}/dist/Statistics.xml" todir="${dist}"/>
+  	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
+  </target>
+
+  <target name="clean"
+          description="clean up" >
+    <!-- Delete the ${build} and ${dist} directory trees -->
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+
+  <target name="clean-dist" depends="clean,dist"
+          description="clean and generate the distribution" >
+  </target>
+
+</project>

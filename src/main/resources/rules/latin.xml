@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules>
+	<exact>
+		<!-- 1. "ee" transliteration near the begin of the token: -->
+		<!-- 1.1. prefix "ie" combined with stem starting with "ie" -->
+		<!-- 1.1.1. in combination with prefix "vis" -->
+		<r target="visneeeee">
+			<replace position="begin">visneieie</replace>
+		</r>
+		<r target="visjāeeee">
+			<replace position="begin">visjāieie</replace>
+		</r>
+		<r target="visneee">
+			<replace position="begin">visneie</replace>
+		</r>
+		<r target="visjāee">
+			<replace position="begin">visjāie</replace>
+		</r>
+		<r target="viseeee">
+			<replace position="begin">visieie</replace>
+		</r>
+		<r target="visee">
+			<replace position="begin">visie</replace>
+		</r>
+		
+		<!-- 1.1.2. combinations without prefix "vis" -->
+		<r target="neeeee">
+			<replace position="begin">neieie</replace>
+		</r>
+		<r target="jāeeee">
+			<replace position="begin">jāieie</replace>
+		</r>
+		<r target="neee">
+			<replace position="begin">neie</replace>
+		</r>
+		<r target="jāee">
+			<replace position="begin">jāie</replace>
+		</r>
+		<r target="eeee">
+			<replace position="begin">ieie</replace>
+		</r>
+		<r target="ee">
+			<replace position="begin">ie</replace>
+		</r>
+		
+		<!-- 1.2. other prefixes combined with prefix "ie" -->
+		<!-- 1.2.1. in combination with prefix "vis" -->
+		<r target="visaizee">
+			<replace position="begin">visaizie</replace>
+		</r>
+		<r target="visapee">
+			<replace position="begin">visapie</replace>
+		</r>
+		<r target="visatee">
+			<replace position="begin">visatie</replace>
+		</r>
+		<r target="visbezee">
+			<replace position="begin">visbezie</replace>
+		</r>
+		<r target="viseksee">
+			<replace position="begin">viseksie</replace>
+		</r>
+		<r target="visizee">
+			<replace position="begin">visizie</replace>
+		</r>
+		<r target="visnoee">
+			<replace position="begin">visnoie</replace>
+		</r>
+		<r target="vispaee">
+			<replace position="begin">vispaie</replace>
+		</r>
+		<r target="vispāree">
+			<replace position="begin">vispārie</replace>
+		</r>
+		<r target="visparee">
+			<replace position="begin">visparie</replace>
+			<!-- Why this was comented out in periodika I? -->
+		</r>
+		<r target="vispeeee">
+			<replace position="begin">vispieie</replace>
+		</r>
+		<r target="vissaee">
+			<replace position="begin">vissaie</replace>
+		</r>
+		<r target="visuzee">
+			<replace position="begin">visuzie</replace>
+		</r>
+		
+		<!-- 1.2.2. combinations without prefix "vis" -->
+		<r target="aizee">
+			<replace position="begin">aizie</replace>
+		</r>
+		<r target="apee">
+			<replace position="begin">apie</replace>
+		</r>
+		<r target="atee">
+			<replace position="begin">atie</replace>
+		</r>
+		<r target="bezee">
+			<replace position="begin">bezie</replace>
+		</r>
+		<r target="eksee">
+			<replace position="begin">eksie</replace>
+		</r>
+		<r target="izee">
+			<replace position="begin">izie</replace>
+		</r>
+		<r target="noee">
+			<replace position="begin">noie</replace>
+		</r>
+		<r target="paee">
+			<replace position="begin">paie</replace>
+		</r>
+		<r target="pāree">
+			<replace position="begin">pārie</replace>
+		</r>
+		<r target="paree">
+			<replace position="begin">parie</replace>
+			<!-- Why this was comented out in periodika I? -->
+		</r>
+		<r target="peeee">
+			<replace position="begin">pieie</replace>
+		</r>
+		<r target="saee">
+			<replace position="begin">saie</replace>
+		</r>
+		<r target="uzee">
+			<replace position="begin">uzie</replace>
+		</r>
+		
+		<!-- 1.3. other prefixes containing "ie" -->
+		<r target="vispee">
+			<replace position="begin">vispie</replace>
+		</r>
+		<r target="pee">
+			<replace position="begin">pie</replace>
+		</r>
+		
+		<!-- 2. Transliteration for the prefixes "iz", "uz", "aiz" in front of s: -->
+		<!-- 2.1. in combination with prefix "vis" -->
+		<r target="visneiss">
+			<replace position="begin">visneizs</replace>
+		</r>
+		<r target="visjāiss">
+			<replace position="begin">visjāizs</replace>
+		</r>
+		<r target="visiss">
+			<replace position="begin">visizs</replace>
+		</r>
+		
+		<r target="visneuss">
+			<replace position="begin">visneuzs</replace>
+		</r>
+		<r target="visjāuss">
+			<replace position="begin">visjāuzs</replace>
+		</r>
+		<r target="visuss">
+			<replace position="begin">visuzs</replace>
+		</r>
+		
+		<r target="visneaiss">
+			<replace position="begin">visneaizs</replace>
+		</r>
+		<r target="visjāaiss">
+			<replace position="begin">visjāaizs</replace>
+		</r>
+		<r target="visaiss">
+			<replace position="begin">visaizs</replace>
+		</r>
+		
+		<!-- 2.2. combinations without prefix "vis" -->
+		<r target="neiss">
+			<replace position="begin">neizs</replace>
+		</r>
+		<r target="jāiss">
+			<replace position="begin">jāizs</replace>
+		</r>
+		<r target="iss">
+			<replace position="begin">izs</replace>
+			<!-- In periodika I restricted to words longer than 4 characters. -->
+		</r>
+		
+		<r target="neuss">
+			<replace position="begin">neuzs</replace>
+		</r>
+		<r target="jāuss">
+			<replace position="begin">jāuzs</replace>
+		</r>
+		<r target="uss">
+			<replace position="begin">uzs</replace>
+			<!-- In periodika I restricted to words longer than 4 characters. -->
+		</r>
+
+		<r target="neaiss">
+			<replace position="begin">neaizs</replace>
+		</r>
+		<r target="jāaiss">
+			<replace position="begin">jāaizs</replace>
+		</r>
+		<r target="aiss">
+			<replace position="begin">aizs</replace>
+		</r>
+
+		<!-- 3. "ee" transliteration near the end of the token:-->
+		<r target="ee">
+			<replace position="end">ie</replace>
+		</r>
+		<r target="ees">
+			<replace position="end">ies</replace>
+		</r>
+		<r target="eem">
+			<replace position="end">iem</replace>
+		</r>
+		
+		<!--4. other endings: -->
+		
+		<!-- 5. transliterations resulting in 1 letter: -->
+		<!-- 5.1. cosonants -->
+		<r target="ch">h</r>
+		<r target="w">v</r>
+		<r target="ŗ">r</r>
+		<r target="ş">s</r>
+		<r target="q">g</r>
+		
+		
+		<!-- 5.2. vowels -->
+		<r target="à">ā</r>
+		<r target="á">ā</r>
+		<r target="â">ā</r>
+		<r target="ã">ā</r>
+		<r target="ä">ā</r>
+
+		<r target="è">ē</r>
+		<r target="é">ē</r>
+		<r target="ê">ē</r>
+		<r target="ë">ē</r>
+		
+		<r target="ì">ī</r>
+		<r target="í">ī</r>
+		<r target="î">ī</r>
+		<r target="ï">ī</r>
+		
+		<r target="ō">o</r>
+		<r target="ò">o</r>
+		<r target="ó">o</r>
+		<r target="ô">o</r>
+		<r target="õ">o</r>
+
+		<r target="ù">ū</r>
+		<r target="ú">ū</r>
+		<r target="û">ū</r>
+		<r target="ü">ū</r>
+		
+		<!-- 6. rules for specific words. -->
+		<r target="vaj">
+			<replace position="exact">vai</replace>
+		</r>
+		<r target="nau">
+			<replace position="exact">nav</replace>
+		</r>
+		<r target="jav">
+			<replace position="exact">jau</replace>
+		</r>
+		<r target="vel">
+			<replace position="exact">vēl</replace>
+		</r>
+		
+		<!-- Rules covering common OCR mistakes. -->
+		<r target="X" sensitive="1">K</r>
+		
+	</exact>
+	<fuzzy>
+		<!-- Rules covering orthography differences. -->
+		<r target="ee">ie</r>
+		<r target="i">ī</r>
+		<r target="e">ē</r>
+		<r target="a">ā</r>
+		<r target="u">ū</r>
+		
+		<r target="g">ģ</r>
+		<r target="s">š</r>
+		<r target="š">s</r>
+		<r target="z">ž</r>
+
+		<r target="j" position="end">i</r>
+
+		<r target="use" position="end">usi</r>
+		
+		<!-- Rules covering common OCR mistakes. -->
+		<r target="c">č</r>
+		<r target="k">ķ</r>
+		<r target="ķ">k</r>
+		<r target="l">ļ</r>
+		<r target="n">ņ</r>
+
+		<r target="c">e</r>
+		<r target="ce">ie</r>
+		<r target="ec">ie</r>
+		<r target="cc">ie</r>
+		
+		<r target="Gr" sensitive="1">G</r>
+		
+		<!-- Rules for specific words. -->
+		
+	</fuzzy>
+</rules>
