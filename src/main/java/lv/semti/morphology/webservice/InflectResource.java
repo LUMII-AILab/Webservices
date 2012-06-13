@@ -1,5 +1,7 @@
 package lv.semti.morphology.webservice;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
@@ -16,9 +18,36 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 public class InflectResource extends ServerResource {
-	@Get("json")
+	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
+		List<List<Wordform>> processedtokens = inflect(query);
+		
+		String format = (String) getRequest().getAttributes().get("format");
+		if (format.equalsIgnoreCase("xml")) {
+			StringWriter s = new StringWriter();					
+			try {
+				s.write("<Elements>\n");
+				for (List<Wordform> token : processedtokens) {
+					s.write("<Locījumi>\n");
+					for (Wordform wf : token) wf.toXML(s);	
+					s.write("</Locījumi>\n");
+				}		
+				s.write("</Elements>\n");
+			} catch (IOException e) { e.printStackTrace(); }
+			return s.toString();
+		} else {
+			List<String> tokenJSON = new LinkedList<String>();
+			for (List<Wordform> token : processedtokens) {
+				List<String> wordJSON = new LinkedList<String>();
+				for (Wordform wf : token) wordJSON.add(wf.toJSON());
+				tokenJSON.add(formatJSON(wordJSON));
+			}		
+			return formatJSON(tokenJSON);			
+		}
+	}
+
+	private List<List<Wordform>> inflect(String query) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -37,25 +66,21 @@ public class InflectResource extends ServerResource {
 		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte");    
 		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
-		LinkedList<String> tokenJSON = new LinkedList<String>();
+		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
-			LinkedList<String> wordJSON = new LinkedList<String>();
 			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken());
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);
 				name = name.substring(0, 1).toUpperCase() + name.substring(1,name.length());
 				wf.addAttribute(AttributeNames.i_Word, name);
-				wordJSON.add(wf.toJSON());
 			}
-			// word.toJSONsingle(MorphoServer.statistics)
-			tokenJSON.add(formatJSON(wordJSON));
+			processedTokens.add(formas);
 		}
 		
 		MorphoServer.analyzer.defaultSettings();
-		
-		return formatJSON(tokenJSON);
+		return processedTokens;
 	}
 	
 	private String formatJSON(Collection<String> tags) {

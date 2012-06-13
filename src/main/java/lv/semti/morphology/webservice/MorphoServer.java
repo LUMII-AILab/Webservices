@@ -32,7 +32,7 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
 	    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
 	    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
-	    component.getDefaultHost().attach("/inflect/{query}", InflectResource.class);
+	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
 	    
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 
