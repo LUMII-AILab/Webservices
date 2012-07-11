@@ -43,7 +43,7 @@ public class WordPipe {
 	}	
 	
 	private static String analyze(Analyzer analyzer, Statistics statistics, String query, boolean all_options) {
-		List<Word> tokens = Splitting.tokenize(analyzer, query, true);
+		List<Word> tokens = Splitting.tokenize(analyzer, query, false);
 		LinkedList<String> tokenJSON = new LinkedList<String>();
 		
 		for (Word word : tokens) {
@@ -59,7 +59,7 @@ public class WordPipe {
 	}
 	
 	private static String analyze_tab(Analyzer analyzer, Statistics statistics, String query){
-		List<Word> tokens = Splitting.tokenize(analyzer, query, true);
+		List<Word> tokens = Splitting.tokenize(analyzer, query, false);
 		StringBuilder s = new StringBuilder(); 
 		
 		for (Word word : tokens) {

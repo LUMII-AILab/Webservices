@@ -13,6 +13,7 @@ import lv.semti.morphology.analyzer.Splitting;
 import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
+import lv.semti.morphology.attributes.AttributeValues;
 
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -63,13 +64,16 @@ public class InflectResource extends ServerResource {
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
 		LinkedList<String> showAttrs = new LinkedList<String>();
-		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte");    
+		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
+		
+		AttributeValues filter = new AttributeValues();
+		filter.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
 		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
-			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken());
+			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken(), filter);
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);
