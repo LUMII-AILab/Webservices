@@ -8,12 +8,27 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import lv.ailab.lnb.fraktur.Transliterator;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.corpus.Statistics;
 
 public class WordPipe {
 	public static void main(String[] args) throws Exception {
-		Analyzer analyzer = new Analyzer("dist/Lexicon.xml"); 	
+		boolean full_output = false;
+		boolean tab_output = false;
+		boolean transliterate = false;
+		for (int i=0; i<args.length; i++) {
+			if (args[i].equalsIgnoreCase("-full")) full_output = true;
+			if (args[i].equalsIgnoreCase("-tab")) tab_output = true;
+			if (args[i].equalsIgnoreCase("-transliterate")) transliterate = true;
+		}
+
+		Analyzer analyzer;
+		if (transliterate) {
+			Transliterator.PATH_FILE = "dist/path.conf";
+			analyzer = new TransliteratingAnalyzer("dist/Lexicon.xml");
+		} else analyzer = new Analyzer("dist/Lexicon.xml"); 	
+		
 		analyzer.enableVocative = true;
 		analyzer.enableDiminutive = true;
 		analyzer.enablePrefixes = true;
@@ -23,27 +38,21 @@ public class WordPipe {
 		analyzer.setCacheSize(10000);
 		
 		Statistics statistics = new Statistics("dist/Statistics.xml");
-		
-		boolean full_output = false;
-		boolean tab_output = false;
-		for (int i=0; i<args.length; i++) {
-			if (args[i].equalsIgnoreCase("-full")) full_output = true;
-			if (args[i].equalsIgnoreCase("-tab")) tab_output = true;
-		}
-				
+					
 		PrintStream out = new PrintStream(System.out, true, "UTF8");
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "UTF8"));
 	    String s;
 	    while ((s = in.readLine()) != null && s.length() != 0) {
+	    	List<Word> tokens = Splitting.tokenize(analyzer, s, false);	    	
+	    	
 	    	if (!tab_output) 
-	    		out.println( analyze( analyzer, statistics, s, full_output));
-	    	else out.println( analyze_tab( analyzer, statistics, s));
+	    		out.println( analyze( analyzer, statistics, tokens, full_output));
+	    	else out.println( analyze_tab( analyzer, statistics, tokens));
 	    	out.flush();
 	    }
 	}	
 	
-	private static String analyze(Analyzer analyzer, Statistics statistics, String query, boolean all_options) {
-		List<Word> tokens = Splitting.tokenize(analyzer, query, false);
+	private static String analyze(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options) {		
 		LinkedList<String> tokenJSON = new LinkedList<String>();
 		
 		for (Word word : tokens) {
@@ -58,8 +67,7 @@ public class WordPipe {
 		return s;
 	}
 	
-	private static String analyze_tab(Analyzer analyzer, Statistics statistics, String query){
-		List<Word> tokens = Splitting.tokenize(analyzer, query, false);
+	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens){
 		StringBuilder s = new StringBuilder(); 
 		
 		for (Word word : tokens) {

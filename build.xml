@@ -1,7 +1,7 @@
-<project name="Morphology" default="clean-dist" basedir=".">
+<project name="Webservices" default="clean-dist" basedir=".">
 
   <description>
-    Build file for Morphology project
+    Build file for morphology web service tools
   </description>
   
   <!-- set global properties for this build -->
@@ -10,6 +10,7 @@
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   <property name="morphology.dir" location="../Morphology"/>
+	<property name="transliterator.dir" location="../Transliterator"/>
 
   <path id="project.class.path">
     <fileset dir="lib">
@@ -27,7 +28,7 @@
   <target name="compile" depends="init"
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar" destdir="${build}">
+    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;" destdir="${build}">
       <classpath refid="project.class.path" />
   	</javac>
   	
@@ -45,9 +46,12 @@
     </copy>
   	<copy file="${morphology.dir}/dist/morphology.jar" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/Exceptions.txt" todir="${dist}"/>
-  	<copy file="${morphology.dir}/dist/Lexicon.xml" todir="${dist}"/>
+  	<copy todir="${dist}">
+  		<fileset dir="${morphology.dir}/dist" includes="Lexicon*.xml"/>
+  	</copy>
   	<copy file="${morphology.dir}/dist/Statistics.xml" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
+  	<copy file="${transliterator.dir}/dist/transliterator.jar" todir="${dist}"/>
   </target>
 
   <target name="clean"
