@@ -20,6 +20,11 @@ public class TransliteratingAnalyzer extends Analyzer {
 		transliterator = Transliterator.getTransliterator();
 	}
 
+	public TransliteratingAnalyzer(String lexiconFileName, boolean useAuxiliaryLexicons) throws Exception {
+		super(lexiconFileName, useAuxiliaryLexicons);
+		transliterator = Transliterator.getTransliterator();
+	}
+
 	public Word analyze(String word) {
 		ResultData rd = transliterator.processWord(word, "fraktur", true);
 		ArrayList<Variant> variants = rd.getAllVariants();

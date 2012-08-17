@@ -17,17 +17,19 @@ public class WordPipe {
 		boolean full_output = false;
 		boolean tab_output = false;
 		boolean transliterate = false;
+		boolean useAux = true;
 		for (int i=0; i<args.length; i++) {
 			if (args[i].equalsIgnoreCase("-full")) full_output = true;
 			if (args[i].equalsIgnoreCase("-tab")) tab_output = true;
 			if (args[i].equalsIgnoreCase("-transliterate")) transliterate = true;
+			if (args[i].equalsIgnoreCase("-core")) useAux = false;
 		}
 
 		Analyzer analyzer;
 		if (transliterate) {
 			Transliterator.PATH_FILE = "dist/path.conf";
 			analyzer = new TransliteratingAnalyzer("dist/Lexicon.xml");
-		} else analyzer = new Analyzer("dist/Lexicon.xml"); 	
+		} else analyzer = new Analyzer("dist/Lexicon.xml", useAux); 	
 		
 		analyzer.enableVocative = true;
 		analyzer.enableDiminutive = true;
