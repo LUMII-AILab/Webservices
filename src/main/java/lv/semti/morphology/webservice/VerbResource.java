@@ -52,10 +52,10 @@ public class VerbResource extends ServerResource {
 		
 		if (word.isRecognized()) {
 			Wordform maxwf = word.wordforms.get(0);
-			int maxticamība = -1;
+			double maxticamība = -1;
 			for (Wordform wf : word.wordforms) {  // Paskatamies visus atrastos variantus un ņemam statistiski ticamāko
 				//tag += String.format("%s\t%d\n", wf.getDescription(), MorphoServer.statistics.getTicamība(wf));
-				int ticamība = MorphoServer.statistics.getEstimate(wf);
+				double ticamība = MorphoServer.statistics.getEstimate(wf);
 				if (wf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb) == verb) ticamība += 200;
 				if (ticamība > maxticamība) {
 					maxticamība = ticamība;
@@ -72,8 +72,8 @@ public class VerbResource extends ServerResource {
 				Collections.addAll(tags, "V1","V2","V3","Inf");
 			}
 			if (maxwf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun) || maxwf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Pronoun) ) { // Lietvārdiem un vietniekvārdiem tagi ar locījumu
-				String ncase = maxwf.getValue(AttributeNames.i_Case);
-				if (ncase != null) tags.add(caseCode(ncase));
+				String ncase = caseCode(maxwf.getValue(AttributeNames.i_Case));
+				if (ncase != null) tags.add(ncase);
 				Collections.addAll(tags, "Nom","Gen","Dat","Acc","Loc");
 			}
 			if (maxwf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Adverb)) { // Apstākļa vārdi
@@ -125,6 +125,7 @@ public class VerbResource extends ServerResource {
 	}
 	
 	private String caseCode(String caseName) {
+		if (caseName == null) return null;
 		String result = null;
 		if (caseName.equals(AttributeNames.v_Nominative)) 	result = "Nom";
 		if (caseName.equals(AttributeNames.v_Genitive)) 	result = "Gen";

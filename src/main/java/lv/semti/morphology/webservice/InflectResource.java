@@ -66,14 +66,11 @@ public class InflectResource extends ServerResource {
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
 		
-		AttributeValues filter = new AttributeValues();
-		filter.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
-		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
-			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken(), filter);
+			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken());
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);

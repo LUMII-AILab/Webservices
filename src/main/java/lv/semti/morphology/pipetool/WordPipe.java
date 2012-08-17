@@ -47,7 +47,7 @@ public class WordPipe {
 	    	
 	    	if (!tab_output) 
 	    		out.println( analyze( analyzer, statistics, tokens, full_output));
-	    	else out.println( analyze_tab( analyzer, statistics, tokens));
+	    	else out.println( analyze_tab( analyzer, statistics, tokens, full_output));
 	    	out.flush();
 	    }
 	}	
@@ -67,12 +67,14 @@ public class WordPipe {
 		return s;
 	}
 	
-	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens){
+	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options){
 		StringBuilder s = new StringBuilder(); 
 		
 		for (Word word : tokens) {
 			if (s.length()>0) s.append("\t");
-			s.append(word.toTabSepsingle(statistics));
+			if (all_options)
+				s.append(word.toTabSep());
+			else s.append(word.toTabSepsingle(statistics));
 		}
 		
 		tokens = null;
