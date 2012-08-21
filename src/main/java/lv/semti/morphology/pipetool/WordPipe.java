@@ -18,11 +18,13 @@ public class WordPipe {
 		boolean tab_output = false;
 		boolean transliterate = false;
 		boolean useAux = true;
+		boolean probabilities = false;
 		for (int i=0; i<args.length; i++) {
 			if (args[i].equalsIgnoreCase("-full")) full_output = true;
 			if (args[i].equalsIgnoreCase("-tab")) tab_output = true;
 			if (args[i].equalsIgnoreCase("-transliterate")) transliterate = true;
 			if (args[i].equalsIgnoreCase("-core")) useAux = false;
+			if (args[i].equalsIgnoreCase("-probabilities")) probabilities = true;
 		}
 
 		Analyzer analyzer;
@@ -40,6 +42,7 @@ public class WordPipe {
 		analyzer.setCacheSize(10000);
 		
 		Statistics statistics = new Statistics("dist/Statistics.xml");
+		if (full_output) statistics.lexemeWeight = 100; //overraidojam, lai nav tik liela starpiiba
 					
 		PrintStream out = new PrintStream(System.out, true, "UTF8");
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "UTF8"));
@@ -49,7 +52,7 @@ public class WordPipe {
 	    	
 	    	if (!tab_output) 
 	    		out.println( analyze( analyzer, statistics, tokens, full_output));
-	    	else out.println( analyze_tab( analyzer, statistics, tokens, full_output));
+	    	else out.println( analyze_tab( analyzer, statistics, tokens, full_output, probabilities));
 	    	out.flush();
 	    }
 	}	
@@ -69,13 +72,13 @@ public class WordPipe {
 		return s;
 	}
 	
-	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options){
+	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options, boolean probabilities){
 		StringBuilder s = new StringBuilder(); 
 		
 		for (Word word : tokens) {
 			if (s.length()>0) s.append("\t");
 			if (all_options)
-				s.append(word.toTabSep());
+				s.append(word.toTabSep(statistics, probabilities));
 			else s.append(word.toTabSepsingle(statistics));
 		}
 		

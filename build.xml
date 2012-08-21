@@ -60,8 +60,12 @@
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
   </target>
+	
+	 <target name="zip" depends="dist" description="compress distribution files">
+	  	<zip destfile="webservices.zip" basedir="." includes="dist/**,lib/**,*.sh" />
+	  </target>
 
-  <target name="clean-dist" depends="clean,dist"
+  <target name="clean-dist" depends="clean,dist,zip"
           description="clean and generate the distribution" >
   </target>
 
