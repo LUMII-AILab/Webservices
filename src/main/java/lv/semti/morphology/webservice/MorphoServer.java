@@ -13,7 +13,8 @@ public class MorphoServer {
 	static Transliterator translit;
 
 	public static void main(String[] args) throws Exception {
-		analyzer = new Analyzer("dist/Lexicon.xml"); 	
+		analyzer = new Analyzer("dist/Lexicon.xml", false); 
+		analyzer.setCacheSize(1000);
 		statistics = new Statistics("dist/Statistics.xml");
 		
 		Transliterator.PATH_FILE = "dist/path.conf";
