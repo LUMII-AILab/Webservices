@@ -3,6 +3,10 @@ package lv.semti.morphology.webservice;
 import org.restlet.*;
 import org.restlet.data.*;
 
+import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreLabel;
+
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.corpus.Statistics;
 import lv.ailab.lnb.fraktur.Transliterator;
@@ -11,6 +15,7 @@ public class MorphoServer {
 	static Analyzer analyzer;
 	static Statistics statistics;
 	static Transliterator translit;
+	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 
 	public static void main(String[] args) throws Exception {
 		analyzer = new Analyzer("dist/Lexicon.xml", false); 
@@ -19,6 +24,10 @@ public class MorphoServer {
 		
 		Transliterator.PATH_FILE = "dist/path.conf";
 		translit = Transliterator.getTransliterator();
+		
+		NERclassifier = CRFClassifier.getClassifierNoExceptions("dist/lv-ner-model.ser.gz");
+		//NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
+		//NERclassifier.featureFactory.init(NERclassifier.flags);
 		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
@@ -34,20 +43,11 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
 	    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
 	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
+	    component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
 	    
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 
 	    component.start();  
 	}
-
-	/*
-	@Override
-	public Restlet createInboundRoot() {
-		Router router = new Router(getContext()); 
-		
-		router.attach("/analyze/{word}", WordResource.class);
-		
-		return router;
-	}*/
 
 }

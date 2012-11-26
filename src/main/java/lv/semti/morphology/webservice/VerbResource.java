@@ -29,6 +29,7 @@ public class VerbResource extends ServerResource {
 			e.printStackTrace();
 		}
 		
+		MorphoServer.analyzer.defaultSettings();
 		
 		LinkedList<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		String debug = "";

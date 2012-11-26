@@ -11,6 +11,7 @@
   <property name="dist"  location="dist"/>
   <property name="morphology.dir" location="../Morphology"/>
 	<property name="transliterator.dir" location="../Transliterator"/>
+	<property name="lvtagger.dir" location="../LVTagger"/>
 
   <path id="project.class.path">
     <fileset dir="lib">
@@ -28,7 +29,7 @@
   <target name="compile" depends="init"
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;" destdir="${build}">
+    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;${lvtagger.dir}/dist/CRF.jar;" destdir="${build}">
       <classpath refid="project.class.path" />
   	</javac>
   	
@@ -52,6 +53,12 @@
   	<copy file="${morphology.dir}/dist/Statistics.xml" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
   	<copy file="${transliterator.dir}/dist/transliterator.jar" todir="${dist}"/>
+  	<copy file="${lvtagger.dir}/dist/CRF.jar" todir="${dist}"/>
+  	<copy file="${lvtagger.dir}/lv-ner-model.ser.gz" todir="${dist}"/>
+  	<mkdir dir="Gazetteer"/>
+  	<copy todir="Gazetteer">
+  	  		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>
+  	  	</copy>
   </target>
 
   <target name="clean"
