@@ -54,7 +54,9 @@
   	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
   	<copy file="${transliterator.dir}/dist/transliterator.jar" todir="${dist}"/>
   	<copy file="${lvtagger.dir}/dist/CRF.jar" todir="${dist}"/>
-  	<copy file="${lvtagger.dir}/lv-ner-model.ser.gz" todir="${dist}"/>
+  	<copy todir="${dist}/models">
+  		<fileset dir="${lvtagger.dir}/models"/>
+  	</copy>
   	<mkdir dir="Gazetteer"/>
   	<copy todir="Gazetteer">
   	  		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>

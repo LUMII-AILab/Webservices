@@ -41,7 +41,7 @@ public class WordPipe {
 		analyzer.meklētsalikteņus = true; 
 		analyzer.setCacheSize(10000);
 		
-		Statistics statistics = new Statistics("dist/Statistics.xml");
+		Statistics statistics = Statistics.getStatistics();
 		if (full_output) statistics.lexemeWeight = 100; //overraidojam, lai nav tik liela starpiiba
 					
 		PrintStream out = new PrintStream(System.out, true, "UTF8");
@@ -51,18 +51,18 @@ public class WordPipe {
 	    	List<Word> tokens = Splitting.tokenize(analyzer, s, false);	    	
 	    	
 	    	if (!tab_output) 
-	    		out.println( analyze( analyzer, statistics, tokens, full_output));
-	    	else out.println( analyze_tab( analyzer, statistics, tokens, full_output, probabilities));
+	    		out.println( analyze( analyzer, tokens, full_output));
+	    	else out.println( analyze_tab( analyzer, tokens, full_output, probabilities));
 	    	out.flush();
 	    }
 	}	
 	
-	private static String analyze(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options) {		
+	private static String analyze(Analyzer analyzer, List<Word> tokens, boolean all_options) {		
 		LinkedList<String> tokenJSON = new LinkedList<String>();
 		
 		for (Word word : tokens) {
 			if (all_options) tokenJSON.add(word.toJSON());
-			else tokenJSON.add(word.toJSONsingle(statistics));
+			else tokenJSON.add(word.toJSONsingle());
 		}
 		
 		String s = formatJSON(tokenJSON).toString();
@@ -72,14 +72,14 @@ public class WordPipe {
 		return s;
 	}
 	
-	private static String analyze_tab(Analyzer analyzer, Statistics statistics, List<Word> tokens, boolean all_options, boolean probabilities){
+	private static String analyze_tab(Analyzer analyzer, List<Word> tokens, boolean all_options, boolean probabilities){
 		StringBuilder s = new StringBuilder(); 
 		
 		for (Word word : tokens) {
 			if (s.length()>0) s.append("\t");
 			if (all_options)
-				s.append(word.toTabSep(statistics, probabilities));
-			else s.append(word.toTabSepsingle(statistics));
+				s.append(word.toTabSep(probabilities));
+			else s.append(word.toTabSepsingle());
 		}
 		
 		tokens = null;

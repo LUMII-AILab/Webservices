@@ -46,7 +46,7 @@ public class NERTaggerResource extends ServerResource {
 		
 		for (Word token : Splitting.tokenize(MorphoServer.analyzer, query)) {
 			CoreLabel word = new CoreLabel();
-			Wordform maxwf = token.getBestWordform(MorphoServer.statistics);
+			Wordform maxwf = token.getBestWordform();
 			
 			word.set(TextAnnotation.class, token.getToken());
 			word.set(LemmaAnnotation.class, maxwf.getValue(AttributeNames.i_Lemma));

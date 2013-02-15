@@ -54,7 +54,7 @@ public class TokenResource extends ServerResource {
 		LinkedList<String> tokenJSON = new LinkedList<String>();
 		
 		for (Word word : tokens) {
-			tokenJSON.add(word.toJSONsingle(MorphoServer.statistics));
+			tokenJSON.add(word.toJSONsingle());
 		}
 		
 		return formatJSON(tokenJSON);

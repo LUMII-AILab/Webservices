@@ -13,6 +13,7 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.AttributeNames;
+import lv.semti.morphology.corpus.Statistics;
 
 public class VerbResource extends ServerResource {
 	@Get
@@ -56,7 +57,7 @@ public class VerbResource extends ServerResource {
 			double maxticamība = -1;
 			for (Wordform wf : word.wordforms) {  // Paskatamies visus atrastos variantus un ņemam statistiski ticamāko
 				//tag += String.format("%s\t%d\n", wf.getDescription(), MorphoServer.statistics.getTicamība(wf));
-				double ticamība = MorphoServer.statistics.getEstimate(wf);
+				double ticamība = Statistics.getStatistics().getEstimate(wf);
 				if (wf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb) == verb) ticamība += 200;
 				if (ticamība > maxticamība) {
 					maxticamība = ticamība;

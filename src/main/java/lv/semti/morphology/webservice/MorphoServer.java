@@ -13,19 +13,17 @@ import lv.ailab.lnb.fraktur.Transliterator;
 
 public class MorphoServer {
 	static Analyzer analyzer;
-	static Statistics statistics;
 	static Transliterator translit;
 	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 
 	public static void main(String[] args) throws Exception {
 		analyzer = new Analyzer("dist/Lexicon.xml", false); 
 		analyzer.setCacheSize(1000);
-		statistics = new Statistics("dist/Statistics.xml");
 		
 		Transliterator.PATH_FILE = "dist/path.conf";
 		translit = Transliterator.getTransliterator();
 		
-		NERclassifier = CRFClassifier.getClassifierNoExceptions("dist/lv-ner-model.ser.gz");
+		//NERclassifier = CRFClassifier.getClassifierNoExceptions("dist/models/lv-ner-model.ser.gz");
 		//NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
 		//NERclassifier.featureFactory.init(NERclassifier.flags);
 		
