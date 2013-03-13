@@ -22,8 +22,9 @@ public class InflectResource extends ServerResource {
 	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
-		List<List<Wordform>> processedtokens = inflect(query);
 		
+		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("gender"));
+				
 		String format = (String) getRequest().getAttributes().get("format");
 		if (format.equalsIgnoreCase("xml")) {
 			StringWriter s = new StringWriter();					
@@ -48,7 +49,7 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query) {
+	private List<List<Wordform>> inflect(String query, String gender) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {

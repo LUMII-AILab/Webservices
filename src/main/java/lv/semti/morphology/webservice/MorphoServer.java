@@ -41,6 +41,7 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
 	    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
 	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
+	    component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
 	    component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
 	    
 	    // Now, let's start the component! 
