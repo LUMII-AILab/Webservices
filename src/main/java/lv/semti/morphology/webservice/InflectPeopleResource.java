@@ -73,7 +73,8 @@ public class InflectPeopleResource extends ServerResource {
 			if (gender.equalsIgnoreCase("f")) filter.addAttribute(AttributeNames.i_Gender, AttributeNames.v_Feminine);
 		}
 		
-		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
+		String words = query;
+		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, words);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
