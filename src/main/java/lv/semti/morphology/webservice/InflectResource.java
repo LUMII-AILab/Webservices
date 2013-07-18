@@ -23,7 +23,7 @@ public class InflectResource extends ServerResource {
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
 		
-		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("gender"));
+		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"));
 				
 		String format = (String) getRequest().getAttributes().get("format");
 		if (format.equalsIgnoreCase("xml")) {
@@ -49,12 +49,15 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query, String gender) {
+	private List<List<Wordform>> inflect(String query, String paradigm) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		
+		Integer paradigmID = null;
+		if (paradigm != null) paradigmID = Integer.decode(paradigm);
 		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = true;
@@ -65,18 +68,25 @@ public class InflectResource extends ServerResource {
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
 		LinkedList<String> showAttrs = new LinkedList<String>();
+		//FIXME - this set is not appropriate for inflecting verbs and others... 
 		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
 		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
-			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken());
+			List<Wordform> formas;
+			if (paradigmID == null) // no specific options passed
+				formas = MorphoServer.analyzer.generateInflections(word.getToken());
+			else formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID); // if a specific paradigm is passed, inflect according to that
+				
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
+				/* capitalization - because it was used for proper names at one point
 				String name = wf.getValue(AttributeNames.i_Word);
 				name = name.substring(0, 1).toUpperCase() + name.substring(1,name.length());
 				wf.addAttribute(AttributeNames.i_Word, name);
+				*/
 			}
 			processedTokens.add(formas);
 		}

@@ -9,8 +9,8 @@
 	<classpathentry kind="lib" path="lib/org.json.jar"/>
 	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.19-bin.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/Morphology"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Transliterator"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LVTagger"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/morphology"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
