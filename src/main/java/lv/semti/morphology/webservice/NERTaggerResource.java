@@ -37,7 +37,7 @@ public class NERTaggerResource extends ServerResource {
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = false;
 		MorphoServer.analyzer.guessVerbs = true;
-		MorphoServer.analyzer.guessParticibles = true;
+		MorphoServer.analyzer.guessParticiples = true;
 		MorphoServer.analyzer.guessAdjectives = true;
 		MorphoServer.analyzer.guessInflexibleNouns = true;
 		MorphoServer.analyzer.enableAllGuesses = true;		
