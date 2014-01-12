@@ -42,9 +42,6 @@
 
     <jar jarfile="${dist}/webservices.jar" basedir="${build}"/>
 
-    <copy todir="${dist}">
-      <fileset dir="${main.resources}"/>
-    </copy>
   	<copy file="${morphology.dir}/dist/morphology.jar" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/Exceptions.txt" todir="${dist}"/>
   	<copy todir="${dist}">
@@ -52,7 +49,6 @@
   	</copy>
   	<copy file="${morphology.dir}/dist/Statistics.xml" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
-  	<copy file="${transliterator.dir}/dist/transliterator.jar" todir="${dist}"/>
   	<copy file="${lvtagger.dir}/dist/CRF.jar" todir="${dist}"/>
   	<copy todir="${dist}/models">
   		<fileset dir="${lvtagger.dir}/models"/>
@@ -61,6 +57,13 @@
   	<copy todir="Gazetteer">
   	  		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>
   	  	</copy>
+  </target>
+	
+  <target name="dist-transliterator" depends="compile,dist">
+    <copy todir="${dist}">
+      <fileset dir="${main.resources}"/> <!-- these are resources for transliterator actually -->
+    </copy>
+  	<copy file="${transliterator.dir}/dist/transliterator.jar" todir="${dist}"/>
   </target>
 
   <target name="clean"
@@ -71,11 +74,19 @@
   </target>
 	
 	 <target name="zip" depends="dist" description="compress distribution files">
-	  	<zip destfile="webservices.zip" basedir="." includes="dist/**,lib/**,*.sh" />
+	  	<zip destfile="webservices.zip" basedir="." includes="dist/**,lib/**,*.sh,*.txt" />
 	  </target>
+
+ <target name="zip-transliterator" depends="dist-transliterator" description="compress distribution files">
+  	<zip destfile="webservices_transliterator.zip" basedir="." includes="dist/**,lib/**,*.sh,*.txt" />
+  </target>
 
   <target name="clean-dist" depends="clean,dist,zip"
           description="clean and generate the distribution" >
+  </target>
+
+  <target name="clean-dist-transliterator" depends="clean,dist-transliterator,zip-transliterator"
+          description="clean and generate the distribution, including the transliterator-specific files" >
   </target>
 
 </project>

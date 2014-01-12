@@ -4,14 +4,12 @@ import org.restlet.*;
 import org.restlet.data.*;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ie.ner.CMMClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 
 import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
-import lv.semti.morphology.corpus.Statistics;
 import lv.ailab.lnb.fraktur.Transliterator;
 
 public class MorphoServer {
@@ -19,13 +17,31 @@ public class MorphoServer {
 	static Transliterator translit;
 	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
+	static private boolean enableTransliterator = false;
 
 	public static void main(String[] args) throws Exception {
+		for (int i=0; i<args.length; i++) {
+			if (args[i].equalsIgnoreCase("-transliterator")) 
+				enableTransliterator = true;
+			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
+				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
+				System.out.println("\nCommand line options:");
+				System.out.println("\t-transliterator : enable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
+				System.out.println("\nWebservice access:");
+				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
+				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
+				System.out.println("http://localhost:8182/verbs/[query] and http://localhost:8182/neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
+				System.out.println("http://localhost:8182/normalize/[ruleset]/[word] and http://localhost:8182/explain/[query] : (if enabled) historical word transliteration and dictionary explanations");
+				System.out.println("http://localhost:8182/inflect/json/[query] : generate all inflectional forms of a lemma");
+				System.out.println("http://localhost:8182/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
+				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
+				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
+			}
+		}
+		
+		
 		analyzer = new Analyzer("dist/Lexicon.xml", false); 
 		analyzer.setCacheSize(1000);
-		
-		Transliterator.PATH_FILE = "dist/path.conf";
-		translit = Transliterator.getTransliterator(analyzer);
 		
 		//NERclassifier = CRFClassifier.getClassifierNoExceptions("dist/models/lv-ner-model.ser.gz");
 		//NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
@@ -48,17 +64,23 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/verbi/{query}", VerbResource.class); //obsolete, jaaiznjem
 	    component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
 	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
-	    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
-	    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
+	    if (enableTransliterator) {
+			Transliterator.PATH_FILE = "dist/path.conf";
+			translit = Transliterator.getTransliterator(analyzer);			
+		    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
+		    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
+	    }
 	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
 	    component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
 	    component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
+	    component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
 	    component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
 	    component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
 	    
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 
 	    component.start();  
+		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
 	}
 
 }

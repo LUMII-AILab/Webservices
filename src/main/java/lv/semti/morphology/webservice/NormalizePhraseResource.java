@@ -10,7 +10,7 @@ import org.restlet.resource.ServerResource;
 
 import lv.lumii.expressions.Expression;
 
-public class InflectPhraseResource extends ServerResource {
+public class NormalizePhraseResource extends ServerResource {
 	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("phrase");
@@ -30,17 +30,10 @@ public class InflectPhraseResource extends ServerResource {
 		MorphoServer.analyzer.guessInflexibleNouns = true;
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
-		//MorphoServer.analyzer.describe(new PrintWriter(System.err));
-		
-		JSONObject oInflections = new JSONObject();
-    	Expression e = new Expression(query, category, true); // Pieņemam, ka klients padod pamatformu
+    	Expression e = new Expression(query, category, false);
     	//e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis
-    	Map<String,String> inflections= e.getInflections();
-    	for (String i_case : inflections.keySet()) {
-    		oInflections.put(i_case, inflections.get(i_case).replaceAll("'", "''"));
-    	}
-		
+    	String pamatforma = e.normalize();		
     	MorphoServer.analyzer.defaultSettings();
-		return oInflections.toJSONString();		
+		return pamatforma;		
 	}
 }
