@@ -18,11 +18,27 @@ public class MorphoServer {
 	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static private boolean enableTransliterator = false;
+	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
 		for (int i=0; i<args.length; i++) {
-			if (args[i].equalsIgnoreCase("-transliterator")) 
+			if (args[i].equalsIgnoreCase("-transliterator")) { 
 				enableTransliterator = true;
+				System.out.println("Transliteration services enabled");
+			}
+			if (args[i].equalsIgnoreCase("-port")) {
+				if (i+1 < args.length && !args[i+1].startsWith("-")) {
+					try {
+						port = Integer.parseInt(args[i+1]);
+						i++;
+					} catch (Exception e) {
+						System.err.printf("Error when parsing command line parameter '%s %s'\n",args[i], args[i+1]);
+						System.err.println(e.getMessage());
+						System.exit(64); //EX_USAGE flag according to sysexit.h 'standard'
+					}
+				}
+			}
+			
 			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
 				System.out.println("\nCommand line options:");
@@ -57,7 +73,7 @@ public class MorphoServer {
 		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
-	    component.getServers().add(Protocol.HTTP, 8182);  
+	    component.getServers().add(Protocol.HTTP, port);  
 	    
 	    // Then attach it to the local host 
 	    component.getDefaultHost().attach("/analyze/{word}", WordResource.class);  

@@ -70,7 +70,13 @@ public class InflectResource extends ServerResource {
 		
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		//FIXME - this set is not appropriate for inflecting verbs and others... 
-		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
+		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); 
+		//nouns
+		showAttrs.add(AttributeNames.i_Case); showAttrs.add(AttributeNames.i_Number); showAttrs.add(AttributeNames.i_Gender); showAttrs.add(AttributeNames.i_Declension);
+		//verbs/particibles
+		showAttrs.add(AttributeNames.i_Person); showAttrs.add(AttributeNames.i_Izteiksme); showAttrs.add(AttributeNames.i_Laiks);
+		//adjectives
+		showAttrs.add(AttributeNames.i_Degree);
 		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
