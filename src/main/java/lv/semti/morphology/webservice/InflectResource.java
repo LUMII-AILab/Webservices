@@ -23,6 +23,7 @@ public class InflectResource extends ServerResource {
 	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
+		String language = (String) getRequest().getAttributes().get("language");
 		
 		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"));
 				
@@ -43,7 +44,12 @@ public class InflectResource extends ServerResource {
 			List<String> tokenJSON = new LinkedList<String>();
 			for (List<Wordform> token : processedtokens) {
 				List<String> wordJSON = new LinkedList<String>();
-				for (Wordform wf : token) wordJSON.add(wf.toJSON());
+				for (Wordform wf : token) {
+					if ("EN".equalsIgnoreCase(language))
+						wordJSON.add(MorphoServer.tagset.toEnglish(wf).toJSON());
+					else
+						wordJSON.add(wf.toJSON());
+				}
 				tokenJSON.add(formatJSON(wordJSON));
 			}		
 			return formatJSON(tokenJSON);			
@@ -95,8 +101,8 @@ public class InflectResource extends ServerResource {
 					if (analysis_case.isMatchingStrong(AttributeNames.i_ParadigmID, "9")) female_5th = true;
 					if (analysis_case.isMatchingStrong(AttributeNames.i_ParadigmID, "10")) male_5th = true;
 				}
-				word.describe(new PrintWriter(System.out));
-				System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
+				//word.describe(new PrintWriter(System.out));
+				//System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
 				if (male_4th && female_4th) { // if so, then build both inflections and merge their forms.
 					formas = MorphoServer.analyzer.generateInflections(word.getToken(), 7);
 					formas.addAll(MorphoServer.analyzer.generateInflections(word.getToken(), 8));
