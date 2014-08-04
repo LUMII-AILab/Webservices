@@ -101,6 +101,8 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
 	    component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
 	    
+	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
+	    
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 
 	    component.start();  
