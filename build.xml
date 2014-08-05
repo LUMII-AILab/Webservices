@@ -12,6 +12,7 @@
   <property name="morphology.dir" location="../Morphology"/>
 	<property name="transliterator.dir" location="../Transliterator"/>
 	<property name="lvtagger.dir" location="../LVTagger"/>
+	<property name="phonetictranscriber.dir" location="../PhoneticTranscriber"/>
 
   <path id="project.class.path">
     <fileset dir="lib">
@@ -29,7 +30,7 @@
   <target name="compile" depends="init"
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;${lvtagger.dir}/dist/CRF.jar;" destdir="${build}">
+    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;${lvtagger.dir}/dist/CRF.jar;${phonetictranscriber.dir}/PhoneticTranscriber.jar;" destdir="${build}">
       <classpath refid="project.class.path" />
   	</javac>
   	
@@ -50,13 +51,18 @@
   	<copy file="${morphology.dir}/dist/Statistics.xml" todir="${dist}"/>
   	<copy file="${morphology.dir}/dist/TagSet.xml" todir="${dist}"/>
   	<copy file="${lvtagger.dir}/dist/CRF.jar" todir="${dist}"/>
+  	<copy file="${phonetictranscriber.dir}/PhoneticTranscriber.jar" todir="${dist}"/>
   	<copy todir="${dist}/models">
   		<fileset dir="${lvtagger.dir}/models"/>
   	</copy>
   	<mkdir dir="Gazetteer"/>
   	<copy todir="Gazetteer">
-  	  		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>
-  	  	</copy>
+		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>
+	</copy>
+	
+  	<copy todir="${dist}/PhoneticTranscriber">
+  		<fileset dir="${phonetictranscriber.dir}/dist/PhoneticTranscriber"/>
+  	</copy>
   </target>
 	
   <target name="dist-transliterator" depends="compile,dist">
