@@ -43,7 +43,7 @@ public class InflectPhraseResource extends ServerResource {
 		MorphoServer.analyzer.enableVocative = true;
 		MorphoServer.analyzer.guessVerbs = false;
 		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessAdjectives = false;
+		MorphoServer.analyzer.guessAdjectives = true;
 		MorphoServer.analyzer.guessInflexibleNouns = true;
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
