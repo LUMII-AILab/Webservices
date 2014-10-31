@@ -77,7 +77,6 @@ public class InflectPeopleResource extends ServerResource {
 		MorphoServer.analyzer.enableVocative = true;
 		MorphoServer.analyzer.guessVerbs = false;
 		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessAdjectives = false;
 		MorphoServer.analyzer.guessInflexibleNouns = true;
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
