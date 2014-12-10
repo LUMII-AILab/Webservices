@@ -26,6 +26,9 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 import lv.lumii.expressions.Expression;
+import lv.lumii.expressions.Expression.Category;
+import lv.lumii.expressions.Expression.Gender;
+import lv.semti.morphology.attributes.AttributeNames;
 
 public class InflectPhraseResource extends ServerResource {
 	@Get
@@ -56,7 +59,13 @@ public class InflectPhraseResource extends ServerResource {
     	for (String i_case : inflections.keySet()) {
     		oInflections.put(i_case, inflections.get(i_case).replaceAll("'", "''"));
     	}
-		
+    	if (e.category == Category.hum) {
+    		if (e.gender == Gender.masculine)
+    			oInflections.put(AttributeNames.i_Gender, AttributeNames.v_Masculine);
+    		if (e.gender == Gender.feminine)
+    			oInflections.put(AttributeNames.i_Gender, AttributeNames.v_Feminine);
+    	}
+    				
     	MorphoServer.analyzer.defaultSettings();
 		return oInflections.toJSONString();		
 	}
