@@ -25,6 +25,8 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 import phonetic_character_converter.AlphabeticCharacterConverter;
+import phonetic_character_converter.IPACharacterConverter;
+import phonetic_character_converter.PhoneticCharacterConverter;
 import phonetic_transcriber.PhoneticTranscriber;
 
 public class PhoneticTranscriberResource extends ServerResource {
@@ -36,7 +38,25 @@ public class PhoneticTranscriberResource extends ServerResource {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		PhoneticTranscriber transcriber=new PhoneticTranscriber(" ", new AlphabeticCharacterConverter());
+		
+		String converter_type=getQuery().getValues("phonem_set");
+		
+		//switch can't handle null string
+		if(converter_type==null)
+			converter_type="";
+		
+		PhoneticCharacterConverter converter;
+		
+		switch(converter_type)
+		{
+		case "IPA":
+			converter=new IPACharacterConverter();
+			break;
+		default:
+			converter=new AlphabeticCharacterConverter();
+		}
+		
+		PhoneticTranscriber transcriber=new PhoneticTranscriber(" ", converter);
 		
 		try {
 			return transcriber.transcribePhrase(phrase);
