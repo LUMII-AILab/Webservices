@@ -39,7 +39,7 @@ public class PhoneticTranscriberResource extends ServerResource {
 			e.printStackTrace();
 		}
 		
-		String converter_type=getQuery().getValues("phonem_set");
+		String converter_type=getQuery().getValues("phoneme_set");
 		
 		//switch can't handle null string
 		if(converter_type==null)
@@ -47,9 +47,9 @@ public class PhoneticTranscriberResource extends ServerResource {
 		
 		PhoneticCharacterConverter converter;
 		
-		switch(converter_type)
+		switch(converter_type.toLowerCase())
 		{
-		case "IPA":
+		case "ipa":
 			converter=new IPACharacterConverter();
 			break;
 		default:
