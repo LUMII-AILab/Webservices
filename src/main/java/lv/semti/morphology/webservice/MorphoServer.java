@@ -24,10 +24,10 @@ import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.ner.CMMClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
-
 import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
+import lv.ailab.domainnames.AlternativeBuilder;
 import lv.ailab.lnb.fraktur.Transliterator;
 
 public class MorphoServer {
@@ -36,6 +36,7 @@ public class MorphoServer {
 	static TagSet tagset;
 	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
+	static public AlternativeBuilder alternatives = null;
 	static private boolean enableTransliterator = false;
 	static private int port = 8182;
 
@@ -93,6 +94,14 @@ public class MorphoServer {
 		
 		Expression.setClassifier(morphoClassifier);
 		
+		// Word embeddings and segmentation data
+	    String WORDLIST_FILE_LV = "dist/wordlist-filtered-lv.txt";
+	    String WORDLIST_FILE_EN = "dist/wordsEn-sil-filtered.txt";
+	    String EMBEDDINGS_LV_FILENAME = "dist/lv_lemmas_70p.out";
+	    String EMBEDDINGS_EN_FILENAME = "dist/polyglot_en.out";
+        String[][] lexiconFiles = {{WORDLIST_FILE_LV, "lv"}, {WORDLIST_FILE_EN, "en"}};
+		alternatives = new AlternativeBuilder(lexiconFiles, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME);
+		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
 	    component.getServers().add(Protocol.HTTP, port);  
@@ -118,9 +127,13 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
 	    component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
 	    component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
+	    component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
 	    
 	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
 	    
+	    component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
+	    component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
+
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 
 	    component.start();  

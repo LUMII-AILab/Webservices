@@ -10,9 +10,10 @@
   <property name="build" location="build"/>
   <property name="dist"  location="dist"/>
   <property name="morphology.dir" location="../Morphology"/>
-	<property name="transliterator.dir" location="../Transliterator"/>
-	<property name="lvtagger.dir" location="../LVTagger"/>
-	<property name="phonetictranscriber.dir" location="../PhoneticTranscriber"/>
+  <property name="transliterator.dir" location="../Transliterator"/>
+  <property name="lvtagger.dir" location="../LVTagger"/>
+  <property name="phonetictranscriber.dir" location="../PhoneticTranscriber"/>
+  <property name="lvsegmenter.dir" location="../LVSegmenter"/>
 
   <path id="project.class.path">
     <fileset dir="lib">
@@ -30,7 +31,7 @@
   <target name="compile" depends="init"
           description="compile the source " >
     <!-- Compile the java code from ${src} into ${build} -->
-    <javac source="1.5" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;${lvtagger.dir}/dist/CRF.jar;${phonetictranscriber.dir}/PhoneticTranscriber.jar;" destdir="${build}">
+    <javac source="1.7" encoding="UTF-8" srcdir="${main.src}" classpath="${morphology.dir}/dist/morphology.jar;${transliterator.dir}/dist/transliterator.jar;${lvtagger.dir}/dist/CRF.jar;${phonetictranscriber.dir}/PhoneticTranscriber.jar;${lvsegmenter.dir}/dist/lvsegmenter.jar;" destdir="${build}">
       <classpath refid="project.class.path" />
   	</javac>
   	
@@ -59,6 +60,9 @@
   	<copy todir="Gazetteer">
 		<fileset dir="${lvtagger.dir}/Gazetteer" includes="*"/>
 	</copy>
+  	<copy todir="${dist}">
+  	  <fileset dir="${lvsegmenter.dir}/dist"/>
+  	</copy>
 	
   	<copy todir="${dist}/PhoneticTranscriber">
   		<fileset dir="${phonetictranscriber.dir}/dist/PhoneticTranscriber"/>
@@ -79,15 +83,15 @@
     <delete dir="${dist}"/>
   </target>
 	
-	 <target name="zip" depends="dist" description="compress distribution files">
-	  	<zip destfile="webservices.zip" basedir="." includes="dist/**,lib/**,*.sh,*.txt" />
-	  </target>
+  <target name="zip" depends="dist" description="compress distribution files">
+  	<zip destfile="webservices.zip" basedir="." includes="dist/**,lib/**,*.sh,*.txt" />
+  </target>
 
  <target name="zip-transliterator" depends="dist-transliterator" description="compress distribution files">
   	<zip destfile="webservices_transliterator.zip" basedir="." includes="dist/**,lib/**,*.sh,*.txt" />
   </target>
 
-  <target name="clean-dist" depends="clean,dist,zip"
+  <target name="clean-dist" depends="clean,dist"
           description="clean and generate the distribution" >
   </target>
 

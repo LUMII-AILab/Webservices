@@ -34,9 +34,13 @@ import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.AttributeNames;
 
 public class MorphoTaggerResource extends ServerResource {
+	// Kopija no LVTaggera morphopipe koda - FIXME, DRY
+	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText};	
+	
 	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
+		
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -45,19 +49,20 @@ public class MorphoTaggerResource extends ServerResource {
 		
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
 		sentence = MorphoServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
-		
-		return output_separated(sentence);
-		
+
+		String format = (String) getRequest().getAttributes().get("format");	
+		outputTypes outputType = outputTypes.VERT;
+		if ("json".equalsIgnoreCase(format))
+			outputType = outputTypes.JSON;
+
+		return output(sentence, outputType);
 	}
 	
-	// Kopija no LVTaggera morphopipe koda - FIXME, DRY
-	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText};
-	private static String output_separated(List<CoreLabel> tokens){
+	private static String output(List<CoreLabel> tokens, outputTypes outputType){
 		// konfigurācija tam kodam
 		String token_separator = System.getProperty("line.separator");
 		String field_separator = "\t";
 		boolean mini_tag = false;
-		outputTypes outputType = outputTypes.VERT;
 		
 		StringBuilder s = new StringBuilder();
 		

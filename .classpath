@@ -13,5 +13,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/LVTagger"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/morphology"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/PhoneticTranscriber"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/LVSegmenter"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
