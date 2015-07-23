@@ -97,10 +97,12 @@ public class MorphoServer {
 		// Word embeddings and segmentation data
 	    String WORDLIST_FILE_LV = "dist/wordlist-filtered-lv.txt";
 	    String WORDLIST_FILE_EN = "dist/wordsEn-sil-filtered.txt";
-	    String EMBEDDINGS_LV_FILENAME = "dist/lv_lemmas_70p.out";
+	    String EMBEDDINGS_LV_FILENAME = "dist/lv_visaslemmas.out";
 	    String EMBEDDINGS_EN_FILENAME = "dist/polyglot_en.out";
+	    String SYNONYMS_FILENAME = "dist/sinonimi.txt";
+	    String BLACKLIST_FILENAME = "dist/blacklist.txt";
         String[][] lexiconFiles = {{WORDLIST_FILE_LV, "lv"}, {WORDLIST_FILE_EN, "en"}};
-		alternatives = new AlternativeBuilder(lexiconFiles, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME);
+		alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
 		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
