@@ -18,7 +18,6 @@
 package lv.semti.morphology.webservice;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -31,10 +30,12 @@ import lv.semti.morphology.analyzer.Splitting;
 import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
-import lv.semti.morphology.attributes.AttributeValues;
 
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
+import org.restlet.util.Series;
 
 public class InflectResource extends ServerResource {
 	@Get
@@ -43,6 +44,14 @@ public class InflectResource extends ServerResource {
 		String language = (String) getRequest().getAttributes().get("language");
 		
 		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"));
+		
+		@SuppressWarnings("unchecked")
+		Series<Header> headers = (Series<Header>)getResponseAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (headers==null) {
+			headers = new Series<Header>(Header.class);
+			getResponseAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, headers);
+		}
+		headers.add(new Header("Access-Control-Allow-Origin", "*"));
 				
 		String format = (String) getRequest().getAttributes().get("format");
 		if (format.equalsIgnoreCase("xml")) {
