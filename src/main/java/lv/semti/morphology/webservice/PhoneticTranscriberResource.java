@@ -40,6 +40,8 @@ public class PhoneticTranscriberResource extends ServerResource {
 		}
 		
 		String converter_type=getQuery().getValues("phoneme_set");
+
+		Utils.allowCORS(this);
 		
 		//switch can't handle null string
 		if(converter_type==null)

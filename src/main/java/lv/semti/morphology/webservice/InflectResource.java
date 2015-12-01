@@ -31,11 +31,8 @@ import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 
-import org.restlet.engine.header.Header;
-import org.restlet.engine.header.HeaderConstants;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
-import org.restlet.util.Series;
 
 public class InflectResource extends ServerResource {
 	@Get
@@ -45,13 +42,7 @@ public class InflectResource extends ServerResource {
 		
 		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"));
 		
-		@SuppressWarnings("unchecked")
-		Series<Header> headers = (Series<Header>)getResponseAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
-		if (headers==null) {
-			headers = new Series<Header>(Header.class);
-			getResponseAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, headers);
-		}
-		headers.add(new Header("Access-Control-Allow-Origin", "*"));
+		Utils.allowCORS(this);
 				
 		String format = (String) getRequest().getAttributes().get("format");
 		if (format.equalsIgnoreCase("xml")) {
