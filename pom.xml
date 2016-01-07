@@ -87,6 +87,12 @@
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>lv.semti.morphology.webservice.MorphoServer</mainClass>
+						</manifest>
+					</archive>
 				</configuration>
 				<executions>
 					<execution>

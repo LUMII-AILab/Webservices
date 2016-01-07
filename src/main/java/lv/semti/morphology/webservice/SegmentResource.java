@@ -8,7 +8,9 @@ import org.restlet.resource.ServerResource;
 
 public class SegmentResource extends ServerResource{
 	@Get("json")
-	public String retrieve() throws Exception {  
+	public String retrieve() throws Exception {
+		Utils.allowCORS(this);
+
 		System.out.println("1");
 		String query = (String) getRequest().getAttributes().get("domainname");
 		System.out.println("2");

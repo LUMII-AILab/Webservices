@@ -42,6 +42,8 @@ public class DictionaryResource extends ServerResource {
 		
 		String XML = "<explanation>";
 
+		Utils.allowCORS(this);
+
 		try {
 			word = word.toLowerCase().trim();
 

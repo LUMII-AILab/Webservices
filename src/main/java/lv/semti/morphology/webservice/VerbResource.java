@@ -46,6 +46,8 @@ public class VerbResource extends ServerResource {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		Utils.allowCORS(this);
 		
 		MorphoServer.analyzer.defaultSettings();
 		

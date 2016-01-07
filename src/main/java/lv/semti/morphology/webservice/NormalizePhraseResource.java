@@ -38,6 +38,8 @@ public class NormalizePhraseResource extends ServerResource {
 		}
 		
 		String category = getQuery().getValues("category");
+
+		Utils.allowCORS(this);
 		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = true;

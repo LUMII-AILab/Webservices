@@ -44,6 +44,8 @@ public class TokenResource extends ServerResource {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		Utils.allowCORS(this);
 		
 		return analyze(query);
 	}

@@ -40,6 +40,8 @@ public class WordResource extends ServerResource {
 			e.printStackTrace();
 		}
 		String language = (String) getRequest().getAttributes().get("language");
+
+		Utils.allowCORS(this);
 		
 		Word w = MorphoServer.analyzer.analyze(query);
 		return toJSON(w.wordforms, language);

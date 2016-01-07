@@ -39,8 +39,9 @@ public class InflectPhraseResource extends ServerResource {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
 		String category = getQuery().getValues("category");
+
+		Utils.allowCORS(this);
 		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = true;

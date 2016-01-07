@@ -39,6 +39,8 @@ public class InflectPeopleResource extends ServerResource {
 	@Get
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
+
+		Utils.allowCORS(this);
 		
 		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("gender"));
 				

@@ -20,6 +20,8 @@ public class DomainNameResource extends ServerResource{
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+
+		Utils.allowCORS(this);
 		
 		Integer limit = null;
 		try {

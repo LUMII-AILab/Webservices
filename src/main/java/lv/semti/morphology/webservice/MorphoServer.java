@@ -17,6 +17,7 @@
  *******************************************************************************/
 package lv.semti.morphology.webservice;
 
+import lv.semti.morphology.corpus.TaggedCorpus;
 import org.restlet.*;
 import org.restlet.data.*;
 
@@ -37,7 +38,9 @@ public class MorphoServer {
 	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
+	static public TaggedCorpus corpus;
 	static private boolean enableTransliterator = false;
+    static private boolean enableDomeniims = false;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -46,6 +49,10 @@ public class MorphoServer {
 				enableTransliterator = true;
 				System.out.println("Transliteration services enabled");
 			}
+            if (args[i].equalsIgnoreCase("-domeniims")) {
+                enableTransliterator = true;
+                System.out.println("Domain name alternative generator enabled");
+            }
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
 					try {
@@ -78,8 +85,7 @@ public class MorphoServer {
 			}
 		}
 		
-		
-		analyzer = new Analyzer("dist/Lexicon.xml", false); 
+		analyzer = new Analyzer(false);
 		analyzer.setCacheSize(1000);
 		
 		tagset = TagSet.getTagSet();
@@ -89,20 +95,25 @@ public class MorphoServer {
 		//NERclassifier.featureFactory.init(NERclassifier.flags);
 		
 		LVMorphologyReaderAndWriter.setPreloadedAnalyzer(analyzer); // Lai nelādētu vēlreiz lieki
-		String morphoClassifierLocation = "dist/models/lv-morpho-model.ser.gz";
+		String morphoClassifierLocation = "models/lv-morpho-model.ser.gz";
 		morphoClassifier = CMMClassifier.getClassifier(morphoClassifierLocation);
 		
 		Expression.setClassifier(morphoClassifier);
-		
-		// Word embeddings and segmentation data
-	    String WORDLIST_FILE_LV = "dist/wordlist-filtered-lv.txt";
-	    String WORDLIST_FILE_EN = "dist/wordsEn-sil-filtered.txt";
-	    String EMBEDDINGS_LV_FILENAME = "dist/lv_visaslemmas.out";
-	    String EMBEDDINGS_EN_FILENAME = "dist/polyglot_en.out";
-	    String SYNONYMS_FILENAME = "dist/sinonimi.txt";
-	    String BLACKLIST_FILENAME = "dist/blacklist.txt";
-        String[][] lexiconFiles = {{WORDLIST_FILE_LV, "lv"}, {WORDLIST_FILE_EN, "en"}};
-		alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
+
+        if (enableDomeniims) {
+            // Word embeddings and segmentation data
+            String WORDLIST_FILE_LV = "wordlist-filtered-lv.txt";
+            String WORDLIST_FILE_EN = "wordsEn-sil-filtered.txt";
+            String EMBEDDINGS_LV_FILENAME = "lv_visaslemmas.out";
+            String EMBEDDINGS_EN_FILENAME = "polyglot_en.out";
+            String SYNONYMS_FILENAME = "sinonimi.txt";
+            String BLACKLIST_FILENAME = "blacklist.txt";
+            String[][] lexiconFiles = {{WORDLIST_FILE_LV, "lv"}, {WORDLIST_FILE_EN, "en"}};
+            alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
+        }
+
+        // Corpus to find usage examples
+        corpus = new TaggedCorpus("corpora/balanseetais_small.txt");
 		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
@@ -117,7 +128,7 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
 	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
 	    if (enableTransliterator) {
-			Transliterator.PATH_FILE = "dist/path.conf";
+			Transliterator.PATH_FILE = "path.conf";
 			translit = Transliterator.getTransliterator(analyzer);			
 		    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
 		    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
@@ -132,9 +143,13 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
 	    
 	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
-	    
-	    component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
-	    component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
+
+        if (enableDomeniims) {
+            component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
+            component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
+        }
+
+        component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
 
 	    // Now, let's start the component! 
 	    // Note that the HTTP server connector is also automatically started. 

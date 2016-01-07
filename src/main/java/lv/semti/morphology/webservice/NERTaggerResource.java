@@ -50,6 +50,8 @@ public class NERTaggerResource extends ServerResource {
 			e.printStackTrace();
 		}
 		System.err.println(query);
+
+		Utils.allowCORS(this);
 		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = false;

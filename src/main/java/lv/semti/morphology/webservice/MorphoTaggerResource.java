@@ -46,6 +46,8 @@ public class MorphoTaggerResource extends ServerResource {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+
+		Utils.allowCORS(this);
 		
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
 		sentence = MorphoServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
