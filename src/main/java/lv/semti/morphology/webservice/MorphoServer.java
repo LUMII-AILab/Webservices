@@ -50,7 +50,7 @@ public class MorphoServer {
 				System.out.println("Transliteration services enabled");
 			}
             if (args[i].equalsIgnoreCase("-domeniims")) {
-                enableTransliterator = true;
+                enableDomeniims = true;
                 System.out.println("Domain name alternative generator enabled");
             }
 			if (args[i].equalsIgnoreCase("-port")) {
