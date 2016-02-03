@@ -2,9 +2,7 @@ package lv.semti.morphology.corpus;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,8 +11,8 @@ import java.util.stream.Collectors;
  * Created by pet on 2016-01-07.
  */
 public class Document {
-    private String description; // TODO - te vajag f-ju kas to izveido no hedera smukāku
-    private List<Token> tokens;
+    private List<Token> tokens; // TODO - vajag dalīt teikumos
+    public Map<String, String> metadata = new HashMap<>();
 
     public List<Example> findExamples(String lemma) {
         List<Example> result = new LinkedList<>();
@@ -27,7 +25,7 @@ public class Document {
                             .map(t -> t.token)
                             .collect(Collectors.joining(" "));
 
-                result.add(new Example(surroundings, description));
+                result.add(new Example(surroundings, this));
             }
             i++;
         }
@@ -60,13 +58,34 @@ public class Document {
         tokens = new ArrayList(tokens);
     }
 
-    private static Pattern title = Pattern.compile("title=\"([^\"]*)\"");
+    // Singleton list - prepare patterns on first use, then store them
+    private static Map<String, Pattern> patterns = new HashMap<>();
+    private static Pattern getPattern(String key) {
+        Pattern p = patterns.get(key);
+        if (p != null) {
+            return p;
+        } else {
+            p = Pattern.compile( key + "=\"([^\"]*)\"");
+            patterns.put(key,p);
+            return p;
+        }
+    }
+    private static String getValue(String data, String key) {
+        Matcher m = getPattern(key).matcher(data);
+        if (m.find())
+            return m.group(1);
+        else return null;
+    }
+
+    private static String[] fields = {"title", "source","author", "authorgender", "published", "genre", "keywords", "fileref"};
     private void parseHeader(String header) {
         // Sample header:
         // <doc title="Keita atvainojas. Vai piedos?" source="Diena. Sestdiena" author="Una Meistere" authorgender="siev." published="10/1/2005" genre="Periodika" keywords="Sabiedrība, zvaigžņu kults" fileref="p0001">
 
-        Matcher m = title.matcher(header);
-        if (m.find())
-            description = m.group(1);
+        for (String key : fields) {
+            String value = getValue(header, key);
+            if (value != null)
+                metadata.put(key, value);
+        }
     }
 }

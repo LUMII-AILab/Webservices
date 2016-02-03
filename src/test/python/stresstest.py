@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """ Stress test for the included webservices - evaluation of performance and limits """
+""" Adapted from http://blog.mailgun.com/stress-testing-http-with-twisted-python-and-treq/"""
 __author__ = "Pēteris Paikens"
 
 from twisted.internet import reactor, task  
@@ -13,7 +14,7 @@ from datetime import datetime
 req_generated = 0  
 req_made = 0  
 req_done = 0
-limit = 5
+limit = 100
 
 cooperator = task.Cooperator()
 
