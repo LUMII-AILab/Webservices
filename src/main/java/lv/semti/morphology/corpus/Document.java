@@ -1,5 +1,9 @@
 package lv.semti.morphology.corpus;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.*;
@@ -11,23 +15,22 @@ import java.util.stream.Collectors;
  * Created by pet on 2016-01-07.
  */
 public class Document {
-    private List<Token> tokens; // TODO - vajag dalīt teikumos
+    private List<List<Token>> sentences = new LinkedList<>();
     public Map<String, String> metadata = new HashMap<>();
+    public Multimap<String, Token> index;
 
+    private static final int optimal_sentence_length = 10;
     public List<Example> findExamples(String lemma) {
         List<Example> result = new LinkedList<>();
-        int i = 0;
-        for (Token token : tokens) {
-            if (token.lemma.equals(lemma)) {
-                String surroundings =
-                        tokens.subList(Math.max(i-5,0), Math.min(i+5, tokens.size()))
-                            .stream()
-                            .map(t -> t.token)
-                            .collect(Collectors.joining(" "));
+        for (Token token : index.get(lemma)) {
+            String sentence_text =
+                    token.sentence
+                        .stream()
+                        .map(t -> t.token)
+                        .collect(Collectors.joining(" "));
 
-                result.add(new Example(surroundings, this));
-            }
-            i++;
+
+            result.add(new Example(sentence_text, this, Math.abs(token.sentence.size()-optimal_sentence_length) ));
         }
         return result;
     }
@@ -36,26 +39,36 @@ public class Document {
         String token;
         String tag;
         String lemma;
-        Token (String line) throws IOException {
+        List<Token> sentence;
+        Token (String line, List<Token> sentence) throws IOException {
             String[] parts = line.split("\t");
-            if (parts.length != 4) // token tag lemma   lowercase_token
+            if (parts.length != 3) // token tag lemma   lowercase_token
                 throw new IOException(String.format("Bad corpus file format - line '%s'",line));
             token = parts[0];
-            lemma = parts[1];
-            tag = parts[2];
+            tag = parts[1];
+            lemma = parts[2];
+            this.sentence = sentence;
         }
     }
 
     public Document(String header, List<String> lines) throws IOException {
         parseHeader(header);
 
-        tokens = new LinkedList<>();
+        List<Token> current_sentence = new LinkedList<>();
+        index = ArrayListMultimap.create();
         for (String line : lines) {
-            // TODO - te ignorē paragrāfus un <g />
+            if (line.startsWith("</s") && !current_sentence.isEmpty()) { // end of sentence
+                sentences.add(current_sentence);
+                current_sentence = new LinkedList<>();
+            }
+            // te ignorē paragrāfus un <g />
             if (line.startsWith("<")) continue;
-            tokens.add(new Token(line));
+            Token token = new Token(line, current_sentence);
+            current_sentence.add(token);
+            index.put(token.lemma, token);
+//            System.out.printf("Liekam indeksā '%s'\n", token.lemma, token.sentence.toString());
         }
-        tokens = new ArrayList(tokens);
+
     }
 
     // Singleton list - prepare patterns on first use, then store them

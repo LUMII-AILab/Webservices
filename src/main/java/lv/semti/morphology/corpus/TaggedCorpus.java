@@ -13,9 +13,10 @@ public class TaggedCorpus {
 
     public List<Example> findExamples(String lemma) {
         List<Example> result = new LinkedList<>();
-        for (Document doc : documents) { // TODO - indekss ?
+        for (Document doc : documents) { // TODO - indekss varbūt jātaisa globāls?
             result.addAll(doc.findExamples(lemma));
         }
+        java.util.Collections.sort(result);
         return result;
     }
 

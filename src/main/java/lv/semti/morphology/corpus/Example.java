@@ -11,11 +11,12 @@ import java.util.Map;
 public class Example implements Comparable<Example> {
     private String example;
     private Document document;
-    private Double priority; // returns the 'quality' of example, higher is better
+    private Integer priority; // returns the 'quality' of example, lower is better
 
-    public Example(String example, Document document) {
+    public Example(String example, Document document, int priority) {
         this.example = example;
         this.document = document;
+        this.priority = priority;
     }
 
     @Override public String toString() {
@@ -23,7 +24,7 @@ public class Example implements Comparable<Example> {
         output.put("example", this.example);
         return JSONValue.toJSONString(output);
     }
-    
+
     @Override
     public int compareTo(Example other) {
         return this.priority.compareTo(other.priority);
