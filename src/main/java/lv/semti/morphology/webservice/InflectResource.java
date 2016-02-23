@@ -17,9 +17,7 @@
  *******************************************************************************/
 package lv.semti.morphology.webservice;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Iterator;
@@ -40,7 +38,7 @@ public class InflectResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		
-		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"));
+		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"));
 		
 		Utils.allowCORS(this);
 				
@@ -73,7 +71,7 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query, String paradigm) {
+	private List<List<Wordform>> inflect(String query, String paradigm, String guess_param) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -82,15 +80,20 @@ public class InflectResource extends ServerResource {
 		
 		Integer paradigmID = null;
 		if (paradigm != null) paradigmID = Integer.decode(paradigm);
-		
-		MorphoServer.analyzer.enableGuessing = true;
+
+		boolean guess = true;
+		if ("false".equalsIgnoreCase(guess_param)) {
+			guess = false;
+		}
+
+		MorphoServer.analyzer.enableGuessing = guess;
 		MorphoServer.analyzer.enableVocative = true;
 		MorphoServer.analyzer.guessVerbs = false;
 		MorphoServer.analyzer.guessParticiples = false;
 		MorphoServer.analyzer.guessAdjectives = false;
-		MorphoServer.analyzer.guessInflexibleNouns = true;
-		MorphoServer.analyzer.enableAllGuesses = true;
-		
+		MorphoServer.analyzer.guessInflexibleNouns = guess;
+		MorphoServer.analyzer.enableAllGuesses = guess;
+
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		//FIXME - this set is not appropriate for inflecting verbs and others... 
 		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); 
@@ -106,6 +109,7 @@ public class InflectResource extends ServerResource {
 		
 		for (Word word : tokens) {
 			List<Wordform> formas;
+
 			if (paradigmID == null) { // no specific options passed
 				// checking for special case of common-gender nouns of 4th/5th declension - 'paziņa', 'auša', 'bende'
 				boolean male_4th = false;
@@ -118,8 +122,8 @@ public class InflectResource extends ServerResource {
 					if (analysis_case.isMatchingStrong(AttributeNames.i_ParadigmID, "9")) female_5th = true;
 					if (analysis_case.isMatchingStrong(AttributeNames.i_ParadigmID, "10")) male_5th = true;
 				}
-				//word.describe(new PrintWriter(System.out));
-				//System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
+//				word.describe(new PrintWriter(System.out));
+//				System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
 				if (male_4th && female_4th) { // if so, then build both inflections and merge their forms.
 					formas = MorphoServer.analyzer.generateInflections(word.getToken(), 7);
 					formas.addAll(MorphoServer.analyzer.generateInflections(word.getToken(), 8));
@@ -128,7 +132,7 @@ public class InflectResource extends ServerResource {
 					formas.addAll(MorphoServer.analyzer.generateInflections(word.getToken(), 10));
 				} else 
 					formas = MorphoServer.analyzer.generateInflections(word.getToken()); // normal case of building just from the token
-				
+
 			} else formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID); // if a specific paradigm is passed, inflect according to that
 				
 			for (Wordform wf : formas) {
