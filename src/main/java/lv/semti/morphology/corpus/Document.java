@@ -1,11 +1,9 @@
 package lv.semti.morphology.corpus;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 public class Document {
     private List<List<Token>> sentences = new LinkedList<>();
     public Map<String, String> metadata = new HashMap<>();
-    public Multimap<String, Token> index;
+    public Multimap<String, Token> index; // FIXME - vajag visam korpusam kopēju indeksu, tas būs ātrāk un efektīvāk; tad arī var katram vārdam atstāt top x piemērus un pārējo korpusu neturēt atmiņā
 
     private static final int optimal_sentence_length = 10;
     public List<Example> findExamples(String lemma) {

@@ -41,6 +41,7 @@ public class MorphoServer {
 	static public TaggedCorpus corpus;
 	static private boolean enableTransliterator = false;
     static private boolean enableDomeniims = false;
+    static private boolean enableTezaurs = false;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -52,6 +53,10 @@ public class MorphoServer {
             if (args[i].equalsIgnoreCase("-domeniims")) {
                 enableDomeniims = true;
                 System.out.println("Domain name alternative generator enabled");
+            }
+            if (args[i].equalsIgnoreCase("-tezaurs")) {
+                enableTezaurs = true;
+                System.out.println("Tezaurs.lv data enabled");
             }
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
@@ -70,9 +75,12 @@ public class MorphoServer {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
 				System.out.println("\nCommand line options:");
 				System.out.println("\t-transliterator : enable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
+                System.out.println("\t-domeniims : enable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
+                System.out.println("\t-tezaurs : enable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
 				System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
+				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
 				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
 				System.out.println("http://localhost:8182/verbs/[query] and http://localhost:8182/neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
 				System.out.println("http://localhost:8182/normalize/[ruleset]/[word] and http://localhost:8182/explain/[query] : (if enabled) historical word transliteration and dictionary explanations");
@@ -80,6 +88,9 @@ public class MorphoServer {
 				System.out.println("http://localhost:8182/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
 				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
+                System.out.println("http://localhost:8182/domenims/[query] and http://localhost:8182/segment/[query] : (if enabled) domain name word2vec alternative genarator and segmentation");
+                System.out.println("http://localhost:8182/corpusexample/[query] : provides a list of corpus mentions of the queried word");
+                System.out.println("http://localhost:8182/words/[query] : (if enabled) provides a json representation of the queried tezaurs.lv entry");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -135,6 +146,7 @@ public class MorphoServer {
 		    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
 	    }
 	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
+        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class);
 	    component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
 	    component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
 	    component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
@@ -144,6 +156,7 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
 	    
 	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
+        component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
 
         if (enableDomeniims) {
             component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
@@ -151,11 +164,18 @@ public class MorphoServer {
         }
 
         component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
+        component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
 
-	    // Now, let's start the component! 
-	    // Note that the HTTP server connector is also automatically started. 
+        component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
+        component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
+
+        if (enableTezaurs) {
+            TezaursWordResource.getEntries();
+            component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
+            component.getDefaultHost().attach("/v1/words/{query}", TezaursWordResource.class);
+        }
 	    component.start();  
-		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
+//		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
 	}
 
 }

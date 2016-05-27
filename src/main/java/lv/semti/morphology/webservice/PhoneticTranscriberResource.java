@@ -39,7 +39,9 @@ public class PhoneticTranscriberResource extends ServerResource {
 			e.printStackTrace();
 		}
 		
-		String converter_type=getQuery().getValues("phoneme_set");
+		String converter_type = getQuery().getValues("phoneme_set");
+		String converter_type_new =  getQuery().getValues("encoding");
+        if (converter_type_new != null) converter_type = converter_type_new;
 
 		Utils.allowCORS(this);
 		

@@ -43,6 +43,7 @@ public class InflectResource extends ServerResource {
 		Utils.allowCORS(this);
 				
 		String format = (String) getRequest().getAttributes().get("format");
+		if (format == null) format = "json";
 		if (format.equalsIgnoreCase("xml")) {
 			StringWriter s = new StringWriter();					
 			try {
