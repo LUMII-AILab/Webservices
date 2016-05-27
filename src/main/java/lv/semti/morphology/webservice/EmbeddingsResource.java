@@ -24,7 +24,7 @@ import org.restlet.resource.ServerResource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-public class PronunciationResource extends ServerResource {
+public class EmbeddingsResource extends ServerResource {
 
     @Get("json")
 	public String retrieve() throws Exception {
@@ -38,7 +38,7 @@ public class PronunciationResource extends ServerResource {
                 e.printStackTrace();
             }
         else query = "";
-        this.redirectPermanent("http://api.tezaurs.lv/api/speech_synthesis.jsp?word=" + query);
+        this.redirectPermanent("http://194.8.1.230:7070/#/query/" + query);
         return null;
 	}
 

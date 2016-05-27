@@ -169,6 +169,9 @@ public class MorphoServer {
         component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
         component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
 
+        component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
+		component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
+
         if (enableTezaurs) {
             TezaursWordResource.getEntries();
             component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);

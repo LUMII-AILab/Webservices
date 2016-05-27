@@ -48,7 +48,7 @@ public class TezaursWordResource extends ServerResource {
             }
         if (query == null || query.isEmpty()) {
             System.out.println("redirecting to wordlist");
-            this.redirectPermanent("/wordlist_sorted.txt");
+            this.redirectPermanent("http://api.tezaurs.lv/wordlist_sorted.txt");
         }
 
         getEntries();
