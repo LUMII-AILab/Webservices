@@ -47,8 +47,8 @@ public class WordPipe {
 		Analyzer analyzer;
 		if (transliterate) {
 			Transliterator.PATH_FILE = "dist/path.conf";
-			analyzer = new TransliteratingAnalyzer("dist/Lexicon.xml");
-		} else analyzer = new Analyzer("dist/Lexicon.xml", useAux); 	
+			analyzer = new TransliteratingAnalyzer("Lexicon.xml");
+		} else analyzer = new Analyzer(useAux);
 		
 		analyzer.enableVocative = true;
 		analyzer.enableDiminutive = true;

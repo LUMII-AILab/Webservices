@@ -1,4 +1,5 @@
 #!/bin/bash
 
 cd $(dirname $0)
-java -Xmx2G -cp dist/webservices.jar:dist/morphology.jar:dist/transliterator.jar:lib/json_simple-1.1.jar:lib/commons-lang3-3.1.jar lv.semti.morphology.pipetool.WordPipe $*
+java -mx3g -cp target/webservices-1.0.4-SNAPSHOT-jar-with-dependencies.jar lv.semti.morphology.pipetool.WordPipe  $*
+
