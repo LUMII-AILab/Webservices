@@ -17,6 +17,8 @@
  *******************************************************************************/
 package lv.semti.morphology.webservice;
 
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import lv.lumii.ner.NerPipe;
 import lv.semti.morphology.corpus.TaggedCorpus;
 import org.restlet.*;
 import org.restlet.data.*;
@@ -31,11 +33,15 @@ import lv.semti.morphology.attributes.TagSet;
 import lv.ailab.domainnames.AlternativeBuilder;
 import lv.ailab.lnb.fraktur.Transliterator;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 public class MorphoServer {
 	static Analyzer analyzer;
 	static Transliterator translit;
 	static TagSet tagset;
-	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
+//	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
+    static NerPipe NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
 	static public TaggedCorpus corpus;
@@ -43,6 +49,7 @@ public class MorphoServer {
     static private boolean enableDomeniims = false;
     static private boolean enableTezaurs = false;
     static private boolean enableTagger = true;
+    static private boolean enableNERTagger = false;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -63,6 +70,10 @@ public class MorphoServer {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
 			}
+            if (args[i].equalsIgnoreCase("-nertagger")) {
+                enableNERTagger = true;
+                System.out.println("NER tagger enabled");
+            }
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
 					try {
@@ -82,7 +93,8 @@ public class MorphoServer {
 				System.out.println("\t-transliterator : enable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
                 System.out.println("\t-domeniims : enable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
                 System.out.println("\t-tezaurs : enable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
-                System.out.println("\t-notagger : disable tagger functionality to reduce memory usage");
+                System.out.println("\t-nertagger : enable NER tagger webservice");
+                System.out.println("\t-notagger : disable morphosyntactic tagger functionality to reduce memory usage");
 				System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
@@ -106,10 +118,16 @@ public class MorphoServer {
 		analyzer.setCacheSize(1000);
 		
 		tagset = TagSet.getTagSet();
-		
-		//NERclassifier = CRFClassifier.getClassifierNoExceptions("dist/models/lv-ner-model.ser.gz");
-		//NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
-		//NERclassifier.featureFactory.init(NERclassifier.flags);
+
+        if (enableNERTagger) {
+            Properties props = new Properties();
+            InputStream stream = MorphoServer.class.getClassLoader().getResourceAsStream("lv-ner-tagger.prop");
+            props.load(stream);
+            NERclassifier = new NerPipe(props);
+//            NERclassifier = CRFClassifier.getClassifierNoExceptions("models/lv-ner-model.ser.gz");
+//            NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
+//            NERclassifier.featureFactory.init(NERclassifier.flags);
+        }
 
         if (enableTagger) {
             LVMorphologyReaderAndWriter.setPreloadedAnalyzer(analyzer); // Lai nelādētu vēlreiz lieki
@@ -157,13 +175,17 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
 
         if (enableTagger) {
-            component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
             component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
             component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
 
             component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
             component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
             component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
+        }
+
+        if (enableNERTagger) {
+            component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
+            component.getDefaultHost().attach("/nerpeople/{query}", NERPeopleResource.class);
         }
 
 	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
