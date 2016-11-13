@@ -38,7 +38,8 @@ public class InflectResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		
-		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"));
+		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
+                getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"));
 		
 		Utils.allowCORS(this);
 				
@@ -72,7 +73,7 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query, String paradigm, String guess_param) {
+	private List<List<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -134,7 +135,15 @@ public class InflectResource extends ServerResource {
 				} else 
 					formas = MorphoServer.analyzer.generateInflections(word.getToken()); // normal case of building just from the token
 
-			} else formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID); // if a specific paradigm is passed, inflect according to that
+			} else {
+                if ((paradigmID == 15 || paradigmID == 18) && stem1 != null && stem2 != null && stem3 != null) {
+                    // For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
+                    formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID, stem1, stem2, stem3);
+                } else {
+                    // if a specific paradigm is passed, inflect according to that
+                    formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID);
+                }
+            }
 				
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
