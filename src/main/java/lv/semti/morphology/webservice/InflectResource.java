@@ -19,10 +19,7 @@ package lv.semti.morphology.webservice;
 
 import java.io.*;
 import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import lv.semti.morphology.analyzer.Splitting;
 import lv.semti.morphology.analyzer.Word;
@@ -38,7 +35,7 @@ public class InflectResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		
-		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
+		List<Collection<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
                 getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"));
 		
 		Utils.allowCORS(this);
@@ -49,7 +46,7 @@ public class InflectResource extends ServerResource {
 			StringWriter s = new StringWriter();					
 			try {
 				s.write("<Elements>\n");
-				for (List<Wordform> token : processedtokens) {
+				for (Collection<Wordform> token : processedtokens) {
 					s.write("<Locījumi>\n");
 					for (Wordform wf : token) wf.toXML(s);	
 					s.write("</Locījumi>\n");
@@ -59,7 +56,7 @@ public class InflectResource extends ServerResource {
 			return s.toString();
 		} else {
 			List<String> tokenJSON = new LinkedList<String>();
-			for (List<Wordform> token : processedtokens) {
+			for (Collection<Wordform> token : processedtokens) {
 				List<String> wordJSON = new LinkedList<String>();
 				for (Wordform wf : token) {
 					if ("EN".equalsIgnoreCase(language))
@@ -73,7 +70,7 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3) {
+	private List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -107,7 +104,7 @@ public class InflectResource extends ServerResource {
 		showAttrs.add(AttributeNames.i_Degree); showAttrs.add(AttributeNames.i_Definiteness);
 		
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
-		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
+		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
 		
 		for (Word word : tokens) {
 			List<Wordform> formas;
@@ -138,29 +135,43 @@ public class InflectResource extends ServerResource {
 			} else {
                 if ((paradigmID == 15 || paradigmID == 18) && stem1 != null && stem2 != null && stem3 != null) {
                     // For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
-                    formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID, stem1, stem2, stem3);
+                    formas = multistem_generate(word.getToken(), paradigmID, stem1, stem2, stem3);
                 } else {
                     // if a specific paradigm is passed, inflect according to that
                     formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID);
                 }
             }
-				
+
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
-				/* capitalization - because this report was used for proper names at one point
-				String name = wf.getValue(AttributeNames.i_Word);
-				name = name.substring(0, 1).toUpperCase() + name.substring(1,name.length());
-				wf.addAttribute(AttributeNames.i_Word, name);
-				*/
+                wf.lexeme = null; // so that identical forms would compare as equal
 			}
-			processedTokens.add(formas);
+			processedTokens.add(new LinkedHashSet<>(formas));
 		}
 		
 		MorphoServer.analyzer.defaultSettings();
 		return processedTokens;
 	}
-	
-	private String formatJSON(Collection<String> tags) {
+
+    private List<Wordform> multistem_generate(String token, Integer paradigmID, String stem1, String stem2, String stem3) {
+        if (stem2.contains(",")) {
+            List<Wordform> formas = new LinkedList<>();
+            for (String stem : stem2.split(",")) {
+                formas.addAll(multistem_generate(token, paradigmID, stem1, stem, stem3));
+            }
+            return formas;
+        }
+        if (stem3.contains(",")) {
+            List<Wordform> formas = new LinkedList<>();
+            for (String stem : stem3.split(",")) {
+                formas.addAll(multistem_generate(token, paradigmID, stem1, stem2, stem));
+            }
+            return formas;
+        }
+        return MorphoServer.analyzer.generateInflections(token, paradigmID, stem1, stem2, stem3);
+    }
+
+    private String formatJSON(Collection<String> tags) {
 		Iterator<String> i = tags.iterator();
 		String out = "[";
 		while (i.hasNext()) {
