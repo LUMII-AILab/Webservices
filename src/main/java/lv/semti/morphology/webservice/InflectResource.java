@@ -26,6 +26,7 @@ import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 
+import lv.semti.morphology.attributes.AttributeValues;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -34,9 +35,10 @@ public class InflectResource extends ServerResource {
 	public String retrieve() {  
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
-		
+
+        String inflmisc = getQuery().getValues("inflmisc");
 		List<Collection<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
-                getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"));
+                getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"), decodeInflMisc(inflmisc));
 		
 		Utils.allowCORS(this);
 				
@@ -70,7 +72,26 @@ public class InflectResource extends ServerResource {
 		}
 	}
 
-	private List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3) {
+    private static AttributeValues decodeInflMisc(String inflmisc) {
+        AttributeValues lemmaAttrs = new AttributeValues();
+        if (inflmisc != null) {
+            for (String attr : inflmisc.split(",")) {
+                if (attr.equalsIgnoreCase("Vīriešu_dzimte"))
+                    lemmaAttrs.addAttribute(AttributeNames.i_Gender, AttributeNames.v_Masculine);
+
+                if (attr.equalsIgnoreCase("Sieviešu_dzimte"))
+                    lemmaAttrs.addAttribute(AttributeNames.i_Gender, AttributeNames.v_Feminine);
+
+                if (attr.equalsIgnoreCase("Daudzskaitlis"))
+                    lemmaAttrs.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_PlurareTantum);
+
+                // TODO - Laumai / tezaura javascript ir vēl citas vērtības, kas te tiek padotas
+            }
+        }
+        return lemmaAttrs;
+    }
+
+    private List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -102,7 +123,7 @@ public class InflectResource extends ServerResource {
 		showAttrs.add(AttributeNames.i_Person); showAttrs.add(AttributeNames.i_Izteiksme); showAttrs.add(AttributeNames.i_Laiks); showAttrs.add(AttributeNames.i_Voice); showAttrs.add(AttributeNames.i_Konjugaacija);
 		//adjectives
 		showAttrs.add(AttributeNames.i_Degree); showAttrs.add(AttributeNames.i_Definiteness);
-		
+
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
 		
@@ -124,11 +145,11 @@ public class InflectResource extends ServerResource {
 //				word.describe(new PrintWriter(System.out));
 //				System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
 				if (male_4th && female_4th) { // if so, then build both inflections and merge their forms.
-					formas = MorphoServer.analyzer.generateInflections(word.getToken(), 7);
-					formas.addAll(MorphoServer.analyzer.generateInflections(word.getToken(), 8));
+					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 7, lemmaAttrs);
+					formas.addAll(MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 8, lemmaAttrs));
 				} else if (male_5th && female_5th) { 
-					formas = MorphoServer.analyzer.generateInflections(word.getToken(), 9);
-					formas.addAll(MorphoServer.analyzer.generateInflections(word.getToken(), 10));
+					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 9, lemmaAttrs);
+					formas.addAll(MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 10, lemmaAttrs));
 				} else 
 					formas = MorphoServer.analyzer.generateInflections(word.getToken()); // normal case of building just from the token
 
@@ -138,7 +159,7 @@ public class InflectResource extends ServerResource {
                     formas = multistem_generate(word.getToken(), paradigmID, stem1, stem2, stem3);
                 } else {
                     // if a specific paradigm is passed, inflect according to that
-                    formas = MorphoServer.analyzer.generateInflections(word.getToken(), paradigmID);
+                    formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), paradigmID, lemmaAttrs);
                 }
             }
 
@@ -168,7 +189,7 @@ public class InflectResource extends ServerResource {
             }
             return formas;
         }
-        return MorphoServer.analyzer.generateInflections(token, paradigmID, stem1, stem2, stem3);
+        return MorphoServer.analyzer.generateInflectionsFromParadigm(token, paradigmID, stem1, stem2, stem3);
     }
 
     private String formatJSON(Collection<String> tags) {
