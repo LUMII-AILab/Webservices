@@ -149,8 +149,7 @@ public class MorphoServer {
         }
 
         // Corpus to find usage examples
-        // corpus = new TaggedCorpus("corpora/balanseetais_small.txt");
-		corpus = new TaggedCorpus("corpora/balanseetais.txt");
+		corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
 		
 		// Create a new Restlet component and add a HTTP server connector to it 
 	    Component component = new Component();  
