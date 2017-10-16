@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -mx3g -jar target/webservices-1.1.0-jar-with-dependencies.jar $*
+java -mx3g -cp "target/*" lv.semti.morphology.webservice.MorphoServer $*
