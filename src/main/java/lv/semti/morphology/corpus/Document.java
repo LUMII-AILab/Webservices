@@ -13,57 +13,79 @@ import java.util.stream.Collectors;
  * Created by pet on 2016-01-07.
  */
 public class Document {
-    private List<List<Token>> sentences = new LinkedList<>();
+    private List<Sentence> sentences = new LinkedList<>();
     public Map<String, String> metadata = new HashMap<>();
     public Multimap<String, Token> index; // FIXME - vajag visam korpusam kopēju indeksu, tas būs ātrāk un efektīvāk; tad arī var katram vārdam atstāt top x piemērus un pārējo korpusu neturēt atmiņā
 
     private static final int optimal_sentence_length = 10;
     public List<Example> findExamples(String lemma) {
         List<Example> result = new LinkedList<>();
+        Set<String> already_seen = new HashSet<>();
         for (Token token : index.get(lemma)) {
-            String sentence_text =
-                    token.sentence
-                        .stream()
-                        .map(t -> t.token)
-                        .collect(Collectors.joining(" "));
+            String sentence_text = token.sentence.sentence;
 
-
-            result.add(new Example(sentence_text, this, Math.abs(token.sentence.size()-optimal_sentence_length) ));
+            sentence_text = sentence_text.replaceAll(" ([.,?!\"])", "$1"); // FIXME - ja būtu korekti ievaddati ar <g/> tagiem, tad šo nevajadzētu
+            if (already_seen.contains(sentence_text)) continue;
+            result.add(new Example(sentence_text, this, Math.abs(token.sentence.tokens.size()-optimal_sentence_length) ));
+            already_seen.add(sentence_text);
         }
         return result;
+    }
+
+    private class Sentence {
+        String sentence;
+        List<Token> tokens;
+        Sentence() {
+            sentence = "";
+            tokens = new LinkedList<>();
+        }
+        boolean isEmpty() {
+            return tokens.isEmpty();
+        }
+
+        public void add(Token token, boolean needspace) {
+            tokens.add(token);
+            token.sentence = this;
+            if (needspace) sentence = sentence + ' ';
+            sentence = sentence + token.token;
+        }
     }
 
     private class Token {
         String token;
         String tag;
         String lemma;
-        List<Token> sentence;
-        Token (String line, List<Token> sentence) throws IOException {
+        Sentence sentence;
+        Token (String line) throws IOException {
             String[] parts = line.split("\t");
             if (parts.length != 3) // token tag lemma   lowercase_token
                 throw new IOException(String.format("Bad corpus file format - line '%s'",line));
             token = parts[0];
             tag = parts[1];
             lemma = parts[2];
-            this.sentence = sentence;
         }
     }
 
     public Document(String header, List<String> lines) throws IOException {
         parseHeader(header);
 
-        List<Token> current_sentence = new LinkedList<>();
+        Sentence current_sentence = new Sentence();
         index = ArrayListMultimap.create();
+        boolean needspace = false;
         for (String line : lines) {
             if (line.startsWith("</s") && !current_sentence.isEmpty()) { // end of sentence
                 sentences.add(current_sentence);
-                current_sentence = new LinkedList<>();
+                current_sentence = new Sentence();
             }
             // te ignorē paragrāfus un <g />
+            if (line.startsWith("<g />")) {
+                needspace = false;
+            }
             if (line.startsWith("<")) continue;
-            Token token = new Token(line, current_sentence);
-            current_sentence.add(token);
+            Token token = new Token(line);
+            current_sentence.add(token, needspace);
             index.put(token.lemma, token);
+            needspace = true; //by default, we'll need a space after this token
 //            System.out.printf("Liekam indeksā '%s'\n", token.lemma, token.sentence.toString());
         }
 
