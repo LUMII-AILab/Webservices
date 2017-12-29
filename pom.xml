@@ -5,7 +5,7 @@
 	<groupId>lv.ailab.morphology</groupId>
 	<artifactId>webservices</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.4</version>
+	<version>1.2.5</version>
 	<name>Webservice API for various Latvian computational linguistic tools</name>
 	<url>https://github.com/LUMII-AILab/Webservices</url>
 
@@ -17,12 +17,12 @@
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>morphology</artifactId>
-			<version>1.2.4</version>
+			<version>1.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>tagger</artifactId>
-			<version>1.2.1</version>
+			<version>1.2.5</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
@@ -70,12 +70,7 @@
             <artifactId>gson</artifactId>
             <version>2.2.4</version>
         </dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-	</dependencies>	
+	</dependencies>
 
 	<build>
 		<plugins>

@@ -45,11 +45,11 @@ public class MorphoServer {
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
 	static public TaggedCorpus corpus;
-	static private boolean enableTransliterator = false;
-    static private boolean enableDomeniims = false;
-    static private boolean enableTezaurs = false;
-    static private boolean enableTagger = true;
-    static private boolean enableNERTagger = false;
+	static public boolean enableTransliterator = false;
+    static public boolean enableDomeniims = false;
+    static public boolean enableTezaurs = false;
+    static public boolean enableTagger = true;
+    static public boolean enableNERTagger = false;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -156,11 +156,12 @@ public class MorphoServer {
 	    component.getServers().add(Protocol.HTTP, port);  
 	    
 	    // Then attach it to the local host 
+        component.getDefaultHost().attach("/", RootResource.class);
+
 	    component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
 	    component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
 	    component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
 	    component.getDefaultHost().attach("/tokenize", TokenResource.class);
-	    component.getDefaultHost().attach("/verbi/{query}", VerbResource.class); //obsolete, jaaiznjem
 	    component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
 	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
 	    if (enableTransliterator) {

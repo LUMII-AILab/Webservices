@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -mx3g -cp "target/*" lv.semti.morphology.webservice.MorphoServer $*
+java -mx4g -cp "target/*" lv.semti.morphology.webservice.MorphoServer $*

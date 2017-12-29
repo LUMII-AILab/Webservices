@@ -20,17 +20,13 @@ package lv.semti.morphology.webservice;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonReader;
-import lv.semti.morphology.corpus.Example;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TezaursWordResource extends ServerResource {
     private static Map<String, String> entries;
@@ -69,13 +65,14 @@ public class TezaursWordResource extends ServerResource {
         if (entries != null) return entries;
 
         entries = new HashMap<>();
+        Map<String, JsonArray> temp_entries = new HashMap<>();
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(String.class, new JsonElementJsonDeserializer())
                 .create();
         JsonParser parser = new JsonParser();
         System.out.println("Loading thesaurus entries");
-        List<String> files = Arrays.asList("entries-bad.json", "entries-good.json", "entries-noParadigm.json", "references-bad.json", "references-good.json", "references-noParadigm.json");
-//        List<String> files = Arrays.asList("entries-bad.json");
+//        List<String> files = Arrays.asList("entries-bad.json", "entries-good.json", "entries-noParadigm.json", "references-bad.json", "references-good.json", "references-noParadigm.json");
+        List<String> files = Arrays.asList("analyzed_tezaurs.json");
         for (String filename : files) {
             filename = "/tezaurs/"+filename;
             InputStream stream = MorphoServer.class.getClass().getResourceAsStream(filename);
@@ -90,7 +87,11 @@ public class TezaursWordResource extends ServerResource {
                 if (entry == null || entry.isEmpty()) continue;
                 JsonObject obj = parser.parse(entry).getAsJsonObject();
                 String lemma = obj.getAsJsonObject("Header").get("Lemma").getAsString();
-                entries.put(lemma, entry);
+                JsonArray entrylist = temp_entries.get(lemma);
+                if (entrylist == null) entrylist = new JsonArray();
+                entrylist.add(obj);
+                temp_entries.put(lemma, entrylist);
+                entries.put(lemma, entrylist.toString());
             }
             System.out.println(filename + " loaded.");
         }
