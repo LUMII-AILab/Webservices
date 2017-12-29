@@ -47,7 +47,7 @@ public class RootResource extends ServerResource {
             addLink(sb, "morphotagger/vīrs%20ar%20cirvi.", "/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
             addLink(sb, "inflect_people/json/Baraks%20Obama?gender=m", "/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
             addLink(sb, "inflect_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
-            addLink(sb, "normalize_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūtam?category=org", "/inflect_phrase/[phrase]?category=[person/org/loc] : try to transform a multiword expression / named entity to its base form, given its category");
+            addLink(sb, "normalize_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūtam?category=org", "/normalize_phrase/[phrase]?category=[person/org/loc] : try to transform a multiword expression / named entity to its base form, given its category");
         }
 
         if (MorphoServer.enableNERTagger) {
