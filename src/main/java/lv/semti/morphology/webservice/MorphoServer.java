@@ -99,6 +99,7 @@ public class MorphoServer {
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
 				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
+                System.out.println("http://localhost:8182/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
 				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
 				System.out.println("http://localhost:8182/verbs/[query] and http://localhost:8182/neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
 				System.out.println("http://localhost:8182/normalize/[ruleset]/[word] and http://localhost:8182/explain/[query] : (if enabled) historical word transliteration and dictionary explanations");
@@ -164,6 +165,7 @@ public class MorphoServer {
 	    component.getDefaultHost().attach("/tokenize", TokenResource.class);
 	    component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
 	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
+        component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class);
 	    if (enableTransliterator) {
 			Transliterator.PATH_FILE = "path.conf";
 			translit = Transliterator.getTransliterator(analyzer);			

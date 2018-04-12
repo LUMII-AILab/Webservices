@@ -30,6 +30,7 @@ public class RootResource extends ServerResource {
         sb.append("<html><head><title>Latvian morphology web services</title></head><body><ul>");
         addLink(sb, "analyze/doma", "/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
         addLink(sb, "analyze/en/doma", "/analyze/en/[word] : morphological analysis of the word with attribute names in English");
+        addLink(sb, "analyzesentence/Vīrs%20ar%20cirvi.", "/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
         addLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize : tokenization of sentences");
         addLink(sb, "verbs/domai", "/verbs/[query] and /neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
         addLink(sb, "v1/inflections/rakt", "/v1/inflections/[query] : generate all inflectional forms of a lemma");
