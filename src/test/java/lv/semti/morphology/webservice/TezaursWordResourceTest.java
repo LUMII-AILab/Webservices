@@ -1,9 +1,12 @@
 package lv.semti.morphology.webservice;
 
+import org.junit.Ignore;
+
 import static org.junit.Assert.*;
 
 public class TezaursWordResourceTest {
 
+    @Ignore
     @org.junit.Test
     public void testGetEntries() throws Exception {
         TezaursWordResource.getEntries();

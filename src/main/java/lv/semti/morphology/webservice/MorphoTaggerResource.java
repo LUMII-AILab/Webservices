@@ -48,7 +48,8 @@ public class MorphoTaggerResource extends ServerResource {
 		}
 
 		Utils.allowCORS(this);
-		
+
+		LVMorphologyReaderAndWriter.setAnalyzerDefaults();
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
 		sentence = MorphoServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
 
@@ -57,7 +58,9 @@ public class MorphoTaggerResource extends ServerResource {
 		if ("json".equalsIgnoreCase(format))
 			outputType = outputTypes.JSON;
 
-		return output(sentence, outputType);
+		String out = output(sentence, outputType);
+		MorphoServer.analyzer.defaultSettings();
+		return out;
 	}
 	
 	private static String output(List<CoreLabel> tokens, outputTypes outputType){

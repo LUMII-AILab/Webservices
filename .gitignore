@@ -3,6 +3,8 @@ build/
 dist/
 .DS_Store
 src/main/resources/morpho/
+src/main/resources/corpora/
+src/main/resources/tezaurs/
 /target/
 .idea/
 webservices.iml

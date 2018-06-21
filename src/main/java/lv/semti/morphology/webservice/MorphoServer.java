@@ -17,7 +17,6 @@
  *******************************************************************************/
 package lv.semti.morphology.webservice;
 
-import edu.stanford.nlp.ie.crf.CRFClassifier;
 import lv.lumii.ner.NerPipe;
 import lv.semti.morphology.corpus.TaggedCorpus;
 import org.restlet.*;
@@ -114,11 +113,88 @@ public class MorphoServer {
 				System.exit(0);
 			}
 		}
-		
-		analyzer = new Analyzer(false);
-		analyzer.setCacheSize(1000);
-		
-		tagset = TagSet.getTagSet();
+
+        initResources();
+        initComponents();
+
+
+        System.out.println("Ready!");
+//		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
+	}
+
+    private static void initComponents() throws Exception {
+        // Create a new Restlet component and add a HTTP server connector to it
+        Component component = new Component();
+        component.getServers().add(Protocol.HTTP, port);
+
+        // Then attach it to the local host
+        component.getDefaultHost().attach("/", RootResource.class);
+
+        component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
+        component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
+        component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
+        component.getDefaultHost().attach("/tokenize", TokenResource.class);
+        component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
+        component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
+        component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class);
+        if (enableTransliterator) {
+            Transliterator.PATH_FILE = "path.conf";
+            translit = Transliterator.getTransliterator(analyzer);
+            component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
+            component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
+        }
+        component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
+        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class);
+        component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
+
+        if (enableTagger) {
+            component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
+            component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
+
+            component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
+            component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
+            component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
+        }
+
+        if (enableNERTagger) {
+            component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
+            component.getDefaultHost().attach("/nerpeople/{query}", NERPeopleResource.class);
+        }
+
+        component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
+        component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
+
+        if (enableDomeniims) {
+            if (enableTagger) {
+                component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
+                component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
+            } else {
+                System.err.println("Domain name alternative service will not work without tagger functionality");
+            }
+        }
+
+        component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
+        component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
+
+        component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
+        component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
+
+        component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
+        component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
+
+        if (enableTezaurs) {
+            TezaursWordResource.getEntries();
+            component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
+            component.getDefaultHost().attach("/v1/words/{query}", TezaursWordResource.class);
+        }
+        component.start();
+    }
+
+    public static void initResources() throws Exception {
+        analyzer = new Analyzer(false);
+        analyzer.setCacheSize(1000);
+
+        tagset = TagSet.getTagSet();
 
         if (enableNERTagger) {
             Properties props = new Properties();
@@ -150,75 +226,7 @@ public class MorphoServer {
         }
 
         // Corpus to find usage examples
-		corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
-		
-		// Create a new Restlet component and add a HTTP server connector to it 
-	    Component component = new Component();  
-	    component.getServers().add(Protocol.HTTP, port);  
-	    
-	    // Then attach it to the local host 
-        component.getDefaultHost().attach("/", RootResource.class);
-
-	    component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
-	    component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
-	    component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
-	    component.getDefaultHost().attach("/tokenize", TokenResource.class);
-	    component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
-	    component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
-        component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class);
-	    if (enableTransliterator) {
-			Transliterator.PATH_FILE = "path.conf";
-			translit = Transliterator.getTransliterator(analyzer);			
-		    component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
-		    component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
-	    }
-	    component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
-        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class);
-	    component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
-
-        if (enableTagger) {
-            component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
-            component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
-
-            component.getDefaultHost().attach("/inflect_people/{format}/{query}", InflectPeopleResource.class);
-            component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
-            component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
-        }
-
-        if (enableNERTagger) {
-            component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
-            component.getDefaultHost().attach("/nerpeople/{query}", NERPeopleResource.class);
-        }
-
-	    component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
-        component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
-
-        if (enableDomeniims) {
-            if (enableTagger) {
-                component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
-                component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
-            } else {
-                System.err.println("Domain name alternative service will not work without tagger functionality");
-            }
-        }
-
-        component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
-        component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
-
-        component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
-        component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
-
-        component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
-		component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
-
-        if (enableTezaurs) {
-            TezaursWordResource.getEntries();
-            component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
-            component.getDefaultHost().attach("/v1/words/{query}", TezaursWordResource.class);
-        }
-	    component.start();
-        System.out.println("Ready!");
-//		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
-	}
+        corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
+    }
 
 }
