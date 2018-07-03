@@ -47,6 +47,7 @@ public class MorphoServer {
 	static public boolean enableTransliterator = false;
     static public boolean enableDomeniims = false;
     static public boolean enableTezaurs = false;
+    static public boolean enableCorpus = true;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
 	static private int port = 8182;
@@ -69,6 +70,10 @@ public class MorphoServer {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
 			}
+            if (args[i].equalsIgnoreCase("-nocorpus")) {
+                enableTagger = false;
+                System.out.println("Corpus example data disabled");
+            }
             if (args[i].equalsIgnoreCase("-nertagger")) {
                 enableNERTagger = true;
                 System.out.println("NER tagger enabled");
@@ -94,6 +99,7 @@ public class MorphoServer {
                 System.out.println("\t-tezaurs : enable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
                 System.out.println("\t-nertagger : enable NER tagger webservice");
                 System.out.println("\t-notagger : disable morphosyntactic tagger functionality to reduce memory usage");
+                System.out.println("\t-nocorpus : disable corpus example functionality to reduce memory usage");
 				System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
@@ -173,8 +179,10 @@ public class MorphoServer {
             }
         }
 
-        component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
-        component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
+        if (enableCorpus) {
+            component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
+            component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
+        }
 
         component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
         component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
@@ -225,8 +233,10 @@ public class MorphoServer {
             alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
         }
 
-        // Corpus to find usage examples
-        corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
+        if (enableCorpus) {
+            // Corpus to find usage examples
+            corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
+        }
     }
 
 }

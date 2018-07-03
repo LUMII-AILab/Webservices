@@ -91,7 +91,7 @@ public class InflectResource extends ServerResource {
         return lemmaAttrs;
     }
 
-    private List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
+    public List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
@@ -177,8 +177,13 @@ public class InflectResource extends ServerResource {
     private List<Wordform> multistem_generate(String token, Integer paradigmID, String stem1, String stem2, String stem3) {
         if (stem2.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
-            for (String stem : stem2.split(",")) {
-                formas.addAll(multistem_generate(token, paradigmID, stem1, stem, stem3));
+            String[] stems2 = stem2.split(",");
+            String[] stems3 = stem3.split(",");
+            for (int i=0; i<stems2.length; i++) {
+                String matching_stem3 = stem3;
+                if (i<stems3.length)
+                    matching_stem3 = stems3[i];
+                formas.addAll(multistem_generate(token, paradigmID, stem1, stems2[i], matching_stem3));
             }
             return formas;
         }
@@ -189,6 +194,7 @@ public class InflectResource extends ServerResource {
             }
             return formas;
         }
+//        System.out.printf("%s\t%s\t%s\n", stem1, stem2, stem3);
         return MorphoServer.analyzer.generateInflectionsFromParadigm(token, paradigmID, stem1, stem2, stem3);
     }
 
