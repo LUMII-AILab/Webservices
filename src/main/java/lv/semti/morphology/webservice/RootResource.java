@@ -27,7 +27,9 @@ public class RootResource extends ServerResource {
 	@Get
 	public Representation retrieve() {
 		StringBuilder sb = new StringBuilder();
-        sb.append("<html><head><title>Latvian morphology web services</title></head><body><ul>");
+        sb.append("<html><head><title>Latvian morphology web services</title></head><body><h3>Version ");
+        sb.append(MorphoServer.analyzer.getRevision());
+        sb.append("</h3><ul>");
         addLink(sb, "analyze/doma", "/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
         addLink(sb, "analyze/en/doma", "/analyze/en/[word] : morphological analysis of the word with attribute names in English");
         addLink(sb, "analyzesentence/Vīrs%20ar%20cirvi.", "/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
