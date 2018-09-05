@@ -97,7 +97,8 @@ public class Document {
         if (p != null) {
             return p;
         } else {
-            p = Pattern.compile( key + "=\"([^\"]*)\"");
+            // p = Pattern.compile( key + "=\"([^\"]*)\"");   for the old format with double quotes
+            p = Pattern.compile( key + "='([^\']*)'");
             patterns.put(key,p);
             return p;
         }
@@ -109,7 +110,7 @@ public class Document {
         else return null;
     }
 
-    private static String[] fields = {"title", "source","author", "authorgender", "published", "genre", "keywords", "fileref"};
+    private static String[] fields = {"id", "reference", "section", "title", "source","author", "authorgender", "published", "genre", "keywords", "fileref"};
     private void parseHeader(String header) {
         // Sample header:
         // <doc title="Keita atvainojas. Vai piedos?" source="Diena. Sestdiena" author="Una Meistere" authorgender="siev." published="10/1/2005" genre="Periodika" keywords="Sabiedrība, zvaigžņu kults" fileref="p0001">

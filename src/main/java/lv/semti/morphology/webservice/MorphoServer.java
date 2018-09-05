@@ -235,7 +235,7 @@ public class MorphoServer {
 
         if (enableCorpus) {
             // Corpus to find usage examples
-            corpus = new TaggedCorpus("corpora/LVK2013_tags.vert");
+            corpus = new TaggedCorpus("corpora/lvk_201809042224.vert");
         }
     }
 
