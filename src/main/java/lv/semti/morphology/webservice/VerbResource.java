@@ -39,6 +39,7 @@ public class VerbResource extends ServerResource {
 	}
 	
 	public String parsequery(Boolean verb) {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		try {
 			query = URLDecoder.decode(query,"UTF8");
@@ -47,8 +48,6 @@ public class VerbResource extends ServerResource {
 			e.printStackTrace();
 		}
 
-		Utils.allowCORS(this);
-		
 		MorphoServer.analyzer.defaultSettings();
 		
 		LinkedList<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);

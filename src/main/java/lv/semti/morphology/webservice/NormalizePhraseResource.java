@@ -29,7 +29,8 @@ import lv.lumii.expressions.Expression;
 
 public class NormalizePhraseResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
@@ -39,8 +40,6 @@ public class NormalizePhraseResource extends ServerResource {
 		
 		String category = getQuery().getValues("category");
 
-		Utils.allowCORS(this);
-		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = true;
 		MorphoServer.analyzer.guessVerbs = false;
@@ -50,8 +49,7 @@ public class NormalizePhraseResource extends ServerResource {
 		MorphoServer.analyzer.enableAllGuesses = true;
 		
     	Expression e = new Expression(query, category, false);
-    	//e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis
-    	String pamatforma = e.normalize();		
+    	String pamatforma = e.normalize();
     	MorphoServer.analyzer.defaultSettings();
 		return pamatforma;		
 	}

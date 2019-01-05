@@ -32,7 +32,8 @@ import org.restlet.resource.ServerResource;
 
 public class InflectResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+        getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 
@@ -40,8 +41,6 @@ public class InflectResource extends ServerResource {
 		List<Collection<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
                 getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"), decodeInflMisc(inflmisc));
 		
-		Utils.allowCORS(this);
-				
 		String format = (String) getRequest().getAttributes().get("format");
 		if (format == null) format = "json";
 		if (format.equalsIgnoreCase("xml")) {

@@ -32,7 +32,8 @@ import lv.semti.morphology.attributes.AttributeValues;
 
 public class WordResource extends ServerResource {
 	@Get("json")
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("word");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
@@ -41,8 +42,6 @@ public class WordResource extends ServerResource {
 		}
 		String language = (String) getRequest().getAttributes().get("language");
 
-		Utils.allowCORS(this);
-		
 		Word w = MorphoServer.analyzer.analyze(query);
 		return toJSON(w.wordforms, language);
 	}

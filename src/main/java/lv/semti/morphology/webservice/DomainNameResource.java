@@ -13,7 +13,8 @@ public class DomainNameResource extends ServerResource{
 
 
 	@Get("json")
-	public String retrieve() throws Exception {  
+	public String retrieve() throws Exception {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("domainname");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
@@ -21,8 +22,6 @@ public class DomainNameResource extends ServerResource{
 			e.printStackTrace();
 		}
 
-		Utils.allowCORS(this);
-		
 		Integer limit = null;
 		try {
 			String limit_str= getQuery().getValues("limit");

@@ -31,8 +31,11 @@ import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
 import lv.ailab.domainnames.AlternativeBuilder;
 import lv.ailab.lnb.fraktur.Transliterator;
+import org.restlet.service.CorsService;
 
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Properties;
 
 public class MorphoServer {
@@ -195,6 +198,17 @@ public class MorphoServer {
             component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
             component.getDefaultHost().attach("/v1/words/{query}", TezaursWordResource.class);
         }
+
+        // Set up CORS
+        CorsService corsService = new CorsService();
+        corsService.setAllowingAllRequestedHeaders(true);
+        corsService.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+        corsService.setAllowedCredentials(true);
+
+        Application application = new Application();
+        application.getServices().add(corsService);
+        component.getDefaultHost().attachDefault(application);
+
         component.start();
     }
 

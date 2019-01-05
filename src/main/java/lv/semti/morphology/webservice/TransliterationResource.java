@@ -27,7 +27,8 @@ import lv.ailab.lnb.fraktur.translit.ResultData;
 
 public class TransliterationResource extends ServerResource {
 	@Get("xml")
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String ruleset = (String) getRequest().getAttributes().get("ruleset");
 		String word = (String) getRequest().getAttributes().get("word");
 		
@@ -36,8 +37,6 @@ public class TransliterationResource extends ServerResource {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		Utils.allowCORS(this);
 
 		String XML = "";
 		try {

@@ -29,7 +29,8 @@ import java.util.stream.Collectors;
 
 public class CorpusResource extends ServerResource {
     @Get("json")
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		try {
 			query = URLDecoder.decode(query,"UTF8");
@@ -37,8 +38,6 @@ public class CorpusResource extends ServerResource {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		Utils.allowCORS(this);
 
 		List<Example> examples = MorphoServer.corpus.findExamples(query);
 

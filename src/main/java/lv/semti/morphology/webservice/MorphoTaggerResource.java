@@ -38,7 +38,8 @@ public class MorphoTaggerResource extends ServerResource {
 	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText};	
 	
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		
 		try {
@@ -46,8 +47,6 @@ public class MorphoTaggerResource extends ServerResource {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		Utils.allowCORS(this);
 
 		LVMorphologyReaderAndWriter.setAnalyzerDefaults();
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
@@ -90,7 +89,6 @@ public class MorphoTaggerResource extends ServerResource {
 			} else s.append(field_separator); 
 		}
 		
-		tokens = null;
 		return s.toString();
 	}
 }

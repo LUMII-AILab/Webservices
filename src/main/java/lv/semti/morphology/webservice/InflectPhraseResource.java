@@ -32,7 +32,8 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 public class InflectPhraseResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
@@ -41,8 +42,6 @@ public class InflectPhraseResource extends ServerResource {
 		}
 		String category = getQuery().getValues("category");
 
-		Utils.allowCORS(this);
-		
 		MorphoServer.analyzer.enableGuessing = true;
 		MorphoServer.analyzer.enableVocative = true;
 		MorphoServer.analyzer.guessVerbs = false;
@@ -50,9 +49,7 @@ public class InflectPhraseResource extends ServerResource {
 		MorphoServer.analyzer.guessAdjectives = true;
 		MorphoServer.analyzer.guessInflexibleNouns = true;
 		MorphoServer.analyzer.enableAllGuesses = true;
-		
-		//MorphoServer.analyzer.describe(new PrintWriter(System.err));
-		
+
 		JSONObject oInflections = new JSONObject();
     	Expression e = new Expression(query, category, true); // Pieņemam, ka klients padod pamatformu
     	//e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis

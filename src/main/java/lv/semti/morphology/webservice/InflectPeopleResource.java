@@ -37,11 +37,10 @@ import org.restlet.resource.ServerResource;
 
 public class InflectPeopleResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 
-		Utils.allowCORS(this);
-		
 		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("gender"));
 				
 		String format = (String) getRequest().getAttributes().get("format");

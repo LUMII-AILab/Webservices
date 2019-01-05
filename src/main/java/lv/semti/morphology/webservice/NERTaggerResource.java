@@ -42,15 +42,14 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 public class NERTaggerResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		Utils.allowCORS(this);
 
         List<CoreLabel> out = this.nertag(query);
         StringBuilder output = new StringBuilder();

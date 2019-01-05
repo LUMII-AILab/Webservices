@@ -32,7 +32,8 @@ import org.restlet.resource.ServerResource;
 
 public class DictionaryResource extends ServerResource {
 	@Get("xml")
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String word = (String) getRequest().getAttributes().get("word");
 		try {
 			word = URLDecoder.decode(word, "UTF8");
@@ -41,8 +42,6 @@ public class DictionaryResource extends ServerResource {
 		}
 		
 		String XML = "<explanation>";
-
-		Utils.allowCORS(this);
 
 		try {
 			word = word.toLowerCase().trim();

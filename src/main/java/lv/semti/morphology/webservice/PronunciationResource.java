@@ -27,8 +27,8 @@ import java.net.URLDecoder;
 public class PronunciationResource extends ServerResource {
 
     @Get("json")
-	public String retrieve() throws Exception {
-        Utils.allowCORS(this);
+	public String retrieve() {
+        getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
         if (query != null)
             try {

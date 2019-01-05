@@ -8,19 +8,15 @@ import org.restlet.resource.ServerResource;
 
 public class SegmentResource extends ServerResource{
 	@Get("json")
-	public String retrieve() throws Exception {
-		Utils.allowCORS(this);
-
-		System.out.println("1");
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("domainname");
-		System.out.println("2");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		System.out.println("2");
-		
+
 		System.out.println(MorphoServer.alternatives);
 		System.out.println(MorphoServer.alternatives.segmenter);
 		System.out.println(MorphoServer.alternatives.segmenter.segment(query));

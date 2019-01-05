@@ -31,7 +31,8 @@ import phonetic_transcriber.PhoneticTranscriber;
 
 public class PhoneticTranscriberResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String phrase = (String) getRequest().getAttributes().get("phrase");
 		try {
 			phrase = URLDecoder.decode(phrase, "UTF8");
@@ -43,8 +44,6 @@ public class PhoneticTranscriberResource extends ServerResource {
 		String converter_type_new =  getQuery().getValues("encoding");
         if (converter_type_new != null) converter_type = converter_type_new;
 
-		Utils.allowCORS(this);
-		
 		//switch can't handle null string
 		if(converter_type==null)
 			converter_type="";

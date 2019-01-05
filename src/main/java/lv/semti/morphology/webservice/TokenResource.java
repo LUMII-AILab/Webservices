@@ -36,7 +36,8 @@ import lv.semti.morphology.analyzer.*;
 
 public class TokenResource extends ServerResource {
 	@Get("json")
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		try {
 			query = URLDecoder.decode(query,"UTF8");
@@ -45,8 +46,6 @@ public class TokenResource extends ServerResource {
 			e.printStackTrace();
 		}
 
-		Utils.allowCORS(this);
-		
 		return analyze(query);
 	}
 	

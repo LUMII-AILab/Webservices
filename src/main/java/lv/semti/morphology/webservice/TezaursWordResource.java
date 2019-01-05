@@ -33,7 +33,7 @@ public class TezaursWordResource extends ServerResource {
 
     @Get("json")
 	public String retrieve() throws Exception {
-        Utils.allowCORS(this);
+        getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
         if (query != null)
             try {
@@ -50,7 +50,6 @@ public class TezaursWordResource extends ServerResource {
         getEntries();
 
         String result = entries.get(query);
-//        if (result != null) return result;
         return result;
 	}
 

@@ -39,7 +39,8 @@ import java.util.List;
 
 public class NERPeopleResource extends ServerResource {
 	@Get
-	public String retrieve() {  
+	public String retrieve() {
+		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
@@ -47,9 +48,7 @@ public class NERPeopleResource extends ServerResource {
 			e.printStackTrace();
 		}
 
-		Utils.allowCORS(this);
-
-        List<CoreLabel> out = NERTaggerResource.nertag(query);
+		List<CoreLabel> out = NERTaggerResource.nertag(query);
 
         JSONArray people = new JSONArray();
 
