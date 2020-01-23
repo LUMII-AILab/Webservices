@@ -38,6 +38,7 @@ public class RootResource extends ServerResource {
         addLink(sb, "v1/inflections/rakt", "/v1/inflections/[query] : generate all inflectional forms of a lemma");
         addLink(sb, "inflect/xml/rakt", "/inflect/[format]/[query] : generate all inflectional forms of a lemma");
         addLink(sb, "inflect/json/en/rakt", "/inflect/[format]/[language]/[query] : generate all inflectional forms of a lemma");
+        addLink(sb, "suitable_paradigm/pokemonizators", "/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
         addLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi?phoneme_set=IPA", "/v1/transcriptions/[phrase] : phonetic transcription of the phrase");
         if (MorphoServer.enableCorpus) {
             addLink(sb, "v1/examples/doma", "/v1/examples/[query] : provides a list of corpus mentions of the queried word");

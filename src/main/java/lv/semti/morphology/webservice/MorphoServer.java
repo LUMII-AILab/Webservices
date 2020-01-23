@@ -114,6 +114,7 @@ public class MorphoServer {
 				System.out.println("http://localhost:8182/inflect/json/[query] : generate all inflectional forms of a lemma");
 				System.out.println("http://localhost:8182/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
+                System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
 				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
                 System.out.println("http://localhost:8182/domenims/[query] and http://localhost:8182/segment/[query] : (if enabled) domain name word2vec alternative genarator and segmentation");
                 System.out.println("http://localhost:8182/corpusexample/[query] : provides a list of corpus mentions of the queried word");
@@ -145,6 +146,7 @@ public class MorphoServer {
         component.getDefaultHost().attach("/tokenize", TokenResource.class);
         component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
         component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
+        component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
         component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class);
         if (enableTransliterator) {
             Transliterator.PATH_FILE = "path.conf";
