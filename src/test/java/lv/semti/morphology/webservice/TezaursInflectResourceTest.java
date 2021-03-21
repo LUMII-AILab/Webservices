@@ -4,6 +4,8 @@ import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +27,7 @@ public class TezaursInflectResourceTest {
         inflectResource = new InflectResource();
     }
 
-    @org.junit.Test
+    @Test
     public void testMultipleStems() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("jaust", "15", "", "jaus", "jauš,jauž", "jaut,jaud", new AttributeValues());
         assertEquals(1, wordforms.size());
@@ -39,6 +41,25 @@ public class TezaursInflectResourceTest {
             if (!wf.isMatchingWeak(filtrs)) continue;
 //            wf.describe();
             assertNotEquals("jauš", wf.getToken());
+        }
+    }
+
+    @Test
+    public void turpms() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("turpmāks", "13", "", "turpmāk", null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        for (Wordform wf : wordforms.get(0)) {
+            assertNotEquals("turpms", wf.getToken());
+        }
+    }
+
+    @Test
+    public void nelokāmie() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("augstpapēžu", "49", "", "", null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        assertNotEquals(0, wordforms.get(0).size());
+        for (Wordform wf : wordforms.get(0)) {
+            wf.describe();
         }
     }
 }
