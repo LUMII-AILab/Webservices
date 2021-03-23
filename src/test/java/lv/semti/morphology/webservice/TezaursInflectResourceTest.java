@@ -10,8 +10,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 /**
  * Created by pet on 2016-05-25.
@@ -25,6 +24,16 @@ public class TezaursInflectResourceTest {
         MorphoServer.enableCorpus = false;
         MorphoServer.initResources();
         inflectResource = new InflectResource();
+    }
+
+    private void assertFormExists(List<Collection<Wordform>> wordforms, String form) {
+        assertEquals(1, wordforms.size());
+        boolean found = false;
+        for (Wordform wf : wordforms.get(0)) {
+            if (wf.getToken().equalsIgnoreCase(form))
+                found = true;
+        }
+        assertTrue(found);
     }
 
     @Test
@@ -61,5 +70,34 @@ public class TezaursInflectResourceTest {
         for (Wordform wf : wordforms.get(0)) {
             wf.describe();
         }
+    }
+
+    @Test
+    public void pirms() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("pirmāks", "13", "", "", null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        for (Wordform wf : wordforms.get(0)) {
+            assertNotEquals("pirms", wf.getToken());
+        }
+    }
+
+    @Test
+    public void noliegumu_ģenerēšana() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("prātot", "16", "", "", null, null, new AttributeValues());
+        assertFormExists(wordforms, "neprātoju");
+    }
+
+    @Test
+    public void skaitļi() {
+        AttributeValues av = new AttributeValues();
+        av.addAttribute(AttributeNames.i_NounType, AttributeNames.v_ProperNoun);
+        av.addAttribute(AttributeNames.i_ProperNounType, AttributeNames.v_Toponym);
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("Rīga", "7", "", "", null, null, av);
+        assertEquals(1, wordforms.size());
+        for (Wordform wf : wordforms.get(0)) {
+            assertNotEquals("Rīgām", wf.getToken());
+        }
+
+
     }
 }
