@@ -1,0 +1,1 @@
+Supposed to contain a tagged LVK2018 corpus file (lvk_201809042224.vert in this version) not included in git because of the size
