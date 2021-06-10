@@ -25,6 +25,7 @@ public class Document {
 
             sentence_text = sentence_text.replaceAll(" ([.,?!\"])", "$1"); // FIXME - ja būtu korekti ievaddati ar <g/> tagiem, tad šo nevajadzētu
             if (already_seen.contains(sentence_text)) continue;
+            if (Blacklist.is_blacklisted(sentence_text, lemma)) continue;
             result.add(new Example(sentence_text, this, Math.abs(token.sentence.tokens.size()-optimal_sentence_length) ));
             already_seen.add(sentence_text);
         }
