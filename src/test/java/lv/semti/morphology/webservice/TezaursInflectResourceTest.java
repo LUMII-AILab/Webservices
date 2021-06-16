@@ -85,6 +85,10 @@ public class TezaursInflectResourceTest {
     public void noliegumu_ģenerēšana() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("prātot", "16", "", "", null, null, new AttributeValues());
         assertFormExists(wordforms, "neprātoju");
+        for (Wordform wf : wordforms.get(0)) {
+            if (wf.getToken().equalsIgnoreCase("neprātoju"))
+                assertEquals("Jā", wf.getValue(AttributeNames.i_Noliegums));
+        }
     }
 
     @Test

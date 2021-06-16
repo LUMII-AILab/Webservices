@@ -196,7 +196,7 @@ public class MorphoServer {
         component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
 
         if (enableTezaurs) {
-            System.err.println("Šis endpoint lietoja vecā tēzaura datus, lai dotu tos kā JSON; tagad kad viss ir normālā datubāzē citā struktūrā, tad tas būtu jātaisa savādāk")
+            System.err.println("Šis endpoint lietoja vecā tēzaura datus, lai dotu tos kā JSON; tagad kad viss ir normālā datubāzē citā struktūrā, tad tas būtu jātaisa savādāk");
                     // FIXME ^^^ - bet šis API pat varbūt nebūtu jāliek šeit, tas būtu no Mikus koda
             TezaursWordResource.getEntries();
             component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
