@@ -36,6 +36,13 @@ public class TezaursInflectResourceTest {
         assertTrue(found);
     }
 
+    private void assertFormDoesNotExist(List<Collection<Wordform>> wordforms, String form) {
+        assertEquals(1, wordforms.size());
+        for (Wordform wf : wordforms.get(0)) {
+            assertNotEquals(wf.getToken(), form);
+        }
+    }
+
     @Test
     public void testMultipleStems() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("jaust", "15", "", "jaus", "jauš,jauž", "jaut,jaud", new AttributeValues());
@@ -89,6 +96,8 @@ public class TezaursInflectResourceTest {
             if (wf.getToken().equalsIgnoreCase("neprātoju"))
                 assertEquals("Jā", wf.getValue(AttributeNames.i_Noliegums));
         }
+        assertFormDoesNotExist(wordforms, "jāneprāto");
+        assertFormDoesNotExist(wordforms, "nejāprāto");
     }
 
     @Test
@@ -101,7 +110,56 @@ public class TezaursInflectResourceTest {
         for (Wordform wf : wordforms.get(0)) {
             assertNotEquals("Rīgām", wf.getToken());
         }
+    }
 
+    @Test
+    public void pabija() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("pabūt", "50", "", "pabū", "", "pabij", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
+        filtrs.addAttribute(AttributeNames.i_Izteiksme, AttributeNames.v_Iisteniibas);
+        filtrs.addAttribute(AttributeNames.i_Person, "2");
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
+        filtrs.addAttribute(AttributeNames.i_Laiks, AttributeNames.v_Pagaatne);
+        filtrs.addAttribute(AttributeNames.i_Noliegums, null);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            assertEquals("pabiji", wf.getToken());
+        }
+    }
 
+    @Test
+    public void nebēdņot() {
+        AttributeValues av = new AttributeValues();
+        av.addAttribute(AttributeNames.i_Noliegums, AttributeNames.v_Yes);
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("nebēdņot", "16", "", "", null, null, av);
+        assertFormExists(wordforms, "nebēdņot");
+        assertFormDoesNotExist(wordforms, "jānebēdņo");
+        assertFormDoesNotExist(wordforms, "nejābēdņo");
+    }
+
+    @Test
+    public void ticket_100() {
+        AttributeValues av = new AttributeValues();
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("varēt", "17", "", "", null, null, av);
+        for (Wordform wf : wordforms.get(0)) {
+            if (wf.getToken().equalsIgnoreCase("varēšana")) {
+                assertEquals(AttributeNames.v_Yes, wf.getValue(AttributeNames.i_Derivative));
+            }
+        }
+    }
+
+    @Test
+    public void ticket_101() {
+        AttributeValues av = new AttributeValues();
+        av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_SingulareTantum);
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("Rīga", "7", "", "", null, null, av);
+        assertFormExists(wordforms, "Rīgai");
+        assertFormDoesNotExist(wordforms, "Rīgām");
+
+        wordforms = inflectResource.inflect("miers", "1", "", "", null, null, av);
+        assertFormExists(wordforms, "mieram");
+        assertFormDoesNotExist(wordforms, "mieriem");
     }
 }

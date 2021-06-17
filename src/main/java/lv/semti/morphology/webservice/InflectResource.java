@@ -84,7 +84,11 @@ public class InflectResource extends ServerResource {
                 if (attr.equalsIgnoreCase("Daudzskaitlis"))
                     lemmaAttrs.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_PlurareTantum);
 
-                // TODO - Laumai / tezaura javascript ir vēl citas vērtības, kas te tiek padotas
+				if (attr.equalsIgnoreCase("Vienskaitlis"))
+					lemmaAttrs.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_SingulareTantum);
+
+				if (attr.equalsIgnoreCase("Noliegums"))
+					lemmaAttrs.addAttribute(AttributeNames.i_Noliegums, AttributeNames.v_Yes);
             }
         }
         return lemmaAttrs;
@@ -115,7 +119,7 @@ public class InflectResource extends ServerResource {
 
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		//FIXME - this set is not appropriate for inflecting verbs and others... 
-		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); 
+		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); showAttrs.add(AttributeNames.i_Derivative);
 		//nouns
 		showAttrs.add(AttributeNames.i_Case); showAttrs.add(AttributeNames.i_Number); showAttrs.add(AttributeNames.i_Gender); showAttrs.add(AttributeNames.i_Declension);
 		//verbs/particibles
