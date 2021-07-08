@@ -162,4 +162,13 @@ public class TezaursInflectResourceTest {
         assertFormExists(wordforms, "mieram");
         assertFormDoesNotExist(wordforms, "mieriem");
     }
+
+    @Test
+    public void abēji() {
+        AttributeValues av = new AttributeValues();
+        av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_PlurareTantum);
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("abēji", "13", "", "", null, null, av);
+        assertFormExists(wordforms, "abējiem");
+    }
+
 }
