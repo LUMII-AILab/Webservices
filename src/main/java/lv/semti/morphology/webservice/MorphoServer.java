@@ -243,7 +243,8 @@ public class MorphoServer {
             // Word embeddings and segmentation data
             String WORDLIST_FILE_LV = "wordlist-filtered-lv.txt";
             String WORDLIST_FILE_EN = "wordsEn-sil-filtered.txt";
-            String EMBEDDINGS_LV_FILENAME = "lv_visaslemmas.out";
+            //String EMBEDDINGS_LV_FILENAME = "lv_visaslemmas.out";
+            String EMBEDDINGS_LV_FILENAME = "polyglot_lv.out";
             String EMBEDDINGS_EN_FILENAME = "polyglot_en.out";
             String SYNONYMS_FILENAME = "sinonimi.txt";
             String BLACKLIST_FILENAME = "blacklist.txt";

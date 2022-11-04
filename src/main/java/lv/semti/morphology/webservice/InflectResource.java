@@ -122,10 +122,12 @@ public class InflectResource extends ServerResource {
 		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); showAttrs.add(AttributeNames.i_Derivative);
 		//nouns
 		showAttrs.add(AttributeNames.i_Case); showAttrs.add(AttributeNames.i_Number); showAttrs.add(AttributeNames.i_Gender); showAttrs.add(AttributeNames.i_Declension);
-		//verbs/particibles
+		//verbs/participles
 		showAttrs.add(AttributeNames.i_Person); showAttrs.add(AttributeNames.i_Izteiksme); showAttrs.add(AttributeNames.i_Laiks); showAttrs.add(AttributeNames.i_Voice); showAttrs.add(AttributeNames.i_Konjugaacija); showAttrs.add(AttributeNames.i_Noliegums);
 		//adjectives
 		showAttrs.add(AttributeNames.i_Degree); showAttrs.add(AttributeNames.i_Definiteness);
+		// usage restrictions are necessary for distinguishing which forms to use/show
+		showAttrs.add(AttributeNames.i_Frequency); showAttrs.add(AttributeNames.i_Usage);
 
 		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
@@ -157,19 +159,20 @@ public class InflectResource extends ServerResource {
 					formas = MorphoServer.analyzer.generateInflections(word.getToken()); // normal case of building just from the token
 
 			} else {
-                if ((paradigmID == 15 || paradigmID == 18) && stem1 != null && stem2 != null && stem3 != null) {
-                    // For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
-                    formas = multistem_generate(word.getToken(), paradigmID, stem1, stem2, stem3);
-                } else {
-                    // if a specific paradigm is passed, inflect according to that
-                    formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), paradigmID, lemmaAttrs);
-                }
-            }
+				if ((paradigmID == 15 || paradigmID == 18) && stem1 != null && stem2 != null && stem3 != null) {
+					// For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
+					formas = multistem_generate(word.getToken(), paradigmID, stem1, stem2, stem3);
+				} else {
+					// if a specific paradigm is passed, inflect according to that
+					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), paradigmID, lemmaAttrs);
+				}
+			}
 
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
-                wf.lexeme = null; // so that identical forms would compare as equal
+				wf.lexeme = null; // so that identical forms would compare as equal
 			}
+
 			processedTokens.add(new LinkedHashSet<>(formas));
 		}
 		

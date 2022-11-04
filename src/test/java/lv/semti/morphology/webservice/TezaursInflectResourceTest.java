@@ -108,7 +108,8 @@ public class TezaursInflectResourceTest {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("Rīga", "7", "", "", null, null, av);
         assertEquals(1, wordforms.size());
         for (Wordform wf : wordforms.get(0)) {
-            assertNotEquals("Rīgām", wf.getToken());
+            // assertNotEquals("Rīgām", wf.getToken());
+            //        Tagad šis filtrs ir morfotabulu zīmēšanas JavaScript atbilstoši karodziņam par morfotabulas īpatnībām
         }
     }
 
@@ -156,7 +157,8 @@ public class TezaursInflectResourceTest {
         av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_SingulareTantum);
         List<Collection<Wordform>> wordforms = inflectResource.inflect("Rīga", "7", "", "", null, null, av);
         assertFormExists(wordforms, "Rīgai");
-        assertFormDoesNotExist(wordforms, "Rīgām");
+//        assertFormDoesNotExist(wordforms, "Rīgām");
+//        Tagad šis filtrs ir morfotabulu zīmēšanas JavaScript atbilstoši karodziņam par morfotabulas īpatnībām
 
         wordforms = inflectResource.inflect("miers", "1", "", "", null, null, av);
         assertFormExists(wordforms, "mieram");
@@ -169,6 +171,14 @@ public class TezaursInflectResourceTest {
         av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_PlurareTantum);
         List<Collection<Wordform>> wordforms = inflectResource.inflect("abēji", "13", "", "", null, null, av);
         assertFormExists(wordforms, "abējiem");
+    }
+
+    @Test
+    public void morfotabulu_īpatnības() {
+        AttributeValues av = new AttributeValues();
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("Foboss", "1", "", "", null, null, av);
+        assertFormExists(wordforms, "Fobosiem");
+        // Mēs gribam lai webserviss šo formu atgriež, bet tēzaura tabulu zīmētājs pēc tam to ignorē
     }
 
 }
