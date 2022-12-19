@@ -5,7 +5,7 @@
 	<groupId>lv.ailab.morphology</groupId>
 	<artifactId>webservices</artifactId>
 	<packaging>jar</packaging>
-	<version>2.2.6-SNAPSHOT</version>
+	<version>2.2.7</version>
 	<name>Tēzaurs.lv Webservice API</name>
 	<description>Webservice API for Tēzaurs.lv and other ailab.lv Latvian computational linguistic tools</description>
 	<url>https://github.com/LUMII-AILab/Webservices</url>
@@ -32,6 +32,13 @@
 		<url>git@github.com:LUMII-AILab/Webservices.git</url>
 	</scm>
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<restlet-version>2.4.1</restlet-version>
@@ -40,12 +47,12 @@
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>morphology</artifactId>
-			<version>2.2.6-SNAPSHOT</version>
+			<version>2.2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>tagger</artifactId>
-			<version>2.2.1</version>
+			<version>2.2.7</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
@@ -55,7 +62,7 @@
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>lvsegmenter</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
@@ -91,7 +98,7 @@
 		<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.2.4</version>
+            <version>2.10</version>
         </dependency>
 	</dependencies>
 
@@ -113,6 +120,14 @@
 				<configuration>
 					<forkMode>once</forkMode>
 					<argLine>-Xms6g -Xmx6g</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<rules><dependencyConvergence/></rules>
 				</configuration>
 			</plugin>
 			<plugin>

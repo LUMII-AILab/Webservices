@@ -25,7 +25,6 @@ public class TezaursCorpusResourceTest {
         String example_string = examples.stream()
                 .map(Example::toString)
                 .collect(Collectors.joining(", "));
-        System.out.println(example_string);
         assertFalse(example_string.contains("Eroglu"));
     }
 }

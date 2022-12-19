@@ -1,5 +1,6 @@
 package lv.semti.morphology.webservice;
 
+import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  */
 public class TezaursInflectResourceTest {
     private static InflectResource inflectResource;
+    private static WordResource wordResource;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception{
@@ -24,6 +26,7 @@ public class TezaursInflectResourceTest {
         MorphoServer.enableCorpus = false;
         MorphoServer.initResources();
         inflectResource = new InflectResource();
+        wordResource = new WordResource();
     }
 
     private void assertFormExists(List<Collection<Wordform>> wordforms, String form) {
@@ -74,9 +77,9 @@ public class TezaursInflectResourceTest {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("augstpapēžu", "49", "", "", null, null, new AttributeValues());
         assertEquals(1, wordforms.size());
         assertNotEquals(0, wordforms.get(0).size());
-        for (Wordform wf : wordforms.get(0)) {
-            wf.describe();
-        }
+//        for (Wordform wf : wordforms.get(0)) {
+//            wf.describe();
+//        }
     }
 
     @Test
@@ -181,4 +184,15 @@ public class TezaursInflectResourceTest {
         // Mēs gribam lai webserviss šo formu atgriež, bet tēzaura tabulu zīmētājs pēc tam to ignorē
     }
 
+    @Test
+    public void ticket_125() throws Exception {
+        // nez kāpēc nestrādā atpazīšana atsevišķiem vārdiem, ja tos padod ar lielo burtu
+        Word w = MorphoServer.analyzer.analyze("krūšu");
+        assertTrue(w.isRecognized());
+
+        w = MorphoServer.analyzer.analyze("Krūšu");
+        assertTrue(w.isRecognized());
+        w.describe(System.out);
+//        System.out.println(wordResource.toJSON(w.wordforms, null) );
+    }
 }
