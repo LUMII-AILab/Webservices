@@ -140,6 +140,7 @@ public class MorphoServer {
         // Then attach it to the local host
         component.getDefaultHost().attach("/", RootResource.class);
 
+        component.getDefaultHost().attach("/version", VersionResource.class);
         component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
