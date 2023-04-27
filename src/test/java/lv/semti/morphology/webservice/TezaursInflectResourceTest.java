@@ -64,6 +64,23 @@ public class TezaursInflectResourceTest {
     }
 
     @Test
+    public void testMultipleStemsWithSpace() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("jaust", "15", "", "jaus", "jauš, jauž", "jaut, jaud", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
+        filtrs.addAttribute(AttributeNames.i_Izteiksme, AttributeNames.v_Iisteniibas);
+        filtrs.addAttribute(AttributeNames.i_Person, "2");
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
+        filtrs.addAttribute(AttributeNames.i_Laiks, AttributeNames.v_Tagadne);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            wf.describe();
+            assertNotEquals(" jaud", wf.getToken());
+        }
+    }
+
+    @Test
     public void turpms() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("turpmāks", "13", "", "turpmāk", null, null, new AttributeValues());
         assertEquals(1, wordforms.size());

@@ -180,6 +180,16 @@ public class InflectResource extends ServerResource {
 		return processedTokens;
 	}
 
+
+	/**
+	 * Generates wordforms with the assumption that "stemX" may contain multiple alternate stem options separated by a comma
+	 * @param token
+	 * @param paradigmID
+	 * @param stem1
+	 * @param stem2
+	 * @param stem3
+	 * @return
+	 */
     private List<Wordform> multistem_generate(String token, Integer paradigmID, String stem1, String stem2, String stem3) {
         if (stem2.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
@@ -189,14 +199,14 @@ public class InflectResource extends ServerResource {
                 String matching_stem3 = stem3;
                 if (i<stems3.length)
                     matching_stem3 = stems3[i];
-                formas.addAll(multistem_generate(token, paradigmID, stem1, stems2[i], matching_stem3));
+                formas.addAll(multistem_generate(token, paradigmID, stem1, stems2[i].trim(), matching_stem3.trim()));
             }
             return formas;
         }
         if (stem3.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
             for (String stem : stem3.split(",")) {
-                formas.addAll(multistem_generate(token, paradigmID, stem1, stem2, stem));
+                formas.addAll(multistem_generate(token, paradigmID, stem1, stem2, stem.trim()));
             }
             return formas;
         }
