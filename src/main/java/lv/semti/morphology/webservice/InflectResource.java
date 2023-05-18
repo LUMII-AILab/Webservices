@@ -21,12 +21,14 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
 
+import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.analyzer.Splitting;
 import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 
 import lv.semti.morphology.attributes.AttributeValues;
+import lv.semti.morphology.lexicon.Paradigm;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -94,28 +96,40 @@ public class InflectResource extends ServerResource {
         return lemmaAttrs;
     }
 
-    public List<Collection<Wordform>> inflect(String query, String paradigm, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
+    public List<Collection<Wordform>> inflect(String query, String paradigm_param, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
-		Integer paradigmID = null;
-		if (paradigm != null) paradigmID = Integer.decode(paradigm);
+
+		Analyzer analyzer = MorphoServer.analyzer;
+		Paradigm paradigm = null;
+		if (paradigm_param != null) {
+			try {
+				int paradigmID = Integer.decode(paradigm_param);
+				paradigm = analyzer.paradigmByID(paradigmID);
+			} catch (NumberFormatException e) {
+				// Using paradigm names
+				if (paradigm_param.endsWith("ltg")) {
+					analyzer = MorphoServer.latgalian_analyzer;
+				}
+				paradigm = analyzer.paradigmByName(paradigm_param);
+			}
+		}
 
 		boolean guess = true;
 		if ("false".equalsIgnoreCase(guess_param)) {
 			guess = false;
 		}
 
-		MorphoServer.analyzer.enableGuessing = guess;
-		MorphoServer.analyzer.enableVocative = true;
-		MorphoServer.analyzer.guessVerbs = false;
-		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessAdjectives = false;
-		MorphoServer.analyzer.guessInflexibleNouns = guess;
-		MorphoServer.analyzer.enableAllGuesses = guess;
+		analyzer.enableGuessing = guess;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = false;
+		analyzer.guessParticiples = false;
+		analyzer.guessAdjectives = false;
+		analyzer.guessInflexibleNouns = guess;
+		analyzer.enableAllGuesses = guess;
 
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		//FIXME - this set is not appropriate for inflecting verbs and others... 
@@ -135,7 +149,7 @@ public class InflectResource extends ServerResource {
 		for (Word word : tokens) {
 			List<Wordform> formas;
 
-			if (paradigmID == null) { // no specific options passed
+			if (paradigm == null) { // no specific options passed or not found
 				// checking for special case of common-gender nouns of 4th/5th declension - 'paziņa', 'auša', 'bende'
 				boolean male_4th = false;
 				boolean female_4th = false;
@@ -150,21 +164,21 @@ public class InflectResource extends ServerResource {
 //				word.describe(new PrintWriter(System.out));
 //				System.out.printf("Inflectresource: vārds %s.  male4:%b  female4:%b   male5:%b   female5:%b\n", word.getToken(), male_4th, female_4th, male_5th, female_5th);
 				if (male_4th && female_4th) { // if so, then build both inflections and merge their forms.
-					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 7, lemmaAttrs);
-					formas.addAll(MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 8, lemmaAttrs));
+					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), 7, lemmaAttrs);
+					formas.addAll(analyzer.generateInflectionsFromParadigm(word.getToken(), 8, lemmaAttrs));
 				} else if (male_5th && female_5th) { 
-					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 9, lemmaAttrs);
-					formas.addAll(MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), 10, lemmaAttrs));
+					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), 9, lemmaAttrs);
+					formas.addAll(analyzer.generateInflectionsFromParadigm(word.getToken(), 10, lemmaAttrs));
 				} else 
-					formas = MorphoServer.analyzer.generateInflections(word.getToken()); // normal case of building just from the token
+					formas = analyzer.generateInflections(word.getToken()); // normal case of building just from the token
 
 			} else {
-				if ((paradigmID == 15 || paradigmID == 18) && stem1 != null && stem2 != null && stem3 != null) {
+				if ((paradigm.getStems()>1) && stem1 != null && stem2 != null && stem3 != null) {
 					// For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
-					formas = multistem_generate(word.getToken(), paradigmID, stem1, stem2, stem3);
+					formas = multistem_generate(word.getToken(), paradigm.getID(), stem1, stem2, stem3);
 				} else {
 					// if a specific paradigm is passed, inflect according to that
-					formas = MorphoServer.analyzer.generateInflectionsFromParadigm(word.getToken(), paradigmID, lemmaAttrs);
+					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), paradigm.getID(), lemmaAttrs);
 				}
 			}
 
@@ -176,7 +190,7 @@ public class InflectResource extends ServerResource {
 			processedTokens.add(new LinkedHashSet<>(formas));
 		}
 		
-		MorphoServer.analyzer.defaultSettings();
+		analyzer.defaultSettings();
 		return processedTokens;
 	}
 

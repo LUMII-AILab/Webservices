@@ -212,4 +212,33 @@ public class TezaursInflectResourceTest {
         w.describe(System.out);
 //        System.out.println(wordResource.toJSON(w.wordforms, null) );
     }
+
+    @Test
+    public void paradigm_names() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("ceļš", "noun-1b", "", null, null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
+        filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            assertEquals("ceļiem", wf.getToken());
+        }
+    }
+
+    @Test
+    public void latgalian() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("kuorklys", "noun-1b-ltg", "", null, null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
+        filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            assertEquals("kuorklim", wf.getToken());
+        }
+    }
+
 }

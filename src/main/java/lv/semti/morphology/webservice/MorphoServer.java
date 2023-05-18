@@ -40,6 +40,7 @@ import java.util.Properties;
 
 public class MorphoServer {
 	static Analyzer analyzer;
+    static Analyzer latgalian_analyzer;
 	static Transliterator translit;
 	static TagSet tagset;
 //	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
@@ -53,6 +54,7 @@ public class MorphoServer {
     static public boolean enableCorpus = true;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
+    static public boolean enableLatgalian = true;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -220,6 +222,11 @@ public class MorphoServer {
     public static void initResources() throws Exception {
         analyzer = new Analyzer(false);
         analyzer.setCacheSize(1000);
+
+        if (enableLatgalian) {
+            latgalian_analyzer = new Analyzer("Latgalian.xml", false);
+            latgalian_analyzer.setCacheSize(100);
+        }
 
         tagset = TagSet.getTagSet();
 
