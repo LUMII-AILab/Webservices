@@ -241,4 +241,17 @@ public class TezaursInflectResourceTest {
         }
     }
 
+    @Test
+    public void latgalian_pasauļs() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("pasauļs", "noun-2a-ltg", "", null, null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
+        filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Accusative);
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            assertEquals("pasauli", wf.getToken());
+        }
+    }
 }

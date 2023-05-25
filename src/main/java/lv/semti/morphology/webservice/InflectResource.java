@@ -143,7 +143,7 @@ public class InflectResource extends ServerResource {
 		// usage restrictions are necessary for distinguishing which forms to use/show
 		showAttrs.add(AttributeNames.i_Frequency); showAttrs.add(AttributeNames.i_Usage);
 
-		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
+		List<Word> tokens = Splitting.tokenize(analyzer, query);
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
 		
 		for (Word word : tokens) {
@@ -175,7 +175,7 @@ public class InflectResource extends ServerResource {
 			} else {
 				if ((paradigm.getStems()>1) && stem1 != null && stem2 != null && stem3 != null) {
 					// For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
-					formas = multistem_generate(word.getToken(), paradigm.getID(), stem1, stem2, stem3);
+					formas = multistem_generate(analyzer, word.getToken(), paradigm.getID(), stem1, stem2, stem3);
 				} else {
 					// if a specific paradigm is passed, inflect according to that
 					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), paradigm.getID(), lemmaAttrs);
@@ -204,7 +204,7 @@ public class InflectResource extends ServerResource {
 	 * @param stem3
 	 * @return
 	 */
-    private List<Wordform> multistem_generate(String token, Integer paradigmID, String stem1, String stem2, String stem3) {
+    private List<Wordform> multistem_generate(Analyzer analyzer, String token, Integer paradigmID, String stem1, String stem2, String stem3) {
         if (stem2.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
             String[] stems2 = stem2.split(",");
@@ -213,19 +213,19 @@ public class InflectResource extends ServerResource {
                 String matching_stem3 = stem3;
                 if (i<stems3.length)
                     matching_stem3 = stems3[i];
-                formas.addAll(multistem_generate(token, paradigmID, stem1, stems2[i].trim(), matching_stem3.trim()));
+                formas.addAll(multistem_generate(analyzer, token, paradigmID, stem1, stems2[i].trim(), matching_stem3.trim()));
             }
             return formas;
         }
         if (stem3.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
             for (String stem : stem3.split(",")) {
-                formas.addAll(multistem_generate(token, paradigmID, stem1, stem2, stem.trim()));
+                formas.addAll(multistem_generate(analyzer, token, paradigmID, stem1, stem2, stem.trim()));
             }
             return formas;
         }
 //        System.out.printf("%s\t%s\t%s\n", stem1, stem2, stem3);
-        return MorphoServer.analyzer.generateInflectionsFromParadigm(token, paradigmID, stem1, stem2, stem3);
+        return analyzer.generateInflectionsFromParadigm(token, paradigmID, stem1, stem2, stem3);
     }
 
     private String formatJSON(Collection<String> tags) {
