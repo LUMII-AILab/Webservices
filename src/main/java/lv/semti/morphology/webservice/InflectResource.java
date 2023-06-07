@@ -116,6 +116,10 @@ public class InflectResource extends ServerResource {
 				}
 				paradigm = analyzer.paradigmByName(paradigm_param);
 			}
+
+			if (paradigm == null) {
+				System.err.printf("Could not find paradigm '%s'\n", paradigm_param);
+			}
 		}
 
 		boolean guess = true;

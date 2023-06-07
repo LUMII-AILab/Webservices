@@ -254,4 +254,12 @@ public class TezaursInflectResourceTest {
             assertEquals("pasauli", wf.getToken());
         }
     }
+
+    // https://github.com/PeterisP/morphology/issues/132
+    @Test
+    public void ticket_132() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("paģisties", "verb-1r", "", "paģis", "paģied", "paģid", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+    }
 }
