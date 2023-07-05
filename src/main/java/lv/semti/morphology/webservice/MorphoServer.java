@@ -51,9 +51,10 @@ public class MorphoServer {
 	static public boolean enableTransliterator = false;
     static public boolean enableDomeniims = false;
     static public boolean enableTezaurs = false;
-    static public boolean enableCorpus = true;
+    static public boolean enableCorpus = false;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
+    static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
 	static private int port = 8182;
 
@@ -63,18 +64,38 @@ public class MorphoServer {
 				enableTransliterator = true;
 				System.out.println("Transliteration services enabled");
 			}
+            if (args[i].equalsIgnoreCase("-notransliterator")) {
+                enableTransliterator = false;
+                System.out.println("Transliteration services disabled");
+            }
             if (args[i].equalsIgnoreCase("-domeniims")) {
                 enableDomeniims = true;
                 System.out.println("Domain name alternative generator enabled");
+            }
+            if (args[i].equalsIgnoreCase("-nodomeniims")) {
+                enableDomeniims = true;
+                System.out.println("Domain name alternative generator disabled");
             }
             if (args[i].equalsIgnoreCase("-tezaurs")) {
                 enableTezaurs = true;
                 System.out.println("Tezaurs.lv data enabled");
             }
+            if (args[i].equalsIgnoreCase("-notezaurs")) {
+                enableTezaurs = true;
+                System.out.println("Tezaurs.lv data disabled");
+            }
+            if (args[i].equalsIgnoreCase("-tagger")) {
+                enableTagger = false;
+                System.out.println("Tagger functionality enabled");
+            }
 			if (args[i].equalsIgnoreCase("-notagger")) {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
 			}
+            if (args[i].equalsIgnoreCase("-corpus")) {
+                enableTagger = false;
+                System.out.println("Corpus example data enabled");
+            }
             if (args[i].equalsIgnoreCase("-nocorpus")) {
                 enableTagger = false;
                 System.out.println("Corpus example data disabled");
@@ -82,6 +103,18 @@ public class MorphoServer {
             if (args[i].equalsIgnoreCase("-nertagger")) {
                 enableNERTagger = true;
                 System.out.println("NER tagger enabled");
+            }
+            if (args[i].equalsIgnoreCase("-nonertagger")) {
+                enableNERTagger = true;
+                System.out.println("NER tagger disabled");
+            }
+            if (args[i].equalsIgnoreCase("-transcription")) {
+                enableNERTagger = true;
+                System.out.println("Transcription service enabled");
+            }
+            if (args[i].equalsIgnoreCase("-notranscription")) {
+                enableNERTagger = true;
+                System.out.println("Transcription service disabled");
             }
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
@@ -99,13 +132,14 @@ public class MorphoServer {
 			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
 				System.out.println("\nCommand line options:");
-				System.out.println("\t-transliterator : enable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
-                System.out.println("\t-domeniims : enable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
-                System.out.println("\t-tezaurs : enable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
-                System.out.println("\t-nertagger : enable NER tagger webservice");
-                System.out.println("\t-notagger : disable morphosyntactic tagger functionality to reduce memory usage");
-                System.out.println("\t-nocorpus : disable corpus example functionality to reduce memory usage");
-				System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
+				System.out.println("\t-transliterator & -notransliterator : enable/disable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
+                System.out.println("\t-domeniims & -nodomeniims : enable/disable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
+                System.out.println("\t-tezaurs & -notezaurs : enable/disable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
+                System.out.println("\t-nertagger & -nonertagger : enable/disable NER tagger webservice");
+                System.out.println("\t-tagger &-notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
+                System.out.println("\t-corpus & -nocorpus : enable/disable corpus example functionality to reduce memory usage");
+                System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
+                System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
 				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
@@ -175,8 +209,10 @@ public class MorphoServer {
             component.getDefaultHost().attach("/nerpeople/{query}", NERPeopleResource.class);
         }
 
-        component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
-        component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
+        if (enableTranscription) {
+            component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
+            component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
+        }
 
         if (enableDomeniims) {
             if (enableTagger) {

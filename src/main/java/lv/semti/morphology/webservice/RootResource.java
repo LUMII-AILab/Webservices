@@ -36,10 +36,14 @@ public class RootResource extends ServerResource {
         addLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize : tokenization of sentences");
         addLink(sb, "verbs/domai", "/verbs/[query] and /neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
         addLink(sb, "v1/inflections/rakt", "/v1/inflections/[query] : generate all inflectional forms of a lemma");
+        addLink(sb, "v1/inflections/aita?paradigm=noun-4f", "/v1/inflections/[query]&amp;paradigm=[paradigm name] : generate all inflectional forms of a lemma according to the given paradigm");
+        addLink(sb, "v1/inflections/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "/v1/inflections/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem] : generate all inflectional forms of a verb from a 1st conjunction");
         addLink(sb, "inflect/xml/rakt", "/inflect/[format]/[query] : generate all inflectional forms of a lemma");
         addLink(sb, "inflect/json/en/rakt", "/inflect/[format]/[language]/[query] : generate all inflectional forms of a lemma");
         addLink(sb, "suitable_paradigm/pokemonizators", "/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
-        addLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi?phoneme_set=IPA", "/v1/transcriptions/[phrase] : phonetic transcription of the phrase");
+        if (MorphoServer.enableTranscription) {
+            addLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi?phoneme_set=IPA", "/v1/transcriptions/[phrase] : phonetic transcription of the phrase");
+        }
         if (MorphoServer.enableCorpus) {
             addLink(sb, "v1/examples/doma", "/v1/examples/[query] : provides a list of corpus mentions of the queried word");
         }
