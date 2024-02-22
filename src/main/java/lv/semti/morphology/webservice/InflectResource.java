@@ -145,7 +145,7 @@ public class InflectResource extends ServerResource {
 		//adjectives
 		showAttrs.add(AttributeNames.i_Degree); showAttrs.add(AttributeNames.i_Definiteness);
 		// usage restrictions are necessary for distinguishing which forms to use/show
-		showAttrs.add(AttributeNames.i_Frequency); showAttrs.add(AttributeNames.i_Usage);
+		showAttrs.add(AttributeNames.i_Frequency); showAttrs.add(AttributeNames.i_Usage); showAttrs.add(AttributeNames.i_Normative);
 
 		List<Word> tokens = Splitting.tokenize(analyzer, query);
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
