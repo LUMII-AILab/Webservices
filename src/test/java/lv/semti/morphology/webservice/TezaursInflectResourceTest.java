@@ -262,4 +262,13 @@ public class TezaursInflectResourceTest {
         assertEquals(1, wordforms.size());
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
     }
+
+
+    // 2.5.2 bija errors The connection was broken. It was probably closed by the client. Reason: Broken pipe
+    @Test
+    public void connectionbroken() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("paaut", "verb-1", "", "paau", "paauj,paaun", "paāv", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+    }
 }
