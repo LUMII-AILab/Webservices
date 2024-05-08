@@ -177,8 +177,9 @@ public class InflectResource extends ServerResource {
 					formas = analyzer.generateInflections(word.getToken()); // normal case of building just from the token
 
 			} else {
-				if ((paradigm.getStems()>1) && stem1 != null && stem2 != null && stem3 != null) {
-					// For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
+//				if ((paradigm.getStems()>1) && stem1 != null && stem2 != null && stem3 != null) {
+//					// For 1st conjugation verbs, if all three stems are passed, then try to use them for inflection
+				if ( (stem1 != null && !stem1.equalsIgnoreCase("")) || (stem2 != null && stem2.equalsIgnoreCase("")) || (stem3 != null && stem3.equalsIgnoreCase(""))) {
 					formas = multistem_generate(analyzer, word.getToken(), paradigm.getID(), stem1, stem2, stem3);
 				} else {
 					// if a specific paradigm is passed, inflect according to that
@@ -209,7 +210,7 @@ public class InflectResource extends ServerResource {
 	 * @return
 	 */
     private List<Wordform> multistem_generate(Analyzer analyzer, String token, Integer paradigmID, String stem1, String stem2, String stem3) {
-        if (stem2.contains(",")) {
+        if (stem2 != null && stem2.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
             String[] stems2 = stem2.split(",");
             String[] stems3 = stem3.split(",");
@@ -221,7 +222,7 @@ public class InflectResource extends ServerResource {
             }
             return formas;
         }
-        if (stem3.contains(",")) {
+        if (stem3 != null && stem3.contains(",")) {
             List<Wordform> formas = new LinkedList<>();
             for (String stem : stem3.split(",")) {
                 formas.addAll(multistem_generate(analyzer, token, paradigmID, stem1, stem2, stem.trim()));

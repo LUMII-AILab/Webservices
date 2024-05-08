@@ -271,4 +271,18 @@ public class TezaursInflectResourceTest {
         assertEquals(1, wordforms.size());
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
     }
+
+    @Test
+    public void latgalian_vargani() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("vargani", "noun-1a-ltg", "", "vargan", null, null, new AttributeValues());
+        assertEquals(1, wordforms.size());
+        AttributeValues filtrs = new AttributeValues();
+        filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
+        filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Genitive);
+        filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
+        for (Wordform wf : wordforms.get(0)) {
+            if (!wf.isMatchingWeak(filtrs)) continue;
+            assertEquals("varganu", wf.getToken());
+        }
+    }
 }
