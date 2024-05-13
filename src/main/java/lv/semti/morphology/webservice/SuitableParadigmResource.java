@@ -17,6 +17,7 @@
  *******************************************************************************/
 package lv.semti.morphology.webservice;
 
+import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeValues;
@@ -44,10 +45,11 @@ public class SuitableParadigmResource extends ServerResource {
 			e.printStackTrace();
 		}
 
-		MorphoServer.analyzer.guessAllParadigms = true;
-		MorphoServer.analyzer.enableAllGuesses = true;
-		List<Paradigm> paradigms = MorphoServer.analyzer.suitableParadigms(query);
-		MorphoServer.analyzer.defaultSettings();
+		Analyzer analyzer = MorphoServer.getAnalyzer();
+		analyzer.guessAllParadigms = true;
+		analyzer.enableAllGuesses = true;
+		List<Paradigm> paradigms = analyzer.suitableParadigms(query);
+		analyzer.defaultSettings();
 		return toJSON(paradigms);
 	}
 	

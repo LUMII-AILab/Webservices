@@ -58,7 +58,7 @@ public class MorphoTaggerResource extends ServerResource {
 			outputType = outputTypes.JSON;
 
 		String out = output(sentence, outputType);
-		MorphoServer.analyzer.defaultSettings();
+		MorphoServer.getAnalyzer().defaultSettings(); // FIXME - nesapratu, kāpēc un vai tas ir vajadzīgs
 		return out;
 	}
 	

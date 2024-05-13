@@ -26,7 +26,7 @@ import org.restlet.resource.ServerResource;
 public class VersionResource extends ServerResource {
 	@Get
 	public Representation retrieve() {
-		return new StringRepresentation(MorphoServer.analyzer.getRevision(), MediaType.TEXT_HTML);
+		return new StringRepresentation(MorphoServer.getAnalyzer().getRevision(), MediaType.TEXT_HTML);
 	}
 
 }

@@ -103,7 +103,7 @@ public class InflectResource extends ServerResource {
 			e.printStackTrace();
 		}
 
-		Analyzer analyzer = MorphoServer.analyzer;
+		Analyzer analyzer = MorphoServer.getAnalyzer();
 		Paradigm paradigm = null;
 		if (paradigm_param != null) {
 			try {
@@ -112,7 +112,7 @@ public class InflectResource extends ServerResource {
 			} catch (NumberFormatException e) {
 				// Using paradigm names
 				if (paradigm_param.endsWith("ltg")) {
-					analyzer = MorphoServer.latgalian_analyzer;
+					analyzer = MorphoServer.getLatgalian_analyzer();
 				}
 				paradigm = analyzer.paradigmByName(paradigm_param);
 			}

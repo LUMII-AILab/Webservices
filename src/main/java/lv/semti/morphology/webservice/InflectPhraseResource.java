@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import lv.semti.morphology.analyzer.Analyzer;
 import org.json.simple.JSONObject;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -32,7 +33,7 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 public class InflectPhraseResource extends ServerResource {
 	@Get
-	public String retrieve() {
+	public synchronized String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
 		try {
@@ -42,13 +43,14 @@ public class InflectPhraseResource extends ServerResource {
 		}
 		String category = getQuery().getValues("category");
 
-		MorphoServer.analyzer.enableGuessing = true;
-		MorphoServer.analyzer.enableVocative = true;
-		MorphoServer.analyzer.guessVerbs = false;
-		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessAdjectives = true;
-		MorphoServer.analyzer.guessInflexibleNouns = true;
-		MorphoServer.analyzer.enableAllGuesses = true;
+		Analyzer analyzer = MorphoServer.getAnalyzer();
+		analyzer.enableGuessing = true;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = false;
+		analyzer.guessParticiples = false;
+		analyzer.guessAdjectives = true;
+		analyzer.guessInflexibleNouns = true;
+		analyzer.enableAllGuesses = true;
 
 		JSONObject oInflections = new JSONObject();
     	Expression e = new Expression(query, category, true); // Pieņemam, ka klients padod pamatformu
@@ -64,7 +66,7 @@ public class InflectPhraseResource extends ServerResource {
     			oInflections.put(AttributeNames.i_Gender, AttributeNames.v_Feminine);
     	}
     				
-    	MorphoServer.analyzer.defaultSettings();
+    	analyzer.defaultSettings();
 		return oInflections.toJSONString();		
 	}
 }

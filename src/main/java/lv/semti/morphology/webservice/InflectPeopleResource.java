@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.analyzer.Splitting;
 import lv.semti.morphology.analyzer.Word;
 import lv.semti.morphology.analyzer.Wordform;
@@ -67,20 +68,21 @@ public class InflectPeopleResource extends ServerResource {
 		}
 	}
 
-	private List<List<Wordform>> inflect(String query, String gender) {
+	private synchronized List<List<Wordform>> inflect(String query, String gender) {
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
-		MorphoServer.analyzer.enableGuessing = true;
-		MorphoServer.analyzer.enableVocative = true;
-		MorphoServer.analyzer.guessVerbs = false;
-		MorphoServer.analyzer.guessAdjectives = true;
-		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessInflexibleNouns = true;
-		MorphoServer.analyzer.enableAllGuesses = true;
+
+		Analyzer analyzer = MorphoServer.getAnalyzer();
+		analyzer.enableGuessing = true;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = false;
+		analyzer.guessAdjectives = true;
+		analyzer.guessParticiples = false;
+		analyzer.guessInflexibleNouns = true;
+		analyzer.enableAllGuesses = true;
 		
 		LinkedList<String> showAttrs = new LinkedList<String>();
 		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
@@ -92,11 +94,11 @@ public class InflectPeopleResource extends ServerResource {
 		}
 		
 		String words = query;
-		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, words);
+		List<Word> tokens = Splitting.tokenize(analyzer, words);
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
 		
 		for (Word word : tokens) {
-			List<Wordform> formas = MorphoServer.analyzer.generateInflections(word.getToken(), true, filter);
+			List<Wordform> formas = analyzer.generateInflections(word.getToken(), true, filter);
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);
@@ -106,7 +108,7 @@ public class InflectPeopleResource extends ServerResource {
 			processedTokens.add(formas);
 		}
 		
-		MorphoServer.analyzer.defaultSettings();
+		analyzer.defaultSettings();
 		return processedTokens;
 	}
 	

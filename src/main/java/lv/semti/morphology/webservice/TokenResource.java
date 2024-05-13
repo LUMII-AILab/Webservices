@@ -68,7 +68,7 @@ public class TokenResource extends ServerResource {
 	}
 
 	private String analyze(String query) {
-		List<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
+		List<Word> tokens = Splitting.tokenize(MorphoServer.getAnalyzer(), query);
 		LinkedList<String> tokenJSON = new LinkedList<String>();
 		
 		for (Word word : tokens) {

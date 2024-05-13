@@ -41,7 +41,7 @@ public class MorphoAnalysisResource extends ServerResource {
         getResponse().setAccessControlAllowOrigin("*");
 
         JSONArray analysis = new JSONArray();
-        LinkedList<Word> tokens = Splitting.tokenize(MorphoServer.analyzer, query);
+        LinkedList<Word> tokens = Splitting.tokenize(MorphoServer.getAnalyzer(), query);
 		for (Word token : tokens) {
             analysis.put(MorphoConverter.formatToken(token, null, null));
         }

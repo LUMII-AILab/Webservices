@@ -204,10 +204,10 @@ public class TezaursInflectResourceTest {
     @Test
     public void ticket_125() throws Exception {
         // nez kāpēc nestrādā atpazīšana atsevišķiem vārdiem, ja tos padod ar lielo burtu
-        Word w = MorphoServer.analyzer.analyze("krūšu");
+        Word w = MorphoServer.getAnalyzer().analyze("krūšu");
         assertTrue(w.isRecognized());
 
-        w = MorphoServer.analyzer.analyze("Krūšu");
+        w = MorphoServer.getAnalyzer().analyze("Krūšu");
         assertTrue(w.isRecognized());
         w.describe(System.out);
 //        System.out.println(wordResource.toJSON(w.wordforms, null) );

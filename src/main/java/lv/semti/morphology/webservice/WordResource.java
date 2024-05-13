@@ -42,7 +42,7 @@ public class WordResource extends ServerResource {
 		}
 		String language = (String) getRequest().getAttributes().get("language");
 
-		Word w = MorphoServer.analyzer.analyze(query);
+		Word w = MorphoServer.getAnalyzer().analyze(query);
 		return toJSON(w.wordforms, language);
 	}
 	
@@ -63,7 +63,7 @@ public class WordResource extends ServerResource {
 	//@Get("xml")
 	public String retrieveXML() {  
 		String query = (String) getRequest().getAttributes().get("word");
-		Wordform w = MorphoServer.analyzer.analyze(query).wordforms.get(0);
+		Wordform w = MorphoServer.getAnalyzer().analyze(query).wordforms.get(0);
 		
 		StringWriter s = new StringWriter();
 		

@@ -17,10 +17,6 @@ public class SegmentResource extends ServerResource{
 			e.printStackTrace();
 		}
 
-		System.out.println(MorphoServer.alternatives);
-		System.out.println(MorphoServer.alternatives.segmenter);
-		System.out.println(MorphoServer.alternatives.segmenter.segment(query));
-		System.out.println(MorphoServer.alternatives.segmenter.segment(query).toJSON());
 		return MorphoServer.alternatives.segmenter.segment(query).toJSON();
 	}
 

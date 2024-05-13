@@ -88,18 +88,19 @@ public class NERTaggerResource extends ServerResource {
 		
 	}
 
-	static List<CoreLabel> nertag(String query) {
-        MorphoServer.analyzer.enableGuessing = true;
-        MorphoServer.analyzer.enableVocative = false;
-        MorphoServer.analyzer.guessVerbs = true;
-        MorphoServer.analyzer.guessParticiples = true;
-        MorphoServer.analyzer.guessAdjectives = true;
-        MorphoServer.analyzer.guessInflexibleNouns = true;
-        MorphoServer.analyzer.enableAllGuesses = true;
+	static synchronized List<CoreLabel> nertag(String query) {
+		Analyzer analyzer = MorphoServer.getAnalyzer();
+        analyzer.enableGuessing = true;
+        analyzer.enableVocative = false;
+        analyzer.guessVerbs = true;
+        analyzer.guessParticiples = true;
+        analyzer.guessAdjectives = true;
+        analyzer.guessInflexibleNouns = true;
+        analyzer.enableAllGuesses = true;
 
         List<CoreLabel> document = new ArrayList<CoreLabel>();
 
-        for (Word token : Splitting.tokenize(MorphoServer.analyzer, query)) {
+        for (Word token : Splitting.tokenize(analyzer, query)) {
             CoreLabel word = new CoreLabel();
             Wordform maxwf = token.getBestWordform();
 
@@ -114,7 +115,7 @@ public class NERTaggerResource extends ServerResource {
         p.set(PartOfSpeechAnnotation.class, "-");
         document.add(p);
 
-        MorphoServer.analyzer.defaultSettings();
+        analyzer.defaultSettings();
         return MorphoServer.NERclassifier.classify(document);
     }
 	

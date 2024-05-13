@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 
+import lv.semti.morphology.analyzer.Analyzer;
 import org.json.simple.JSONObject;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -40,17 +41,18 @@ public class NormalizePhraseResource extends ServerResource {
 		
 		String category = getQuery().getValues("category");
 
-		MorphoServer.analyzer.enableGuessing = true;
-		MorphoServer.analyzer.enableVocative = true;
-		MorphoServer.analyzer.guessVerbs = false;
-		MorphoServer.analyzer.guessParticiples = false;
-		MorphoServer.analyzer.guessAdjectives = false;
-		MorphoServer.analyzer.guessInflexibleNouns = true;
-		MorphoServer.analyzer.enableAllGuesses = true;
+		Analyzer analyzer = MorphoServer.getAnalyzer();
+		analyzer.enableGuessing = true;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = false;
+		analyzer.guessParticiples = false;
+		analyzer.guessAdjectives = false;
+		analyzer.guessInflexibleNouns = true;
+		analyzer.enableAllGuesses = true;
 		
     	Expression e = new Expression(query, category, false);
     	String pamatforma = e.normalize();
-    	MorphoServer.analyzer.defaultSettings();
+    	analyzer.defaultSettings();
 		return pamatforma;		
 	}
 }

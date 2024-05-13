@@ -39,8 +39,12 @@ import java.util.HashSet;
 import java.util.Properties;
 
 public class MorphoServer {
-	static Analyzer analyzer;
-    static Analyzer latgalian_analyzer;
+	static private Analyzer analyzer;
+    static synchronized Analyzer getAnalyzer() { return MorphoServer.analyzer; };
+    static synchronized void setAnalyzer(Analyzer analyzer) { MorphoServer.analyzer = analyzer; };
+    static private Analyzer latgalian_analyzer;
+    static synchronized Analyzer getLatgalian_analyzer() { return MorphoServer.latgalian_analyzer; }
+    static synchronized void setLatgalian_analyzer(Analyzer analyzer) { MorphoServer.latgalian_analyzer = analyzer; };
 	static Transliterator translit;
 	static TagSet tagset;
 //	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
@@ -177,6 +181,7 @@ public class MorphoServer {
         component.getDefaultHost().attach("/", RootResource.class);
 
         component.getDefaultHost().attach("/version", VersionResource.class);
+        component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
         component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
