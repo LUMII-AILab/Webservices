@@ -8,3 +8,5 @@ src/main/resources/tezaurs/
 /target/
 .idea/
 webservices.iml
+attributes.txt
+resources/
