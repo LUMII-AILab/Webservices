@@ -302,7 +302,7 @@ public class TezaursInflectResourceTest {
     }
 
     @Test
-    public void latgalian_pronound()
+    public void latgalian_pronouns()
     {
         List<Collection<Wordform>> es = inflectResource.inflect("es", "pron-ltg", "", "", null, null, new AttributeValues());
         assertEquals(1, es.size());
