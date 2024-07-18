@@ -139,11 +139,11 @@ public class TezaursInflectResourceTest {
         // Leksikonā no Tēzaura DB ir jābūt nonākušām nestandarta vietniekvārdu formām.
         // Tātad visiem vietniekvārdiem ir jābūt formām.
         // Gan "viņš", ko loka pēc lietvārda parauga bez specformām:
-        List<Collection<Wordform>> viņš = inflectResource.inflect("viņš", "2", "", "", null, null, new AttributeValues());
+        List<Collection<Wordform>> viņš = inflectResource.inflect("viņš", "noun-1b", "", "", null, null, new AttributeValues());
         assertEquals(1, viņš.size());
         assertTrue(viņš.get(0).size() > 1);
         // Gan "jebkas", kam būtu jābūt specformām:
-        List<Collection<Wordform>> jebkas = inflectResource.inflect("jebkas", "25", "", "", null, null, new AttributeValues());
+        List<Collection<Wordform>> jebkas = inflectResource.inflect("jebkas", "pron", "", "", null, null, new AttributeValues());
         assertEquals(1, jebkas.size());
         assertTrue(jebkas.get(0).size() > 1);
     }
@@ -299,5 +299,15 @@ public class TezaursInflectResourceTest {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("varganu", wf.getToken());
         }
+    }
+
+    @Test
+    public void latgalian_pronound()
+    {
+        List<Collection<Wordform>> es = inflectResource.inflect("es", "pron-ltg", "", "", null, null, new AttributeValues());
+        assertEquals(1, es.size());
+        // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
+        // šīm formām jānāk no tēzaura.
+        assertTrue(es.get(0).size() > 4);
     }
 }
