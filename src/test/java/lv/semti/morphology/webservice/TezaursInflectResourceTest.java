@@ -134,6 +134,21 @@ public class TezaursInflectResourceTest {
     }
 
     @Test
+    public void pronouns()
+    {
+        // Leksikonā no Tēzaura DB ir jābūt nonākušām nestandarta vietniekvārdu formām.
+        // Tātad visiem vietniekvārdiem ir jābūt formām.
+        // Gan "viņš", ko loka pēc lietvārda parauga bez specformām:
+        List<Collection<Wordform>> viņš = inflectResource.inflect("viņš", "2", "", "", null, null, new AttributeValues());
+        assertEquals(1, viņš.size());
+        assertTrue(viņš.get(0).size() > 1);
+        // Gan "jebkas", kam būtu jābūt specformām:
+        List<Collection<Wordform>> jebkas = inflectResource.inflect("jebkas", "25", "", "", null, null, new AttributeValues());
+        assertEquals(1, jebkas.size());
+        assertTrue(jebkas.get(0).size() > 1);
+    }
+
+    @Test
     public void pabija() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("pabūt", "50", "", "pabū", "", "pabij", new AttributeValues());
         assertEquals(1, wordforms.size());
