@@ -141,7 +141,7 @@ public class InflectResource extends ServerResource {
 		//nouns
 		showAttrs.add(AttributeNames.i_Case); showAttrs.add(AttributeNames.i_Number); showAttrs.add(AttributeNames.i_Gender); showAttrs.add(AttributeNames.i_Declension);
 		//verbs/participles
-		showAttrs.add(AttributeNames.i_Person); showAttrs.add(AttributeNames.i_Izteiksme); showAttrs.add(AttributeNames.i_Laiks); showAttrs.add(AttributeNames.i_Voice); showAttrs.add(AttributeNames.i_Konjugaacija); showAttrs.add(AttributeNames.i_Noliegums);
+		showAttrs.add(AttributeNames.i_Person); showAttrs.add(AttributeNames.i_Mood); showAttrs.add(AttributeNames.i_Tense); showAttrs.add(AttributeNames.i_Voice); showAttrs.add(AttributeNames.i_Konjugaacija); showAttrs.add(AttributeNames.i_Noliegums);
 		//adjectives
 		showAttrs.add(AttributeNames.i_Degree); showAttrs.add(AttributeNames.i_Definiteness);
 		// usage restrictions are necessary for distinguishing which forms to use/show

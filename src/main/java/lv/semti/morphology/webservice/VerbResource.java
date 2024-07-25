@@ -87,7 +87,7 @@ public class VerbResource extends ServerResource {
 			if (maxwf.isMatchingStrong(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb)) {  // Verbiem tagi ar verba personu
 				String person = maxwf.getValue(AttributeNames.i_Person);
 				if (person != null && person.length() == 1) tags.add("V" + person);
-				if (maxwf.isMatchingStrong(AttributeNames.i_Izteiksme, AttributeNames.v_Nenoteiksme)) tags.add("Inf");
+				if (maxwf.isMatchingStrong(AttributeNames.i_Mood, AttributeNames.v_Infinitive)) tags.add("Inf");
 				
 				Collections.addAll(tags, "V1","V2","V3","Inf");
 			}

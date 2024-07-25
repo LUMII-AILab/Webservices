@@ -52,10 +52,10 @@ public class TezaursInflectResourceTest {
         assertEquals(1, wordforms.size());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
-        filtrs.addAttribute(AttributeNames.i_Izteiksme, AttributeNames.v_Iisteniibas);
+        filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
         filtrs.addAttribute(AttributeNames.i_Person, "2");
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
-        filtrs.addAttribute(AttributeNames.i_Laiks, AttributeNames.v_Tagadne);
+        filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Present);
         for (Wordform wf : wordforms.get(0)) {
             if (!wf.isMatchingWeak(filtrs)) continue;
 //            wf.describe();
@@ -69,10 +69,10 @@ public class TezaursInflectResourceTest {
         assertEquals(1, wordforms.size());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
-        filtrs.addAttribute(AttributeNames.i_Izteiksme, AttributeNames.v_Iisteniibas);
+        filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
         filtrs.addAttribute(AttributeNames.i_Person, "2");
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
-        filtrs.addAttribute(AttributeNames.i_Laiks, AttributeNames.v_Tagadne);
+        filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Present);
         for (Wordform wf : wordforms.get(0)) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             wf.describe();
@@ -154,10 +154,10 @@ public class TezaursInflectResourceTest {
         assertEquals(1, wordforms.size());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
-        filtrs.addAttribute(AttributeNames.i_Izteiksme, AttributeNames.v_Iisteniibas);
+        filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
         filtrs.addAttribute(AttributeNames.i_Person, "2");
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
-        filtrs.addAttribute(AttributeNames.i_Laiks, AttributeNames.v_Pagaatne);
+        filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Past);
         filtrs.addAttribute(AttributeNames.i_Noliegums, null);
         for (Wordform wf : wordforms.get(0)) {
             if (!wf.isMatchingWeak(filtrs)) continue;
