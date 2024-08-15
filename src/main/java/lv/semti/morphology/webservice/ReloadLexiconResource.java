@@ -1,6 +1,8 @@
 package lv.semti.morphology.webservice;
 
 import lv.semti.morphology.analyzer.Analyzer;
+import org.restlet.data.Method;
+import org.restlet.resource.Options;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
@@ -9,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.concurrent.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -171,6 +174,18 @@ public class ReloadLexiconResource extends ServerResource{
 		Date status = Reloader.attempt_reload();
 		// FIXME TODO - atgriezt statusu
 
+		return "";
+	}
+
+	@Options()
+	public String cors() {
+		getResponse().setAccessControlAllowOrigin("*");
+		HashSet<String> headersHashSet = new HashSet<>();
+		headersHashSet.add("*");
+		getResponse().setAccessControlAllowHeaders(headersHashSet);
+		HashSet<Method> methodHashSet = new HashSet<>();
+		methodHashSet.add(Method.POST);
+		getResponse().setAccessControlAllowMethods(methodHashSet);
 		return "";
 	}
 
