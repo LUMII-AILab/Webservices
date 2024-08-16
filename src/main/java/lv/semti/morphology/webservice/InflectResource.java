@@ -29,12 +29,15 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 import lv.semti.morphology.attributes.AttributeValues;
 import lv.semti.morphology.lexicon.Paradigm;
+import org.restlet.data.MediaType;
+import org.restlet.representation.Representation;
+import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 public class InflectResource extends ServerResource {
 	@Get
-	public String retrieve() {
+	public Representation retrieve() {
         getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
@@ -56,7 +59,8 @@ public class InflectResource extends ServerResource {
 				}		
 				s.write("</Elements>\n");
 			} catch (IOException e) { e.printStackTrace(); }
-			return s.toString();
+
+			return new StringRepresentation(s.toString(), MediaType.APPLICATION_XML);
 		} else {
 			List<String> tokenJSON = new LinkedList<String>();
 			for (Collection<Wordform> token : processedtokens) {
@@ -68,8 +72,9 @@ public class InflectResource extends ServerResource {
 						wordJSON.add(wf.toJSON());
 				}
 				tokenJSON.add(formatJSON(wordJSON));
-			}		
-			return formatJSON(tokenJSON);			
+			}
+			
+			return new StringRepresentation(formatJSON(tokenJSON), MediaType.APPLICATION_JSON);
 		}
 	}
 
