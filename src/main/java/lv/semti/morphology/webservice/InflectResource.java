@@ -73,7 +73,7 @@ public class InflectResource extends ServerResource {
 				}
 				tokenJSON.add(formatJSON(wordJSON));
 			}
-			
+
 			return new StringRepresentation(formatJSON(tokenJSON), MediaType.APPLICATION_JSON);
 		}
 	}
