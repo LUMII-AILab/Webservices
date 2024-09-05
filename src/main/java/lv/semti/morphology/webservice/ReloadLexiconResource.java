@@ -2,6 +2,7 @@ package lv.semti.morphology.webservice;
 
 import lv.semti.morphology.analyzer.Analyzer;
 import org.restlet.data.Method;
+import org.restlet.data.Status;
 import org.restlet.resource.Options;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
@@ -10,6 +11,7 @@ import java.io.*;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.*;
@@ -18,21 +20,38 @@ import java.nio.file.Paths;
 
 class Reloader {
 	private static String TEZAURS_DUMP_PATH = "../tezaurs_dump/";
-//	private static String TEZAURS_DUMP_PATH = "python3 tezaurs_dump/";
 
-	private static Date reloadStart = null;
-	public static synchronized Date getReloadStart() { return reloadStart; }
-	public static synchronized void setReloadStart(Date value) { reloadStart = value; }
-	public static synchronized boolean isReloadInProgress() {
+	private static Reloader latvian_reloader = null;
+	private static Reloader latgalian_reloader = null;
+
+	public static Reloader getReloader(String lexicon) {
+		if (lexicon.equalsIgnoreCase("latgalian")) {
+			if (latgalian_reloader == null) {
+				latgalian_reloader = new Reloader();
+				latgalian_reloader.latgalian = true;
+			}
+			return latgalian_reloader;
+		}
+		if (latvian_reloader == null) {
+			latvian_reloader = new Reloader();
+		}
+		return latvian_reloader;
+	}
+
+	private boolean latgalian = false;
+	private Date reloadStart = null;
+	public synchronized Date getReloadStart() { return reloadStart; }
+	public synchronized void setReloadStart(Date value) { reloadStart = value; }
+	public synchronized boolean isReloadInProgress() {
 		return reloadStart != null;
 	}
-	private static boolean needsOneMoreReload = false;
-	private static synchronized boolean getNeedsOneMoreReload() { return needsOneMoreReload; }
-	private static synchronized void setNeedsOneMoreReload(boolean value) { needsOneMoreReload = value; }
+	private boolean needsOneMoreReload = false;
+	private synchronized boolean getNeedsOneMoreReload() { return needsOneMoreReload; }
+	private synchronized void setNeedsOneMoreReload(boolean value) { needsOneMoreReload = value; }
 
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public static Date attempt_reload() {
+	public Date attempt_reload(String lexicon_name) {
 		setNeedsOneMoreReload(true);
 		Date rs = getReloadStart();
 		if (rs != null) {      // if we're already processing..
@@ -50,18 +69,23 @@ class Reloader {
 		return null;
 	}
 
-	private static void reload(){
+	private void reload(){
 		System.out.println("Starting reload at " + new Date());
 		try {
-			// Check if the file exists
-
 			String script_path = TEZAURS_DUMP_PATH+"tezaurs_dump.py";
+			// Check if the file exists
 			if (!Files.exists(Paths.get(script_path))) {
 				System.err.println("Tezaurs dump script does not exist: " + script_path);
 				return;
 			}
 			// Create ProcessBuilder with command and arguments
-			ProcessBuilder processBuilder = new ProcessBuilder("python3", script_path);
+			ProcessBuilder processBuilder;
+			if (this.latgalian) {
+				processBuilder = new ProcessBuilder("python3", script_path, "latgalian");
+			} else {
+				processBuilder = new ProcessBuilder("python3", script_path);
+			}
+
 			// Start the process
 			Process process = processBuilder.start();
 
@@ -93,20 +117,20 @@ class Reloader {
 			System.out.println("DB extract done at " + new Date());
 
 			// Copying all the required files from the dump and also from the .jar file to the same resources/ folder
-			Path sourcePath = Paths.get( "tezaurs_lexemes.json");
+			Path sourcePath;
+			String lexiconFileName;
+			if (this.latgalian) {
+				sourcePath = Paths.get( "tezaurs_latgalian.json");
+				lexiconFileName = "resources/Latgalian.xml";
+			} else {
+				sourcePath = Paths.get( "tezaurs_lexemes.json");
+				lexiconFileName = "resources/Lexicon_v2.xml";
+			}
 			if (!Files.exists(sourcePath)) {
 				System.err.println("DB extract result file not found " + sourcePath);
 				return;
 			}
 			Path targetPath = Paths.get("resources/").resolve(sourcePath.getFileName());
-			Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
-
-			sourcePath = Paths.get( "tezaurs_latgalian.json");
-			if (!Files.exists(sourcePath)) {
-				System.err.println("DB extract result file not found " + sourcePath);
-				return;
-			}
-			targetPath = Paths.get("resources/").resolve(sourcePath.getFileName());
 			Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 
 			extractResourceFromJAR("Lexicon_v2.xml");
@@ -116,13 +140,13 @@ class Reloader {
 			extractResourceFromJAR("Latgalian.xml");
 			extractResourceFromJAR("Latgalian_minicore.xml");
 
-			Analyzer analyzer = new Analyzer("resources/Lexicon_v2.xml",false);
-			analyzer.setCacheSize(1000);
-			MorphoServer.setAnalyzer(analyzer);
-			if (MorphoServer.enableLatgalian) {
-				Analyzer latgalian_analyzer = new Analyzer("Latgalian.xml", false);
-				latgalian_analyzer.setCacheSize(100);
-				MorphoServer.setLatgalian_analyzer(latgalian_analyzer);
+			Analyzer analyzer = new Analyzer(lexiconFileName,false);
+			if (this.latgalian) {
+				analyzer.setCacheSize(100);
+				MorphoServer.setLatgalian_analyzer(analyzer);
+			} else {
+				analyzer.setCacheSize(1000);
+				MorphoServer.setAnalyzer(analyzer);
 			}
 
 		} catch (Exception e) {
@@ -167,12 +191,16 @@ public class ReloadLexiconResource extends ServerResource{
 		String query = (String) getRequest().getAttributes().get("lexicon");
 		try {
 			query = URLDecoder.decode(query, "UTF8");
+			if (query.equalsIgnoreCase("latgalian") && !MorphoServer.enableLatgalian) {
+				this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
+				return "Latgalian corpus not enabled on this server";
+			}
+
+			Date status = Reloader.getReloader(query).attempt_reload(query);
+			// FIXME TODO - atgriezt statusu
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-
-		Date status = Reloader.attempt_reload();
-		// FIXME TODO - atgriezt statusu
 
 		return "";
 	}
