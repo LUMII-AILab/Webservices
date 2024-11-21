@@ -51,7 +51,7 @@ class Reloader {
 
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public Date attempt_reload(String lexicon_name) {
+	public Date attempt_reload() {
 		setNeedsOneMoreReload(true);
 		Date rs = getReloadStart();
 		if (rs != null) {      // if we're already processing..
@@ -69,7 +69,7 @@ class Reloader {
 		return null;
 	}
 
-	private void reload(){
+	protected void reload(){
 		System.out.println("Starting reload at " + new Date());
 		try {
 			String script_path = TEZAURS_DUMP_PATH+"tezaurs_dump.py";
@@ -189,6 +189,12 @@ public class ReloadLexiconResource extends ServerResource{
 	public String reload() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("lexicon");
+		String wait = (String) getRequest().getAttributes().get("wait");
+		for (String key: getRequest().getAttributes().keySet()) {
+			System.out.println(key);
+		}
+		System.out.println(query);
+		System.out.println(wait);
 		try {
 			query = URLDecoder.decode(query, "UTF8");
 			if (query.equalsIgnoreCase("latgalian") && !MorphoServer.enableLatgalian) {
@@ -196,8 +202,15 @@ public class ReloadLexiconResource extends ServerResource{
 				return "Latgalian corpus not enabled on this server";
 			}
 
-			Date status = Reloader.getReloader(query).attempt_reload(query);
-			// FIXME TODO - atgriezt statusu
+			if (wait == null) {
+				System.out.println("Not waiting");
+				Date status = Reloader.getReloader(query).attempt_reload();
+				// FIXME TODO - atgriezt statusu
+			} else {
+				System.out.println("Waiting until completion");
+				Reloader.getReloader(query).reload();
+			}
+
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}

@@ -182,6 +182,7 @@ public class MorphoServer {
 
         component.getDefaultHost().attach("/version", VersionResource.class);
         component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
+        component.getDefaultHost().attach("/reload_lexicon/{lexicon}/{wait}", ReloadLexiconResource.class);
         component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
