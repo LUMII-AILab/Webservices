@@ -5,7 +5,7 @@
 	<groupId>lv.ailab.morphology</groupId>
 	<artifactId>webservices</artifactId>
 	<packaging>jar</packaging>
-	<version>2.5.9-SNAPSHOT</version>
+	<version>2.5.10-SNAPSHOT</version>
 	<name>Tēzaurs.lv Webservice API</name>
 	<description>Webservice API for Tēzaurs.lv and other ailab.lv Latvian computational linguistic tools</description>
 	<url>https://github.com/LUMII-AILab/Webservices</url>
