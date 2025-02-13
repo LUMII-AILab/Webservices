@@ -309,5 +309,11 @@ public class TezaursInflectResourceTest {
         // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
         // šīm formām jānāk no tēzaura.
         assertTrue(es.get(0).size() > 4);
+
+        List<Collection<Wordform>> šys = inflectResource.inflect("šys", "pron-ltg", "", "", null, null, new AttributeValues());
+        assertEquals(1, šys.size());
+        // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
+        // šīm formām jānāk no tēzaura.
+        assertTrue(šys.get(0).size() > 4);
     }
 }
