@@ -198,9 +198,9 @@ public class InflectResource extends ServerResource {
 					// varbūt šīs formās ģenerēt, bet 2025-09-04 viena papildu
 					// celma padošana izraisa tēzaurā to, ka daļu formu uzģenerē
 					// vispār bez celma. Tāpēc šobrīd 2./3. konjugācijai šis ir
-					// aizpačots. + jādomā, ko ar šīm formām darīt, vai nelikt
-					// labāk kā izņēmumformas (jāprasa valodniekiem, kas ar
-					// divdabjiem).
+					// aizpačots. + jādomā, ko ar šīm formām darīt - likt
+					// izņēmumformas būtu daudz, jo Baiba apstiprināja, ka šie
+					// celmi rada arī attiecīgos divdabjus.
 				} else {
 					// if a specific paradigm is passed, inflect according to that
 					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), paradigm.getID(), lemmaAttrs);
