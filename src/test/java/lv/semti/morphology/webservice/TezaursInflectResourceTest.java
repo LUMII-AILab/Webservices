@@ -121,6 +121,17 @@ public class TezaursInflectResourceTest {
     }
 
     @Test
+    public void secondThirdConjStems() {
+        // aizmirdzēt?paradigm=verb-3a&stem1=&stem2=&stem3=mirdz
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("aizmirdzēt", "17", "", "", "", "mirdz", new AttributeValues());
+        assertFormExists(wordforms, "aizmirdzu");
+        assertFormDoesNotExist(wordforms, "nu");
+        wordforms = inflectResource.inflect("aizmirdzēt", "17", "", "", null, "mirdz", new AttributeValues());
+        assertFormExists(wordforms, "aizmirdzu");
+        assertFormDoesNotExist(wordforms, "nu");
+    }
+
+    @Test
     public void skaitļi() {
         AttributeValues av = new AttributeValues();
         av.addAttribute(AttributeNames.i_NounType, AttributeNames.v_ProperNoun);
