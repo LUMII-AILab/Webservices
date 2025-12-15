@@ -188,19 +188,22 @@ public class InflectResource extends ServerResource {
 						((stem1 != null && !stem1.equalsIgnoreCase("")) || (stem2 != null && stem2.equalsIgnoreCase("")) || (stem3 != null && stem3.equalsIgnoreCase("")))) {
 					formas = multistem_generate(analyzer, word.getToken(), paradigm.getID(), stem1, stem2, stem3);
 
-					// TODO FIXME.
-					// Te ir vairākas lietas vienā:
-					// (1) 3. konjugācijai vajag celmus,
-					// (2) laikam arī latgaliešu daudskaitliniekiem vajag celmus,
-					// (3) mēs esam kādreiz domājuši, ka 3. konjugācijas verbiem,
-					// kam LLVV ir norādīta 1. konj. paralēlforma (aizmirdzēt ->
-					// -> aizmirdzēja + aizmirdza) varētu caur celmu nodošanu
-					// varbūt šīs formās ģenerēt, bet 2025-09-04 viena papildu
-					// celma padošana izraisa tēzaurā to, ka daļu formu uzģenerē
-					// vispār bez celma. Tāpēc šobrīd 2./3. konjugācijai šis ir
-					// aizpačots. + jādomā, ko ar šīm formām darīt - likt
-					// izņēmumformas būtu daudz, jo Baiba apstiprināja, ka šie
-					// celmi rada arī attiecīgos divdabjus.
+					/* TODO FIXME.
+					Te ir vairākas lietas vienā:
+					(1) 3. konjugācijai vajag celmus,
+					(2) laikam arī latgaliešu daudskaitliniekiem vajag celmus,
+					(3) mēs esam kādreiz domājuši, ka 3. konjugācijas verbiem,
+					    kam LLVV ir norādīta 1. konj. paralēlforma (aizmirdzēt ->
+					    -> aizmirdzēja + aizmirdza) varētu caur celmu nodošanu
+					    varbūt šīs formās ģenerēt, bet 2025-09-04 viena papildu
+					    celma padošana izraisa tēzaurā to, ka daļu formu uzģenerē
+					    vispār bez celma. Tāpēc šobrīd 2./3. konjugācijai šis ir
+					    aizpačots. + jādomā, ko ar šīm formām darīt - likt
+					    izņēmumformas būtu daudz, jo Baiba apstiprināja, ka šie
+					    celmi rada arī attiecīgos divdabjus. No pagātnes celma
+					    taisa pagātnes divdabjus, no tagadnes celma - tagadnes un
+					    nelokāmos.
+					 */
 				} else {
 					// if a specific paradigm is passed, inflect according to that
 					formas = analyzer.generateInflectionsFromParadigm(word.getToken(), paradigm.getID(), lemmaAttrs);
