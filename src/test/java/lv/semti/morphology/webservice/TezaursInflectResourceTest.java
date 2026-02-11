@@ -253,6 +253,28 @@ public class TezaursInflectResourceTest {
         }
     }
 
+    // https://github.com/PeterisP/morphology/issues/132
+    @Test
+    public void ticket_132() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("paģisties", "verb-1r", "", "paģis", "paģied", "paģid", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+    }
+
+    // 2.5.2 bija errors The connection was broken. It was probably closed by the client. Reason: Broken pipe
+    @Test
+    public void connectionbroken() {
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("paaut", "verb-1", "", "paau", "paauj,paaun", "paāv", new AttributeValues());
+        assertEquals(1, wordforms.size());
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+    }
+
+    @Test
+    public void stems()
+    {
+
+    }
+
     @Test
     public void latgalian() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("kuorklys", "noun-1b-ltg", "", null, null, null, new AttributeValues());
@@ -279,23 +301,6 @@ public class TezaursInflectResourceTest {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("pasauli", wf.getToken());
         }
-    }
-
-    // https://github.com/PeterisP/morphology/issues/132
-    @Test
-    public void ticket_132() {
-        List<Collection<Wordform>> wordforms = inflectResource.inflect("paģisties", "verb-1r", "", "paģis", "paģied", "paģid", new AttributeValues());
-        assertEquals(1, wordforms.size());
-        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
-    }
-
-
-    // 2.5.2 bija errors The connection was broken. It was probably closed by the client. Reason: Broken pipe
-    @Test
-    public void connectionbroken() {
-        List<Collection<Wordform>> wordforms = inflectResource.inflect("paaut", "verb-1", "", "paau", "paauj,paaun", "paāv", new AttributeValues());
-        assertEquals(1, wordforms.size());
-        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
     }
 
     @Test

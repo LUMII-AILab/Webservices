@@ -29,6 +29,7 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 import lv.semti.morphology.attributes.AttributeValues;
 import lv.semti.morphology.lexicon.Paradigm;
+import lv.semti.morphology.lexicon.StemType;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -212,6 +213,8 @@ public class InflectResource extends ServerResource {
 
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
+				wf.addAttribute("Formas celms", wf.lexeme.getStem(wf.getEnding().stemType));
+				wf.addAttribute("Nenoteiksmes celms", wf.lexeme.getStem(StemType.STEM1));
 				wf.lexeme = null; // so that identical forms would compare as equal
 			}
 

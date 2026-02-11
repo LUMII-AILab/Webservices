@@ -20,6 +20,7 @@ package lv.semti.morphology.pipetool;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -55,16 +56,16 @@ public class WordPipe {
 		analyzer.enablePrefixes = true;
 		analyzer.enableGuessing = true;
 		analyzer.enableAllGuesses = true;
-		analyzer.meklētsalikteņus = true; 
+		analyzer.searchCompoundWords = true;
 		analyzer.setCacheSize(10000);
 		
 		Statistics statistics = Statistics.getStatistics();
 		if (full_output) statistics.lexemeWeight = 100; //overraidojam, lai nav tik liela starpiiba
 					
 		PrintStream out = new PrintStream(System.out, true, "UTF8");
-		BufferedReader in = new BufferedReader(new InputStreamReader(System.in, "UTF8"));
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 	    String s;
-	    while ((s = in.readLine()) != null && s.length() != 0) {
+	    while ((s = in.readLine()) != null && !s.isEmpty()) {
 	    	List<Word> tokens = Splitting.tokenize(analyzer, s, false);	    	
 	    	
 	    	if (!tab_output) 
