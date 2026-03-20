@@ -128,10 +128,7 @@ public class InflectResource extends ServerResource {
 			}
 		}
 
-		boolean guess = true;
-		if ("false".equalsIgnoreCase(guess_param)) {
-			guess = false;
-		}
+		boolean guess = !"false".equalsIgnoreCase(guess_param);
 
 		analyzer.enableGuessing = guess;
 		analyzer.enableVocative = true;
@@ -153,7 +150,17 @@ public class InflectResource extends ServerResource {
 		// usage restrictions are necessary for distinguishing which forms to use/show
 		showAttrs.add(AttributeNames.i_Frequency); showAttrs.add(AttributeNames.i_Usage); showAttrs.add(AttributeNames.i_Normative);
 
-		List<Word> tokens = Splitting.tokenize(analyzer, query);
+		/*
+		 * In 2026-03-20 a workaround is added to avoid tokenizer in case when
+		 * the paradigm is known. Further investigation needed on wheather the
+		 * tokenization is ever usefull at all in this place.
+		 * Lauma.
+		 */
+		Word wholeWord = new Word(query);
+		List<Word> tokens = paradigm == null
+				? Splitting.tokenize(analyzer, query)
+				: new ArrayList<Word>() {{add(wholeWord);}};
+
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
 		
 		for (Word word : tokens) {

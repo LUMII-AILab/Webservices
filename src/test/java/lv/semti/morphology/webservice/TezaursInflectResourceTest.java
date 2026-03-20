@@ -5,7 +5,6 @@ import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -261,6 +260,20 @@ public class TezaursInflectResourceTest {
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
     }
 
+    @Test
+    public void abbr_tokenization() {
+        AttributeValues av = new AttributeValues();
+        av.addAttribute(AttributeNames.i_Noliegums, AttributeNames.v_Yes);
+        List<Collection<Wordform>> wordforms = inflectResource.inflect("P.S.", "abbr", "", "", null, null, av);
+        for (Collection<Wordform> wfs : wordforms) {
+            for (Wordform wf : wfs)
+                wf.describe();
+        }
+        assertFormDoesNotExist(wordforms, "P");
+        assertFormDoesNotExist(wordforms, ".");
+        assertFormExists(wordforms, "P.S.");
+    }
+
     // 2.5.2 bija errors The connection was broken. It was probably closed by the client. Reason: Broken pipe
     @Test
     public void connectionbroken() {
@@ -269,11 +282,6 @@ public class TezaursInflectResourceTest {
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
     }
 
-    @Test
-    public void stems()
-    {
-
-    }
 
     @Test
     public void latgalian() {
