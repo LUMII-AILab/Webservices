@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class Reloader {
-	private static String TEZAURS_DUMP_PATH = "../tezaurs_dump/";
+	private static String TEZAURS_DUMP_PATH = "../TezaursMorphoDump/";
 
 	private static Reloader latvian_reloader = null;
 	private static Reloader latgalian_reloader = null;
