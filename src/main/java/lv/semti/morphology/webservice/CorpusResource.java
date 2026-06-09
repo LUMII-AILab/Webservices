@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class CorpusResource extends ServerResource {
     @Get("json")
 	public String retrieve() {

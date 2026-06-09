@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Deprecated
 public class TezaursCorpusResourceTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {

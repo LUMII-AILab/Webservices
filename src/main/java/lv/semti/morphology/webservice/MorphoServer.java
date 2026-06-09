@@ -34,10 +34,12 @@ public class MorphoServer {
     static NerPipe NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
+	@Deprecated
 	static public TaggedCorpus corpus;
 	static public boolean enableTransliterator = false;
     static public boolean enableDomeniims = false;
     static public boolean enableTezaurs = false;
+	@Deprecated
     static public boolean enableCorpus = false;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;

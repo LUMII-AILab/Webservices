@@ -8,6 +8,7 @@ import java.util.List;
  * Created by pet on 2016-01-06.
  * Reads a morphotagged corpus in the so-called 'vert' format (one token per line, tab-separated token/tag/lemma, and xml-like tags for documents, paragraphs and missing spaces between tokens
  */
+@Deprecated
 public class TaggedCorpus {
     private List<Document> documents;
 
