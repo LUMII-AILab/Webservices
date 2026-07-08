@@ -5,7 +5,7 @@
 	<groupId>lv.ailab.morphology</groupId>
 	<artifactId>webservices</artifactId>
 	<packaging>jar</packaging>
-	<version>2.202603.0</version>
+	<version>2.202603.1-SNAPSHOT</version>
 	<name>Tēzaurs.lv Webservice API</name>
 	<description>Webservice API for Tēzaurs.lv and other ailab.lv Latvian computational linguistic tools</description>
 	<url>https://github.com/LUMII-AILab/Webservices</url>
@@ -43,16 +43,50 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<restlet-version>2.4.3</restlet-version>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>with-dep</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<addClasspath>true</addClasspath>
+									<mainClass>lv.semti.morphology.webservice.MorphoServer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+						<executions>
+							<execution>
+								<id>make-my-jar-with-dependencies</id>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>morphology</artifactId>
-			<version>2.202603.0</version>
+			<version>2.202603.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>tagger</artifactId>
-			<version>2.202603.0</version>
+			<version>2.202603.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
@@ -91,14 +125,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.google.collections</groupId>
-			<artifactId>google-collections</artifactId>
-			<version>1.0</version>
+			<!-- google-collections part of guava now -->
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>33.6.0-jre</version>
 		</dependency>
 		<dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.10</version>
+            <version>2.14.0</version>
         </dependency>
 	</dependencies>
 
@@ -109,8 +144,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.3</version>
 				<configuration>
-					<source>8</source>
-					<target>8</target>
+					<source>25</source>
+					<target>25</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -144,29 +179,6 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<mainClass>lv.semti.morphology.webservice.MorphoServer</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-my-jar-with-dependencies</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>		
 	        <plugin>
 	          <groupId>org.sonatype.central</groupId>
 	          <artifactId>central-publishing-maven-plugin</artifactId>
