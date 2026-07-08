@@ -85,7 +85,7 @@ public class InflectPeopleResource extends ServerResource {
 			for (Wordform wf : formas) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);
-				name = name.substring(0, 1).toUpperCase() + name.substring(1,name.length());
+				name = name.substring(0, 1).toUpperCase() + name.substring(1);
 				wf.addAttribute(AttributeNames.i_Word, name);
 			}
 			processedTokens.add(formas);

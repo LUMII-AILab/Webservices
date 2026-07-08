@@ -2,6 +2,7 @@ package lv.semti.morphology.webservice;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,13 +23,9 @@ public class NERTaggerResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
-        List<CoreLabel> out = this.nertag(query);
+		List<CoreLabel> out = nertag(query);
         StringBuilder output = new StringBuilder();
         String prevtag = "";
 		for (CoreLabel word : out) {
@@ -36,9 +33,9 @@ public class NERTaggerResource extends ServerResource {
 			if (token.equalsIgnoreCase("<p/>")) continue;
 			String tag = word.get(AnswerAnnotation.class);
 			if (tag == null) System.err.println("tag ir null");
-			if (tag.length()<2) tag = "";
+			if (tag == null || tag.length()<2) tag = "";
 			
-			if (output.length() > 0) output.append(" ");
+			if (!output.isEmpty()) output.append(" ");
 			
 			if (!tag.equalsIgnoreCase(prevtag)) {
 				if (!prevtag.equalsIgnoreCase("")) {

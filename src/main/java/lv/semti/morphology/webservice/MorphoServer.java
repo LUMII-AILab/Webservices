@@ -32,10 +32,8 @@ public class MorphoServer {
     static NerPipe NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
-	@Deprecated
 	static public boolean enableTransliterator = false;
     static public boolean enableDomeniims = false;
-    static public boolean enableTezaurs = false;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
     static public boolean enableTranscription = false;
@@ -60,14 +58,6 @@ public class MorphoServer {
                 enableDomeniims = true;
                 System.out.println("Domain name alternative generator disabled");
             }
-            if (args[i].equalsIgnoreCase("-tezaurs")) {
-                enableTezaurs = true;
-                System.out.println("Tezaurs.lv data enabled");
-            }
-            if (args[i].equalsIgnoreCase("-notezaurs")) {
-                enableTezaurs = true;
-                System.out.println("Tezaurs.lv data disabled");
-            }
             if (args[i].equalsIgnoreCase("-tagger")) {
                 enableTagger = false;
                 System.out.println("Tagger functionality enabled");
@@ -76,14 +66,6 @@ public class MorphoServer {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
 			}
-            if (args[i].equalsIgnoreCase("-corpus")) {
-                enableTagger = false;
-                System.out.println("Corpus example data enabled");
-            }
-            if (args[i].equalsIgnoreCase("-nocorpus")) {
-                enableTagger = false;
-                System.out.println("Corpus example data disabled");
-            }
             if (args[i].equalsIgnoreCase("-nertagger")) {
                 enableNERTagger = true;
                 System.out.println("NER tagger enabled");
@@ -118,10 +100,8 @@ public class MorphoServer {
 				System.out.println("\nCommand line options:");
 				System.out.println("\t-transliterator & -notransliterator : enable/disable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
                 System.out.println("\t-domeniims & -nodomeniims : enable/disable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
-                System.out.println("\t-tezaurs & -notezaurs : enable/disable webservice for supplementary tezaurs.lv data (NB! the extra json files need to be included)");
                 System.out.println("\t-nertagger & -nonertagger : enable/disable NER tagger webservice");
                 System.out.println("\t-tagger &-notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
-                System.out.println("\t-corpus & -nocorpus : enable/disable corpus example functionality to reduce memory usage");
                 System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
@@ -137,8 +117,6 @@ public class MorphoServer {
                 System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
 				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
                 System.out.println("http://localhost:8182/domenims/[query] and http://localhost:8182/segment/[query] : (if enabled) domain name word2vec alternative genarator and segmentation");
-                System.out.println("http://localhost:8182/corpusexample/[query] : provides a list of corpus mentions of the queried word");
-                System.out.println("http://localhost:8182/words/[query] : (if enabled) provides a json representation of the queried tezaurs.lv entry");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -214,14 +192,6 @@ public class MorphoServer {
 
         component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
         component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
-
-        if (enableTezaurs) {
-            System.err.println("Šis endpoint lietoja vecā tēzaura datus, lai dotu tos kā JSON; tagad kad viss ir normālā datubāzē citā struktūrā, tad tas būtu jātaisa savādāk");
-                    // FIXME ^^^ - bet šis API pat varbūt nebūtu jāliek šeit, tas būtu no Mikus koda
-            TezaursWordResource.getEntries();
-            component.getDefaultHost().attach("/v1/words", TezaursWordResource.class);
-            component.getDefaultHost().attach("/v1/words/{query}", TezaursWordResource.class);
-        }
 
         // Set up CORS
         CorsService corsService = new CorsService();

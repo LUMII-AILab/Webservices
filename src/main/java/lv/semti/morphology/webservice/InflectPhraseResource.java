@@ -2,6 +2,7 @@ package lv.semti.morphology.webservice;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import lv.semti.morphology.analyzer.Analyzer;
@@ -19,11 +20,7 @@ public class InflectPhraseResource extends ServerResource {
 	public synchronized String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String category = getQuery().getValues("category");
 
 		Analyzer analyzer = MorphoServer.getAnalyzer();
@@ -40,7 +37,7 @@ public class InflectPhraseResource extends ServerResource {
     	//e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis
     	Map<String,String> inflections= e.getInflections();
     	for (String i_case : inflections.keySet()) {
-    		oInflections.put(i_case, inflections.get(i_case).replaceAll("'", "''"));
+    		oInflections.put(i_case, inflections.get(i_case).replace("'", "''"));
     	}
     	if (e.category == Category.hum) {
     		if (e.gender == Gender.masculine)

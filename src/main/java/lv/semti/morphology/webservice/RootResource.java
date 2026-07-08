@@ -50,10 +50,6 @@ public class RootResource extends ServerResource {
             addLink(sb, "segment/krogssala", "/domenims/[domain name] : domain name segmenter");
         }
 
-        if (MorphoServer.enableTezaurs) {
-            addLink(sb, "v1/words/doma", "/v1/words/[query] : provides a json representation of the queried tezaurs.lv entry");
-        }
-
         sb.append("</ul></body></html>");
 		return new StringRepresentation(sb.toString(), MediaType.TEXT_HTML);
 	}
