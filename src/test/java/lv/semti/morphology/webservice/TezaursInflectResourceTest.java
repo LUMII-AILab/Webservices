@@ -22,7 +22,6 @@ public class TezaursInflectResourceTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception{
         MorphoServer.enableTagger = false;
-        MorphoServer.enableCorpus = false;
         MorphoServer.initResources();
         inflectResource = new InflectResource();
         wordResource = new WordResource();

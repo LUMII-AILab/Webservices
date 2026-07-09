@@ -1,7 +1,5 @@
 package lv.semti.morphology.webservice;
-
 import lv.lumii.ner.NerPipe;
-import lv.semti.morphology.corpus.TaggedCorpus;
 import org.restlet.*;
 import org.restlet.data.*;
 
@@ -35,12 +33,9 @@ public class MorphoServer {
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
 	@Deprecated
-	static public TaggedCorpus corpus;
 	static public boolean enableTransliterator = false;
     static public boolean enableDomeniims = false;
     static public boolean enableTezaurs = false;
-	@Deprecated
-    static public boolean enableCorpus = false;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
     static public boolean enableTranscription = false;
@@ -214,11 +209,6 @@ public class MorphoServer {
             }
         }
 
-        if (enableCorpus) {
-            component.getDefaultHost().attach("/corpusexample/{query}", CorpusResource.class);
-            component.getDefaultHost().attach("/v1/examples/{query}", CorpusResource.class);
-        }
-
         component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
         component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
 
@@ -287,10 +277,6 @@ public class MorphoServer {
             alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
         }
 
-        if (enableCorpus) {
-            // Corpus to find usage examples
-            corpus = new TaggedCorpus("corpora/lvk_201809042224.vert");
-        }
     }
 
 }

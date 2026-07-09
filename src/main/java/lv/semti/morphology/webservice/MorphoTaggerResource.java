@@ -47,7 +47,7 @@ public class MorphoTaggerResource extends ServerResource {
 	
 	private static String output(List<CoreLabel> tokens, outputTypes outputType){
 		// konfigurācija tam kodam
-		String token_separator = System.getProperty("line.separator");
+		String token_separator = System.lineSeparator();
 		String field_separator = "\t";
 		boolean mini_tag = false;
 		

@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
 public class TaggerTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        MorphoServer.enableCorpus = false;
         MorphoServer.initResources();
         LVMorphologyReaderAndWriter.setAnalyzerDefaults();
     }

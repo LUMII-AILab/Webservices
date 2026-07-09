@@ -2,7 +2,7 @@ Morfoloģijas webservisu kopa
 ============================
 
 ## Priekšnosacījumi:
-Java 1.7
+Java 1.25
 
 ## Palaišana:
 `./webservice.sh`

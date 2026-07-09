@@ -27,9 +27,6 @@ public class RootResource extends ServerResource {
         if (MorphoServer.enableTranscription) {
             addLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi?phoneme_set=IPA", "/v1/transcriptions/[phrase] : phonetic transcription of the phrase");
         }
-        if (MorphoServer.enableCorpus) {
-            addLink(sb, "v1/examples/doma", "/v1/examples/[query] : provides a list of corpus mentions of the queried word");
-        }
 
         if (MorphoServer.enableTransliterator) {
             addLink(sb, "explain/vuška", "/explain/[query] : dictionary explanations of historical words");
