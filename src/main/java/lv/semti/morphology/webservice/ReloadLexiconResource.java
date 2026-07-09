@@ -9,6 +9,7 @@ import org.restlet.resource.ServerResource;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Date;
@@ -18,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class Reloader {
-	private static String TEZAURS_DUMP_PATH = "../TezaursMorphoDump/";
+	static String TEZAURS_DUMP_PATH = "../TezaursMorphoDump/";
 
 	private static Reloader latvian_reloader = null;
 	private static Reloader latgalian_reloader = null;
@@ -194,24 +195,19 @@ public class ReloadLexiconResource extends ServerResource{
 		}
 		System.out.println(query);
 		System.out.println(wait);
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-			if (query.equalsIgnoreCase("latgalian") && !MorphoServer.enableLatgalian) {
-				this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
-				return "Latgalian corpus not enabled on this server";
-			}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+		if (query.equalsIgnoreCase("latgalian") && !MorphoServer.enableLatgalian) {
+			this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
+			return "Latgalian corpus not enabled on this server";
+		}
 
-			if (wait == null) {
-				System.out.println("Not waiting");
-				Date status = Reloader.getReloader(query).attempt_reload();
-				// FIXME TODO - atgriezt statusu
-			} else {
-				System.out.println("Waiting until completion");
-				Reloader.getReloader(query).reload();
-			}
-
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+		if (wait == null) {
+			System.out.println("Not waiting");
+			Date status = Reloader.getReloader(query).attempt_reload();
+			// FIXME TODO - atgriezt statusu
+		} else {
+			System.out.println("Waiting until completion");
+			Reloader.getReloader(query).reload();
 		}
 
 		return "";

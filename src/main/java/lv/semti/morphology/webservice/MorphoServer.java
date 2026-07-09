@@ -15,17 +15,17 @@ import lv.ailab.lnb.fraktur.Transliterator;
 import org.restlet.service.CorsService;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 
 public class MorphoServer {
 	static private Analyzer analyzer;
-    static synchronized Analyzer getAnalyzer() { return MorphoServer.analyzer; };
-    static synchronized void setAnalyzer(Analyzer analyzer) { MorphoServer.analyzer = analyzer; };
+    static synchronized Analyzer getAnalyzer() { return MorphoServer.analyzer; }
+    static synchronized void setAnalyzer(Analyzer analyzer) { MorphoServer.analyzer = analyzer; }
     static private Analyzer latgalian_analyzer;
     static synchronized Analyzer getLatgalian_analyzer() { return MorphoServer.latgalian_analyzer; }
-    static synchronized void setLatgalian_analyzer(Analyzer analyzer) { MorphoServer.latgalian_analyzer = analyzer; };
+    static synchronized void setLatgalian_analyzer(Analyzer analyzer) { MorphoServer.latgalian_analyzer = analyzer; }
 	static Transliterator translit;
 	static TagSet tagset;
 //	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
@@ -38,6 +38,8 @@ public class MorphoServer {
     static public boolean enableNERTagger = false;
     static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
+	static public boolean enableLexiconReloader = false;
+	static public String MORPHO_DUMPER_PATH = "../TezaursMorphoDump/";
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -55,11 +57,11 @@ public class MorphoServer {
                 System.out.println("Domain name alternative generator enabled");
             }
             if (args[i].equalsIgnoreCase("-nodomeniims")) {
-                enableDomeniims = true;
+                enableDomeniims = false;
                 System.out.println("Domain name alternative generator disabled");
             }
             if (args[i].equalsIgnoreCase("-tagger")) {
-                enableTagger = false;
+                enableTagger = true;
                 System.out.println("Tagger functionality enabled");
             }
 			if (args[i].equalsIgnoreCase("-notagger")) {
@@ -71,17 +73,32 @@ public class MorphoServer {
                 System.out.println("NER tagger enabled");
             }
             if (args[i].equalsIgnoreCase("-nonertagger")) {
-                enableNERTagger = true;
+                enableNERTagger = false;
                 System.out.println("NER tagger disabled");
             }
             if (args[i].equalsIgnoreCase("-transcription")) {
-                enableNERTagger = true;
+                enableTranscription = true;
                 System.out.println("Transcription service enabled");
             }
             if (args[i].equalsIgnoreCase("-notranscription")) {
-                enableNERTagger = true;
+                enableTranscription = false;
                 System.out.println("Transcription service disabled");
             }
+			if (args[i].equalsIgnoreCase("-lexreloader")) {
+				enableLexiconReloader = true;
+				System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+			}
+			if (args[i].equalsIgnoreCase("-nolexreloader")) {
+				enableLexiconReloader = false;
+				System.out.println("Lexicon reloading service disabled");
+			}
+			if (args[i].length() > "-lexreloader=".length()
+					&& args[i].substring(0, "-lexreloader=".length()).equalsIgnoreCase("-lexreloader="))
+			{
+				enableLexiconReloader = true;
+				MORPHO_DUMPER_PATH = args[i].substring("-lexreloader=".length());
+				System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+			}
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
 					try {
@@ -101,8 +118,9 @@ public class MorphoServer {
 				System.out.println("\t-transliterator & -notransliterator : enable/disable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
                 System.out.println("\t-domeniims & -nodomeniims : enable/disable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
                 System.out.println("\t-nertagger & -nonertagger : enable/disable NER tagger webservice");
-                System.out.println("\t-tagger &-notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
+                System.out.println("\t-tagger & -notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
                 System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
+                System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
@@ -139,8 +157,11 @@ public class MorphoServer {
         component.getDefaultHost().attach("/", RootResource.class);
 
         component.getDefaultHost().attach("/version", VersionResource.class);
-        component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
-        component.getDefaultHost().attach("/reload_lexicon/{lexicon}/{wait}", ReloadLexiconResource.class);
+		if (enableLexiconReloader) {
+			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;
+			component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
+			component.getDefaultHost().attach("/reload_lexicon/{lexicon}/{wait}", ReloadLexiconResource.class);
+		}
         component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
@@ -196,7 +217,7 @@ public class MorphoServer {
         // Set up CORS
         CorsService corsService = new CorsService();
         corsService.setAllowingAllRequestedHeaders(true);
-        corsService.setAllowedOrigins(new HashSet(Arrays.asList("*")));
+        corsService.setAllowedOrigins(new HashSet<>(List.of("*")));
         corsService.setAllowedCredentials(true);
 
         Application application = new Application();

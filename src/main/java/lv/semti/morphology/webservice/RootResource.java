@@ -50,6 +50,12 @@ public class RootResource extends ServerResource {
             addLink(sb, "segment/krogssala", "/domenims/[domain name] : domain name segmenter");
         }
 
+        if (MorphoServer.enableLexiconReloader)
+        {
+            addLink(sb, "reload_lexicon/latgalian", "/reload_lexicon/[lexicon] : reload a lexicon from Tēzaurs DB (recognised values: \"latgalian\" for Latgalian or anything else for Standard Latvian)");
+
+        }
+
         sb.append("</ul></body></html>");
 		return new StringRepresentation(sb.toString(), MediaType.TEXT_HTML);
 	}
