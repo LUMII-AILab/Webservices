@@ -113,17 +113,17 @@ class Reloader {
 				return;
 			}
 
-			// At this point we assume that the lexicon JSON files are written somewhere and we need to load them
+			// At this point we assume that the lexicon JSONL files are written somewhere and we need to load them
 			System.out.println("DB extract done at " + new Date());
 
 			// Copying all the required files from the dump and also from the .jar file to the same resources/ folder
 			Path sourcePath;
 			String lexiconFileName;
 			if (this.latgalian) {
-				sourcePath = Paths.get( "tezaurs_latgalian.json");
+				sourcePath = Paths.get( "tezaurs_latgalian.jsonl");
 				lexiconFileName = "resources/Latgalian.xml";
 			} else {
-				sourcePath = Paths.get( "tezaurs_lexemes.json");
+				sourcePath = Paths.get( "tezaurs_lexemes.jsonl");
 				lexiconFileName = "resources/Lexicon_v2.xml";
 			}
 			if (!Files.exists(sourcePath)) {
