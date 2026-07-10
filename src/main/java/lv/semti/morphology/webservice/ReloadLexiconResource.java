@@ -19,7 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 class Reloader {
-	static String TEZAURS_DUMP_PATH = "../TezaursMorphoDump/";
+	static Path TEZAURS_DUMP_PATH = Paths.get("../TezaursMorphoDump/");
 
 	private static Reloader latvian_reloader = null;
 	private static Reloader latgalian_reloader = null;
@@ -72,18 +72,18 @@ class Reloader {
 	protected void reload(){
 		System.out.println("Starting reload at " + new Date());
 		try {
-			String script_path = TEZAURS_DUMP_PATH+"tezaurs_dump.py";
+			Path script_path = TEZAURS_DUMP_PATH.resolve("tezaurs_dump.py");
 			// Check if the file exists
-			if (!Files.exists(Paths.get(script_path))) {
+			if (!Files.exists(script_path)) {
 				System.err.println("Tezaurs dump script does not exist: " + script_path);
 				return;
 			}
 			// Create ProcessBuilder with command and arguments
 			ProcessBuilder processBuilder;
 			if (this.latgalian) {
-				processBuilder = new ProcessBuilder("python3", script_path, "latgalian");
+				processBuilder = new ProcessBuilder("python3", script_path.toString(), "latgalian");
 			} else {
-				processBuilder = new ProcessBuilder("python3", script_path);
+				processBuilder = new ProcessBuilder("python3", script_path.toString());
 			}
 
 			// Start the process
@@ -130,6 +130,7 @@ class Reloader {
 				System.err.println("DB extract result file not found " + sourcePath);
 				return;
 			}
+			Files.createDirectories(Paths.get("resources/"));
 			Path targetPath = Paths.get("resources/").resolve(sourcePath.getFileName());
 			Files.move(sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING);
 

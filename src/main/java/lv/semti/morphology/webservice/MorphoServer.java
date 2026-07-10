@@ -15,6 +15,9 @@ import lv.ailab.lnb.fraktur.Transliterator;
 import org.restlet.service.CorsService;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -39,7 +42,7 @@ public class MorphoServer {
     static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
-	static public String MORPHO_DUMPER_PATH = "../TezaursMorphoDump/";
+	static public Path MORPHO_DUMPER_PATH = Paths.get("../TezaursMorphoDump/");
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -85,19 +88,33 @@ public class MorphoServer {
                 System.out.println("Transcription service disabled");
             }
 			if (args[i].equalsIgnoreCase("-lexreloader")) {
-				enableLexiconReloader = true;
-				System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+				if (Files.exists(MORPHO_DUMPER_PATH)) {
+					enableLexiconReloader = true;
+					System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+				}
+				else {
+					System.err.println("Folder '" + MORPHO_DUMPER_PATH + "' not found!");
+					enableLexiconReloader = false;
+					System.out.println("Lexicon reloading service is turned of because of lacking dumper script.\n");
+				}
 			}
 			if (args[i].equalsIgnoreCase("-nolexreloader")) {
 				enableLexiconReloader = false;
 				System.out.println("Lexicon reloading service disabled");
 			}
-			if (args[i].length() > "-lexreloader=".length()
+			if (args[i].length() >= "-lexreloader=".length()
 					&& args[i].substring(0, "-lexreloader=".length()).equalsIgnoreCase("-lexreloader="))
 			{
-				enableLexiconReloader = true;
-				MORPHO_DUMPER_PATH = args[i].substring("-lexreloader=".length());
-				System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+				MORPHO_DUMPER_PATH = Paths.get(args[i].substring("-lexreloader=".length()));
+				if (Files.exists(MORPHO_DUMPER_PATH)) {
+					enableLexiconReloader = true;
+					System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
+				}
+				else {
+					System.err.println("Folder '" + MORPHO_DUMPER_PATH + "' not found!");
+					enableLexiconReloader = false;
+					System.out.println("Lexicon reloading service is turned of because of lacking dumper script.\n");
+				}
 			}
 			if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
