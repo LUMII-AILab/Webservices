@@ -35,11 +35,36 @@ public class MorphoServer {
     static NerPipe NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
 	static public AlternativeBuilder alternatives = null;
+	/**
+	 * Transliterator service needs freshening up, as it currently references
+	 * very, very old copy of Morpology and the paths to resources might be
+	 * messed up after introducing maven packaging for Webservices.
+	 */
 	static public boolean enableTransliterator = false;
+	/**
+	 * Domeniims service needs freshening up, as it currently references
+	 * very, very old copy of Morpology and the paths to resources might be
+	 * messed up after introducing maven packaging for Webservices.
+	 */
     static public boolean enableDomeniims = false;
     static public boolean enableTagger = true;
     static public boolean enableNERTagger = false;
-    static public boolean enableTranscription = false;
+	/**
+	 * Pronunciation service is long dead and requires either complete rewrite
+	 * or removal.
+	 */
+	static public boolean enablePronuncer = false;
+	/**
+	 * Transcription service is very old, (source is https://github.com/Skriptotajs/PhoneticTranscriber ),
+	 * but ir works, when turned on. Research is needed, if it is valuable, or
+	 * should be substituted with something newer.
+	 */
+    static public boolean enableTranscription = true;
+	/**
+	 * Embedding service is long dead and requires either complete rewrite
+	 * or removal.
+	 */
+	static public boolean enableEmbeddings = false;
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
 	static public Path MORPHO_DUMPER_PATH = Paths.get("../TezaursMorphoDump/");
@@ -79,6 +104,14 @@ public class MorphoServer {
                 enableNERTagger = false;
                 System.out.println("NER tagger disabled");
             }
+			if (args[i].equalsIgnoreCase("-pronunciation")) {
+				enablePronuncer = true;
+				System.out.println("Pronunciation service enabled");
+			}
+			if (args[i].equalsIgnoreCase("-nopronunciation")) {
+				enablePronuncer = false;
+				System.out.println("Pronunciation service disabled");
+			}
             if (args[i].equalsIgnoreCase("-transcription")) {
                 enableTranscription = true;
                 System.out.println("Transcription service enabled");
@@ -87,6 +120,14 @@ public class MorphoServer {
                 enableTranscription = false;
                 System.out.println("Transcription service disabled");
             }
+			if (args[i].equalsIgnoreCase("-embeddings")) {
+				enableEmbeddings = true;
+				System.out.println("Embeddings service enabled");
+			}
+			if (args[i].equalsIgnoreCase("-noembeddings")) {
+				enableEmbeddings = false;
+				System.out.println("Embeddings service disabled");
+			}
 			if (args[i].equalsIgnoreCase("-lexreloader")) {
 				if (Files.exists(MORPHO_DUMPER_PATH)) {
 					enableLexiconReloader = true;
@@ -225,12 +266,15 @@ public class MorphoServer {
             }
         }
 
-        component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
-        component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
+		if (enablePronuncer) {
+			component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
+			component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
+		}
 
-        component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
-        component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
-
+		if (enableEmbeddings) {
+			component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
+			component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
+		}
 
         // Set up CORS
         CorsService corsService = new CorsService();
