@@ -191,7 +191,6 @@ public class MorphoServer {
         if (enableTransliterator) {
             Transliterator.PATH_FILE = "path.conf";
             translit = Transliterator.getTransliterator(analyzer);
-            component.getDefaultHost().attach("/explain/{word}", DictionaryResource.class);
             component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
         }
         component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);

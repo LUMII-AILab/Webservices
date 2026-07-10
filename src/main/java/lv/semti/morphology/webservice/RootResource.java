@@ -37,7 +37,6 @@ public class RootResource extends ServerResource {
         }
 
         if (MorphoServer.enableTransliterator) {
-            addGetLink(sb, "explain/vuška", "/explain/[query]", "dictionary explanations of historical words");
             addGetLink(sb, "normalize/core/waj", "/normalize/[ruleset]/[word]", "historical word transliteration ");
         }
 
