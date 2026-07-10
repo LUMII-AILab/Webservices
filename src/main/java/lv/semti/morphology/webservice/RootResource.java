@@ -1,6 +1,7 @@
 package lv.semti.morphology.webservice;
 
 import org.restlet.data.MediaType;
+import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
@@ -9,7 +10,14 @@ import org.restlet.resource.ServerResource;
 public class RootResource extends ServerResource {
 	@Get
 	public Representation retrieve() {
-		StringBuilder sb = new StringBuilder();
+        String tail = (String) getRequest().getAttributes().get("tail");
+        if (tail != null && !tail.isEmpty())
+        {
+            doError(Status.CLIENT_ERROR_NOT_FOUND);
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
         sb.append("<html><head><title>Latvian morphology web services</title></head><body><h3>Version ");
         sb.append(MorphoServer.getAnalyzer().getRevision());
         sb.append("</h3>\n<ul>\n");

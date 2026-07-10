@@ -155,6 +155,7 @@ public class MorphoServer {
 
         // Then attach it to the local host
         component.getDefaultHost().attach("/", RootResource.class);
+        component.getDefaultHost().attach("/{tail}", RootResource.class);
 
         component.getDefaultHost().attach("/version", VersionResource.class);
 		if (enableLexiconReloader) {
@@ -213,6 +214,7 @@ public class MorphoServer {
 
         component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
         component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
+
 
         // Set up CORS
         CorsService corsService = new CorsService();
