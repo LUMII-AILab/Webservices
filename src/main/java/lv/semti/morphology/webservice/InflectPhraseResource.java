@@ -1,6 +1,5 @@
 package lv.semti.morphology.webservice;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

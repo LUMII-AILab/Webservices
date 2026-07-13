@@ -90,16 +90,6 @@
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
-			<artifactId>transliterator</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>lv.ailab.morphology</groupId>
-			<artifactId>lvsegmenter</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>phonetictranscriber</artifactId>
 			<version>1.0.1</version>
 		</dependency>

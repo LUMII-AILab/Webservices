@@ -28,7 +28,8 @@ Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masī
 ### Vārdformu ģenerēšana
 ```
 http://localhost:8182/inflect/[format]/[vārds]
-http://localhost:8182/inflect/rakt```
+http://localhost:8182/inflect/rakt
+```
 
 Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi. Pieejamie izvada formāti ir `json` vai `xml`.
 
@@ -40,9 +41,9 @@ http://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person
 ```
 
 Lokāmajam nosaukumam jābūt pamatformā. Korektiem rezultātiem ir ļoti ieteicams norādīt kategorijas:
-org|organization
-hum|person
-loc|location
+- org|organization
+- hum|person
+- loc|location
 
 ### Entītiju frāžu pamatformu noteikšana
 
@@ -81,24 +82,3 @@ http://localhost:8182/morphotagger/Šis žagaru saišķis
 
 Pārveido teikumu par tab-delimited tabulu, kur katrā rindiņā ir teksta vienība, tās pamatforma un tags, lietojot statistisko morfoloģisko analīzi ticamākās formas izvēlei.
 
-### Atbalsta rīki verbu valenču anotācijas rīkam
-```http://localhost:8182/verbs/[vārds]
-http://localhost:8182/verbs/roku
-http://localhost:8182/neverbs/[vārds]
-http://localhost:8182/neverbs/roku
-``` 
-
-Atgriež 'pieļaujamos' valenču veidus šim vārdam, atkarībā no tā vai tas ir 'centrālais' vārds (kas parasti ir verbs) vai necentrālais vārds (kur priekšroku dod analīzes variantiem, kas nav verbi)
-
-### Eksperimentālas iestrādnes
-NB! Šobrīd nefunkcionē
-
-LNB vecās drukas tekstu transliterācija
-```
-http://localhost:8182/normalize/[ruleset]/[vārds]
-http://localhost:8182/explain/[vārds]
-```
-
-Nosaukto vienību detektēšana (NER)
-
-`http://localhost:8182/ner/[teksts]` 

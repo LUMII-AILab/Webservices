@@ -1,5 +1,4 @@
 package lv.semti.morphology.webservice;
-import lv.lumii.ner.NerPipe;
 import org.restlet.*;
 import org.restlet.data.*;
 
@@ -10,17 +9,13 @@ import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
-import lv.ailab.domainnames.AlternativeBuilder;
-import lv.ailab.lnb.fraktur.Transliterator;
 import org.restlet.service.CorsService;
 
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Properties;
 
 public class MorphoServer {
 	static private Analyzer analyzer;
@@ -29,42 +24,14 @@ public class MorphoServer {
     static private Analyzer latgalian_analyzer;
     static synchronized Analyzer getLatgalian_analyzer() { return MorphoServer.latgalian_analyzer; }
     static synchronized void setLatgalian_analyzer(Analyzer analyzer) { MorphoServer.latgalian_analyzer = analyzer; }
-	static Transliterator translit;
 	static TagSet tagset;
-//	static AbstractSequenceClassifier<CoreLabel> NERclassifier;
-    static NerPipe NERclassifier;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
-	static public AlternativeBuilder alternatives = null;
-	/**
-	 * Transliterator service needs freshening up, as it currently references
-	 * very, very old copy of Morpology and the paths to resources might be
-	 * messed up after introducing maven packaging for Webservices.
-	 */
-	static public boolean enableTransliterator = false;
-	/**
-	 * Domeniims service needs freshening up, as it currently references
-	 * very, very old copy of Morpology and the paths to resources might be
-	 * messed up after introducing maven packaging for Webservices.
-	 */
-    static public boolean enableDomeniims = false;
     static public boolean enableTagger = true;
-    static public boolean enableNERTagger = false;
 	/**
-	 * Pronunciation service is long dead and requires either complete rewrite
-	 * or removal.
+	 * Transcription service is very old.
+	 * Planned future work: integrate the new, python based transcription service.
 	 */
-	static public boolean enablePronuncer = false;
-	/**
-	 * Transcription service is very old, (source is https://github.com/Skriptotajs/PhoneticTranscriber ),
-	 * but ir works, when turned on. Research is needed, if it is valuable, or
-	 * should be substituted with something newer.
-	 */
-    static public boolean enableTranscription = true;
-	/**
-	 * Embedding service is long dead and requires either complete rewrite
-	 * or removal.
-	 */
-	static public boolean enableEmbeddings = false;
+    static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
 	static public Path MORPHO_DUMPER_PATH = Paths.get("../TezaursMorphoDump/");
@@ -72,22 +39,6 @@ public class MorphoServer {
 
 	public static void main(String[] args) throws Exception {
 		for (int i=0; i<args.length; i++) {
-			if (args[i].equalsIgnoreCase("-transliterator")) { 
-				enableTransliterator = true;
-				System.out.println("Transliteration services enabled");
-			}
-            if (args[i].equalsIgnoreCase("-notransliterator")) {
-                enableTransliterator = false;
-                System.out.println("Transliteration services disabled");
-            }
-            if (args[i].equalsIgnoreCase("-domeniims")) {
-                enableDomeniims = true;
-                System.out.println("Domain name alternative generator enabled");
-            }
-            if (args[i].equalsIgnoreCase("-nodomeniims")) {
-                enableDomeniims = false;
-                System.out.println("Domain name alternative generator disabled");
-            }
             if (args[i].equalsIgnoreCase("-tagger")) {
                 enableTagger = true;
                 System.out.println("Tagger functionality enabled");
@@ -95,22 +46,6 @@ public class MorphoServer {
 			if (args[i].equalsIgnoreCase("-notagger")) {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
-			}
-            if (args[i].equalsIgnoreCase("-nertagger")) {
-                enableNERTagger = true;
-                System.out.println("NER tagger enabled");
-            }
-            if (args[i].equalsIgnoreCase("-nonertagger")) {
-                enableNERTagger = false;
-                System.out.println("NER tagger disabled");
-            }
-			if (args[i].equalsIgnoreCase("-pronunciation")) {
-				enablePronuncer = true;
-				System.out.println("Pronunciation service enabled");
-			}
-			if (args[i].equalsIgnoreCase("-nopronunciation")) {
-				enablePronuncer = false;
-				System.out.println("Pronunciation service disabled");
 			}
             if (args[i].equalsIgnoreCase("-transcription")) {
                 enableTranscription = true;
@@ -120,14 +55,6 @@ public class MorphoServer {
                 enableTranscription = false;
                 System.out.println("Transcription service disabled");
             }
-			if (args[i].equalsIgnoreCase("-embeddings")) {
-				enableEmbeddings = true;
-				System.out.println("Embeddings service enabled");
-			}
-			if (args[i].equalsIgnoreCase("-noembeddings")) {
-				enableEmbeddings = false;
-				System.out.println("Embeddings service disabled");
-			}
 			if (args[i].equalsIgnoreCase("-lexreloader")) {
 				if (Files.exists(MORPHO_DUMPER_PATH)) {
 					enableLexiconReloader = true;
@@ -173,11 +100,8 @@ public class MorphoServer {
 			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
 				System.out.println("\nCommand line options:");
-				System.out.println("\t-transliterator & -notransliterator : enable/disable webservice for historical text transliteration (NB! the extra dictionary files and language models need to be included)");
-                System.out.println("\t-domeniims & -nodomeniims : enable/disable webservice for domain name alternative generation service (NB! the extra word2vec model files need to be included)");
-                System.out.println("\t-nertagger & -nonertagger : enable/disable NER tagger webservice");
                 System.out.println("\t-tagger & -notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
-                System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
+                //System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
                 System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
@@ -185,14 +109,11 @@ public class MorphoServer {
 				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
                 System.out.println("http://localhost:8182/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
 				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
-				System.out.println("http://localhost:8182/verbs/[query] and http://localhost:8182/neverbs/[query] : Support webservice for 'verbs' valency annotation tool - possible inflections of wordform");
-				System.out.println("http://localhost:8182/normalize/[ruleset]/[word] and http://localhost:8182/explain/[query] : (if enabled) historical word transliteration and dictionary explanations");
 				System.out.println("http://localhost:8182/inflect/json/[query] : generate all inflectional forms of a lemma");
 				System.out.println("http://localhost:8182/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
                 System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
 				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
-                System.out.println("http://localhost:8182/domenims/[query] and http://localhost:8182/segment/[query] : (if enabled) domain name word2vec alternative genarator and segmentation");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -200,7 +121,6 @@ public class MorphoServer {
 
         initResources();
         initComponents();
-
 
         System.out.println("Ready!");
 //		System.out.println("Usage sample for entity inflection:\nhttp://localhost:8182/inflect_phrase/Vaira Vīķe-Freiberga?category=person");
@@ -225,17 +145,10 @@ public class MorphoServer {
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
         component.getDefaultHost().attach("/tokenize", TokenResource.class);
-        component.getDefaultHost().attach("/verbs/{query}", VerbResource.class);
-        component.getDefaultHost().attach("/neverbs/{query}", NonVerbResource.class);
         component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
-        component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class);
-        if (enableTransliterator) {
-            Transliterator.PATH_FILE = "path.conf";
-            translit = Transliterator.getTransliterator(analyzer);
-            component.getDefaultHost().attach("/normalize/{ruleset}/{word}", TransliterationResource.class);
-        }
+        //component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class); //eh?
         component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
-        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class);
+        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class); // pārtaisīt homonīmiem
         component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
 
         if (enableTagger) {
@@ -246,46 +159,19 @@ public class MorphoServer {
             component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
             component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
         }
-
-        if (enableNERTagger) {
-            component.getDefaultHost().attach("/nertagger/{query}", NERTaggerResource.class);
-            component.getDefaultHost().attach("/nerpeople/{query}", NERPeopleResource.class);
-        }
-
-        if (enableTranscription) {
+        if (enableTranscription) { // aizstāt ar viestura risinājumu
             component.getDefaultHost().attach("/phonetic_transcriber/{phrase}", PhoneticTranscriberResource.class);
             component.getDefaultHost().attach("/v1/transcriptions/{phrase}", PhoneticTranscriberResource.class);
         }
-
-        if (enableDomeniims) {
-            if (enableTagger) {
-                component.getDefaultHost().attach("/domenims/{domainname}", DomainNameResource.class);
-                component.getDefaultHost().attach("/segment/{domainname}", SegmentResource.class);
-            } else {
-                System.err.println("Domain name alternative service will not work without tagger functionality");
-            }
-        }
-
-		if (enablePronuncer) {
-			component.getDefaultHost().attach("/v1/pronunciation/{query}", PronunciationResource.class);
-			component.getDefaultHost().attach("/v1/pronunciations/{query}", PronunciationResource.class);
-		}
-
-		if (enableEmbeddings) {
-			component.getDefaultHost().attach("/v1/embeddings", EmbeddingsResource.class);
-			component.getDefaultHost().attach("/v1/embeddings/{query}", EmbeddingsResource.class);
-		}
 
         // Set up CORS
         CorsService corsService = new CorsService();
         corsService.setAllowingAllRequestedHeaders(true);
         corsService.setAllowedOrigins(new HashSet<>(List.of("*")));
         corsService.setAllowedCredentials(true);
-
         Application application = new Application();
         application.getServices().add(corsService);
         component.getDefaultHost().attachDefault(application);
-
         component.start();
     }
 
@@ -300,36 +186,12 @@ public class MorphoServer {
 
         tagset = TagSet.getTagSet();
 
-        if (enableNERTagger) {
-            Properties props = new Properties();
-            InputStream stream = MorphoServer.class.getClassLoader().getResourceAsStream("lv-ner-tagger.prop");
-            props.load(stream);
-            NERclassifier = new NerPipe(props);
-//            NERclassifier = CRFClassifier.getClassifierNoExceptions("models/lv-ner-model.ser.gz");
-//            NERclassifier.flags.props.setProperty("gazette", "./Gazetteer/LV_LOC_GAZETTEER.txt,./Gazetteer/LV_PERS_GAZETTEER.txt,./Gazetteer/PP_Onomastica_surnames.txt,./Gazetteer/PP_Onomastica_geonames.txt,./Gazetteer/PP_valstis.txt,./Gazetteer/PP_orgnames.txt,./Gazetteer/PP_org_elements.txt");
-//            NERclassifier.featureFactory.init(NERclassifier.flags);
-        }
-
         if (enableTagger) {
             LVMorphologyReaderAndWriter.setPreloadedAnalyzer(analyzer); // Lai nelādētu vēlreiz lieki
             String morphoClassifierLocation = "models/lv-morpho-model.ser.gz";
             morphoClassifier = CMMClassifier.getClassifier(morphoClassifierLocation);
             Expression.setClassifier(morphoClassifier);
         }
-
-        if (enableDomeniims) {
-            // Word embeddings and segmentation data
-            String WORDLIST_FILE_LV = "wordlist-filtered-lv.txt";
-            String WORDLIST_FILE_EN = "wordsEn-sil-filtered.txt";
-            //String EMBEDDINGS_LV_FILENAME = "lv_visaslemmas.out";
-            String EMBEDDINGS_LV_FILENAME = "polyglot_lv.out";
-            String EMBEDDINGS_EN_FILENAME = "polyglot_en.out";
-            String SYNONYMS_FILENAME = "sinonimi.txt";
-            String BLACKLIST_FILENAME = "blacklist.txt";
-            String[][] lexiconFiles = {{WORDLIST_FILE_LV, "lv"}, {WORDLIST_FILE_EN, "en"}};
-            alternatives = new AlternativeBuilder(lexiconFiles, true, true, EMBEDDINGS_LV_FILENAME, EMBEDDINGS_EN_FILENAME, SYNONYMS_FILENAME, BLACKLIST_FILENAME);
-        }
-
     }
 
 }
