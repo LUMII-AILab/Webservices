@@ -2,8 +2,8 @@ package lv.semti.morphology.webservice;
 
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,20 +22,14 @@ public class TokenResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
-		try {
-			query = URLDecoder.decode(query,"UTF8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		return analyze(query);
 	}
 	
 	@Post("json")
-	public String postquery(JsonRepresentation entity) throws JSONException, IOException {
-		//System.out.println(entity.getText());
-		
+	public String postquery(JsonRepresentation entity) throws JSONException {
+
 		JSONObject json;
 		String query = null;
 		try {
@@ -52,7 +46,7 @@ public class TokenResource extends ServerResource {
 
 	private String analyze(String query) {
 		List<Word> tokens = Splitting.tokenize(MorphoServer.getAnalyzer(), query);
-		LinkedList<String> tokenJSON = new LinkedList<String>();
+		LinkedList<String> tokenJSON = new LinkedList<>();
 		
 		for (Word word : tokens) {
 			tokenJSON.add(word.toJSONsingle());

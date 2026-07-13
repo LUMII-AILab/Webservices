@@ -54,9 +54,9 @@ class Reloader {
 	public Date attempt_reload() {
 		setNeedsOneMoreReload(true);
 		Date rs = getReloadStart();
-		if (rs != null) {      // if we're already processing..
+		if (rs != null) {      // if we're already processing...
 			System.out.println("Adding reload to queue");
-			return rs;         // return the start time of that processing}
+			return rs;         // return the start time of that processing
 		}
 		Future<?> future = executor.submit(() -> {
 			while (getNeedsOneMoreReload()) {

@@ -30,16 +30,18 @@ public class TezaursInflectResourceTest {
     private void assertFormExists(List<Collection<Wordform>> wordforms, String form) {
         assertEquals(1, wordforms.size());
         boolean found = false;
-        for (Wordform wf : wordforms.get(0)) {
-            if (wf.getToken().equalsIgnoreCase(form))
-                found = true;
+        for (Wordform wf : wordforms.getFirst()) {
+			if (wf.getToken().equalsIgnoreCase(form)) {
+				found = true;
+				break;
+			}
         }
         assertTrue(found);
     }
 
     private void assertFormDoesNotExist(List<Collection<Wordform>> wordforms, String form) {
         assertEquals(1, wordforms.size());
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             assertNotEquals(wf.getToken(), form);
         }
     }
@@ -54,7 +56,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_Person, "2");
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
         filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Present);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
 //            wf.describe();
             assertNotEquals("jauš", wf.getToken());
@@ -71,7 +73,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_Person, "2");
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
         filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Present);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             wf.describe();
             assertNotEquals(" jaud", wf.getToken());
@@ -82,7 +84,7 @@ public class TezaursInflectResourceTest {
     public void turpms() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("turpmāks", "13", "", "turpmāk", null, null, new AttributeValues());
         assertEquals(1, wordforms.size());
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             assertNotEquals("turpms", wf.getToken());
         }
     }
@@ -91,7 +93,7 @@ public class TezaursInflectResourceTest {
     public void nelokāmie() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("augstpapēžu", "49", "", "", null, null, new AttributeValues());
         assertEquals(1, wordforms.size());
-        assertNotEquals(0, wordforms.get(0).size());
+        assertNotEquals(0, wordforms.getFirst().size());
 //        for (Wordform wf : wordforms.get(0)) {
 //            wf.describe();
 //        }
@@ -101,7 +103,7 @@ public class TezaursInflectResourceTest {
     public void pirms() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("pirmāks", "13", "", "", null, null, new AttributeValues());
         assertEquals(1, wordforms.size());
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             assertNotEquals("pirms", wf.getToken());
         }
     }
@@ -110,7 +112,7 @@ public class TezaursInflectResourceTest {
     public void noliegumu_ģenerēšana() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("prātot", "16", "", "", null, null, new AttributeValues());
         assertFormExists(wordforms, "neprātoju");
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (wf.getToken().equalsIgnoreCase("neprātoju"))
                 assertEquals("Jā", wf.getValue(AttributeNames.i_Noliegums));
         }
@@ -136,10 +138,10 @@ public class TezaursInflectResourceTest {
         av.addAttribute(AttributeNames.i_ProperNounType, AttributeNames.v_Toponym);
         List<Collection<Wordform>> wordforms = inflectResource.inflect("Rīga", "7", "", "", null, null, av);
         assertEquals(1, wordforms.size());
-        for (Wordform wf : wordforms.get(0)) {
+        //for (Wordform wf : wordforms.get(0)) {
             // assertNotEquals("Rīgām", wf.getToken());
             //        Tagad šis filtrs ir morfotabulu zīmēšanas JavaScript atbilstoši karodziņam par morfotabulas īpatnībām
-        }
+        //}
     }
 
     @Test
@@ -150,11 +152,11 @@ public class TezaursInflectResourceTest {
         // Gan "viņš", ko loka pēc lietvārda parauga bez specformām:
         List<Collection<Wordform>> viņš = inflectResource.inflect("viņš", "noun-1b", "", "", null, null, new AttributeValues());
         assertEquals(1, viņš.size());
-        assertTrue(viņš.get(0).size() > 1);
+        assertTrue(viņš.getFirst().size() > 1);
         // Gan "jebkas", kam būtu jābūt specformām:
         List<Collection<Wordform>> jebkas = inflectResource.inflect("jebkas", "pron", "", "", null, null, new AttributeValues());
         assertEquals(1, jebkas.size());
-        assertTrue(jebkas.get(0).size() > 1);
+        assertTrue(jebkas.getFirst().size() > 1);
     }
 
     @Test
@@ -168,7 +170,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
         filtrs.addAttribute(AttributeNames.i_Tense, AttributeNames.v_Past);
         filtrs.addAttribute(AttributeNames.i_Noliegums, null);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("pabiji", wf.getToken());
         }
@@ -188,7 +190,7 @@ public class TezaursInflectResourceTest {
     public void ticket_100() {
         AttributeValues av = new AttributeValues();
         List<Collection<Wordform>> wordforms = inflectResource.inflect("varēt", "17", "", "", null, null, av);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (wf.getToken().equalsIgnoreCase("varēšana")) {
                 assertEquals(AttributeNames.v_Yes, wf.getValue(AttributeNames.i_Derivative));
             }
@@ -226,7 +228,7 @@ public class TezaursInflectResourceTest {
     }
 
     @Test
-    public void ticket_125() throws Exception {
+    public void ticket_125() {
         // nez kāpēc nestrādā atpazīšana atsevišķiem vārdiem, ja tos padod ar lielo burtu
         Word w = MorphoServer.getAnalyzer().analyze("krūšu");
         assertTrue(w.isRecognized());
@@ -245,7 +247,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("ceļiem", wf.getToken());
         }
@@ -256,7 +258,7 @@ public class TezaursInflectResourceTest {
     public void ticket_132() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("paģisties", "verb-1r", "", "paģis", "paģied", "paģid", new AttributeValues());
         assertEquals(1, wordforms.size());
-        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.getFirst().size()>1);
     }
 
     @Test
@@ -278,7 +280,7 @@ public class TezaursInflectResourceTest {
     public void connectionbroken() {
         List<Collection<Wordform>> wordforms = inflectResource.inflect("paaut", "verb-1", "", "paau", "paauj,paaun", "paāv", new AttributeValues());
         assertEquals(1, wordforms.size());
-        assertTrue("Jābūt vairāk kā vienai formai", wordforms.get(0).size()>1);
+        assertTrue("Jābūt vairāk kā vienai formai", wordforms.getFirst().size()>1);
     }
 
 
@@ -290,7 +292,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("kuorklim", wf.getToken());
         }
@@ -304,7 +306,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Accusative);
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Singular);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("pasauli", wf.getToken());
         }
@@ -318,7 +320,7 @@ public class TezaursInflectResourceTest {
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Genitive);
         filtrs.addAttribute(AttributeNames.i_Number, AttributeNames.v_Plural);
-        for (Wordform wf : wordforms.get(0)) {
+        for (Wordform wf : wordforms.getFirst()) {
             if (!wf.isMatchingWeak(filtrs)) continue;
             assertEquals("varganu", wf.getToken());
         }
@@ -331,12 +333,12 @@ public class TezaursInflectResourceTest {
         assertEquals(1, es.size());
         // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
         // šīm formām jānāk no tēzaura.
-        assertTrue(es.get(0).size() > 4);
+        assertTrue(es.getFirst().size() > 4);
 
         List<Collection<Wordform>> šys = inflectResource.inflect("šys", "pron-ltg", "", "", null, null, new AttributeValues());
         assertEquals(1, šys.size());
         // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
         // šīm formām jānāk no tēzaura.
-        assertTrue(šys.get(0).size() > 4);
+        assertTrue(šys.getFirst().size() > 4);
     }
 }

@@ -1,7 +1,7 @@
 package lv.semti.morphology.webservice;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import lv.semti.morphology.analyzer.Analyzer;
 import org.restlet.resource.Get;
@@ -14,12 +14,8 @@ public class NormalizePhraseResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+
 		String category = getQuery().getValues("category");
 
 		Analyzer analyzer = MorphoServer.getAnalyzer();

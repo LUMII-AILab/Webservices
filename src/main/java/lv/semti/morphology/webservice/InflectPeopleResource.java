@@ -2,8 +2,8 @@ package lv.semti.morphology.webservice;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -41,9 +41,9 @@ public class InflectPeopleResource extends ServerResource {
 			} catch (IOException e) { e.printStackTrace(); }
 			return s.toString();
 		} else {
-			List<String> tokenJSON = new LinkedList<String>();
+			List<String> tokenJSON = new LinkedList<>();
 			for (List<Wordform> token : processedtokens) {
-				List<String> wordJSON = new LinkedList<String>();
+				List<String> wordJSON = new LinkedList<>();
 				for (Wordform wf : token) wordJSON.add(wf.toJSON());
 				tokenJSON.add(formatJSON(wordJSON));
 			}		
@@ -52,11 +52,7 @@ public class InflectPeopleResource extends ServerResource {
 	}
 
 	private synchronized List<List<Wordform>> inflect(String query, String gender) {
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		Analyzer analyzer = MorphoServer.getAnalyzer();
 		analyzer.enableGuessing = true;
@@ -67,7 +63,7 @@ public class InflectPeopleResource extends ServerResource {
 		analyzer.guessInflexibleNouns = true;
 		analyzer.enableAllGuesses = true;
 		
-		LinkedList<String> showAttrs = new LinkedList<String>();
+		LinkedList<String> showAttrs = new LinkedList<>();
 		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
 		
 		AttributeValues filter = new AttributeValues();
@@ -78,7 +74,7 @@ public class InflectPeopleResource extends ServerResource {
 		
 		String words = query;
 		List<Word> tokens = Splitting.tokenize(analyzer, words);
-		LinkedList<List<Wordform>> processedTokens = new LinkedList<List<Wordform>>();
+		LinkedList<List<Wordform>> processedTokens = new LinkedList<>();
 		
 		for (Word word : tokens) {
 			List<Wordform> formas = analyzer.generateInflections(word.getToken(), true, filter);

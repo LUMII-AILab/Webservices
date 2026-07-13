@@ -127,7 +127,7 @@ public class MorphoServer {
 	}
 
     private static void initComponents() throws Exception {
-        // Create a new Restlet component and add a HTTP server connector to it
+        // Create a new Restlet component and add an HTTP server connector to it
         Component component = new Component();
         component.getServers().add(Protocol.HTTP, port);
 
@@ -146,7 +146,6 @@ public class MorphoServer {
         component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
         component.getDefaultHost().attach("/tokenize", TokenResource.class);
         component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
-        //component.getDefaultHost().attach("/analyzesentence/{query}", MorphoAnalysisResource.class); //eh?
         component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
         component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class); // pārtaisīt homonīmiem
         component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);

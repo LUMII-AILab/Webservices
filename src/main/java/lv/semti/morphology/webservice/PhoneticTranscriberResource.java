@@ -1,8 +1,8 @@
 package lv.semti.morphology.webservice;
 
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -17,12 +17,8 @@ public class PhoneticTranscriberResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String phrase = (String) getRequest().getAttributes().get("phrase");
-		try {
-			phrase = URLDecoder.decode(phrase, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		
+		phrase = URLDecoder.decode(phrase, StandardCharsets.UTF_8);
+
 		String converter_type = getQuery().getValues("phoneme_set");
 		String converter_type_new =  getQuery().getValues("encoding");
         if (converter_type_new != null) converter_type = converter_type_new;
@@ -32,14 +28,11 @@ public class PhoneticTranscriberResource extends ServerResource {
 			converter_type="";
 		
 		PhoneticCharacterConverter converter;
-		
-		switch(converter_type.toLowerCase())
-		{
-		case "ipa":
-			converter=new IPACharacterConverter();
-			break;
-		default:
-			converter=new AlphabeticCharacterConverter();
+
+		if (converter_type.equalsIgnoreCase("ipa")) {
+			converter = new IPACharacterConverter();
+		} else {
+			converter = new AlphabeticCharacterConverter();
 		}
 		
 		PhoneticTranscriber transcriber=new PhoneticTranscriber(" ", converter);

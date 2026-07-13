@@ -2,8 +2,8 @@ package lv.semti.morphology.webservice;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -18,11 +18,7 @@ public class WordResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("word");
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
 
 		Word w = MorphoServer.getAnalyzer().analyze(query);
@@ -46,7 +42,7 @@ public class WordResource extends ServerResource {
 	//@Get("xml")
 	public String retrieveXML() {  
 		String query = (String) getRequest().getAttributes().get("word");
-		Wordform w = MorphoServer.getAnalyzer().analyze(query).wordforms.get(0);
+		Wordform w = MorphoServer.getAnalyzer().analyze(query).wordforms.getFirst();
 		
 		StringWriter s = new StringWriter();
 		

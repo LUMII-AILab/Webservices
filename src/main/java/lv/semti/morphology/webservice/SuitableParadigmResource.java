@@ -6,8 +6,8 @@ import org.json.simple.JSONValue;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,11 +16,7 @@ public class SuitableParadigmResource extends ServerResource {
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("lemma");
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		Analyzer analyzer = MorphoServer.getAnalyzer();
 		analyzer.guessAllParadigms = true;

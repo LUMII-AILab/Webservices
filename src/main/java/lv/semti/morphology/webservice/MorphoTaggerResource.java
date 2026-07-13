@@ -1,7 +1,7 @@
 package lv.semti.morphology.webservice;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.restlet.resource.Get;
@@ -18,18 +18,14 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 public class MorphoTaggerResource extends ServerResource {
 	// Kopija no LVTaggera morphopipe koda - FIXME, DRY
-	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText};	
+	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText}
 	
 	@Get
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
-		
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		LVMorphologyReaderAndWriter.setAnalyzerDefaults();
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
@@ -56,7 +52,7 @@ public class MorphoTaggerResource extends ServerResource {
 		for (CoreLabel word : tokens) {
 			String token = word.getString(TextAnnotation.class);
 			if (token.contains("<s>")) continue;
-			if (s.length()>0) s.append(token_separator);
+			if (!s.isEmpty()) s.append(token_separator);
 			if (outputType == outputTypes.MOSES) token = token.replace(' ', '_');
 			s.append(token);
 			s.append(field_separator);

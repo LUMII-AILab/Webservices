@@ -23,7 +23,6 @@ public class RootResource extends ServerResource {
         sb.append("</h3>\n<ul>\n");
         addGetLink(sb, "analyze/doma", "/analyze/[word]", "morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
         addGetLink(sb, "analyze/en/doma", "/analyze/en/[word]", "morphological analysis of the word with attribute names in English");
-        //addGetLink(sb, "analyzesentence/Vīrs%20ar%20cirvi.", "/analyzesentence/[query]", "JSON format of analysis for each token in a sentence for tagger needs");
         addGetLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize", "tokenization of sentences");
         addGetLink(sb, "v1/inflections/rakt", "/v1/inflections/[query]", "generate all inflectional forms of a lemma");
         addGetLink(sb, "v1/inflections/aita?paradigm=noun-4f", "/v1/inflections/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm");

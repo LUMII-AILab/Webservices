@@ -2,6 +2,7 @@ package lv.semti.morphology.webservice;
 
 import java.io.*;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import lv.semti.morphology.analyzer.Analyzer;
@@ -46,9 +47,9 @@ public class InflectResource extends ServerResource {
 
 			return new StringRepresentation(s.toString(), MediaType.APPLICATION_XML);
 		} else {
-			List<String> tokenJSON = new LinkedList<String>();
+			List<String> tokenJSON = new LinkedList<>();
 			for (Collection<Wordform> token : processedtokens) {
-				List<String> wordJSON = new LinkedList<String>();
+				List<String> wordJSON = new LinkedList<>();
 				for (Wordform wf : token) {
 					if ("EN".equalsIgnoreCase(language))
 						wordJSON.add(MorphoServer.tagset.toEnglish(wf).toJSON());
@@ -86,11 +87,7 @@ public class InflectResource extends ServerResource {
     }
 
     public List<Collection<Wordform>> inflect(String query, String paradigm_param, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
-		try {
-			query = URLDecoder.decode(query, "UTF8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		Analyzer analyzer = MorphoServer.getAnalyzer();
 		Paradigm paradigm = null;
@@ -121,7 +118,7 @@ public class InflectResource extends ServerResource {
 		analyzer.guessInflexibleNouns = guess;
 		analyzer.enableAllGuesses = guess;
 
-		LinkedList<String> showAttrs = new LinkedList<String>();
+		LinkedList<String> showAttrs = new LinkedList<>();
 		//FIXME - this set is not appropriate for inflecting verbs and others... 
 		showAttrs.add(AttributeNames.i_Word); showAttrs.add(AttributeNames.i_PartOfSpeech); showAttrs.add(AttributeNames.i_Derivative);
 		//nouns
@@ -142,7 +139,7 @@ public class InflectResource extends ServerResource {
 		Word wholeWord = new Word(query);
 		List<Word> tokens = paradigm == null
 				? Splitting.tokenize(analyzer, query)
-				: new ArrayList<Word>() {{add(wholeWord);}};
+				: new ArrayList<>() {{add(wholeWord);}};
 
 		LinkedList<Collection<Wordform>> processedTokens = new LinkedList<>();
 		
