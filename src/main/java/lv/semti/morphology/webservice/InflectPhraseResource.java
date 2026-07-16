@@ -14,6 +14,11 @@ import lv.lumii.expressions.Expression.Category;
 import lv.lumii.expressions.Expression.Gender;
 import lv.semti.morphology.attributes.AttributeNames;
 
+/**
+ * Specialized inflection service for phrases: organizations, locations and
+ * person phrases like "prezidents Viesturs Priedājs".
+ * TODO: to unify with other resources we should add json/xml format choice?
+ */
 public class InflectPhraseResource extends ServerResource {
 	@Get
 	public synchronized String retrieve() {
@@ -22,7 +27,7 @@ public class InflectPhraseResource extends ServerResource {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String category = getQuery().getValues("category");
 
-		Analyzer analyzer = MorphoServer.getAnalyzer();
+		Analyzer analyzer = CentralServer.getAnalyzer();
 		analyzer.enableGuessing = true;
 		analyzer.enableVocative = true;
 		analyzer.guessVerbs = false;

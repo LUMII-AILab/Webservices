@@ -16,6 +16,10 @@ import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.AttributeNames;
 
+/**
+ * Service providing morphological tag, i.e., wrapper for LVTagger.
+ * TODO: looks like none of the output types works, must investigate.
+ */
 public class MorphoTaggerResource extends ServerResource {
 	// Kopija no LVTaggera morphopipe koda - FIXME, DRY
 	private enum outputTypes {JSON, TAB, VERT, MOSES, CONLL_X, XML, VISL_CG, lemmatizedText}
@@ -29,7 +33,7 @@ public class MorphoTaggerResource extends ServerResource {
 
 		LVMorphologyReaderAndWriter.setAnalyzerDefaults();
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
-		sentence = MorphoServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
+		sentence = CentralServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
 
 		String format = (String) getRequest().getAttributes().get("format");	
 		outputTypes outputType = outputTypes.VERT;
@@ -37,7 +41,7 @@ public class MorphoTaggerResource extends ServerResource {
 			outputType = outputTypes.JSON;
 
 		String out = output(sentence, outputType);
-		MorphoServer.getAnalyzer().defaultSettings(); // FIXME - nesapratu, kāpēc un vai tas ir vajadzīgs
+		CentralServer.getAnalyzer().defaultSettings(); // FIXME - nesapratu, kāpēc un vai tas ir vajadzīgs
 		return out;
 	}
 	

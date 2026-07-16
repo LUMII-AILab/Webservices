@@ -58,7 +58,7 @@
 							<archive>
 								<manifest>
 									<addClasspath>true</addClasspath>
-									<mainClass>lv.semti.morphology.webservice.MorphoServer</mainClass>
+									<mainClass>lv.semti.morphology.webservice.CentralServer</mainClass>
 								</manifest>
 							</archive>
 						</configuration>
@@ -164,7 +164,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>lv.semti.morphology.webservice.MorphoServer</mainClass>
+							<mainClass>lv.semti.morphology.webservice.CentralServer</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

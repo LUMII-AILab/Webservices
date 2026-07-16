@@ -1,7 +1,6 @@
 package lv.semti.morphology.webservice;
 
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
@@ -17,6 +16,9 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import lv.semti.morphology.analyzer.*;
 
+/**
+ * Service providing morphological analyzer based tokenization.
+ */
 public class TokenResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
@@ -45,7 +47,7 @@ public class TokenResource extends ServerResource {
 	}
 
 	private String analyze(String query) {
-		List<Word> tokens = Splitting.tokenize(MorphoServer.getAnalyzer(), query);
+		List<Word> tokens = Splitting.tokenize(CentralServer.getAnalyzer(), query);
 		LinkedList<String> tokenJSON = new LinkedList<>();
 		
 		for (Word word : tokens) {

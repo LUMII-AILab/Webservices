@@ -15,12 +15,12 @@ import static org.junit.Assert.*;
 public class TaggerTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
-        MorphoServer.initResources();
+        CentralServer.initResources();
         LVMorphologyReaderAndWriter.setAnalyzerDefaults();
     }
 
     private static List<CoreLabel> tag (String sentence) {
-        return MorphoServer.morphoClassifier.classify( LVMorphologyReaderAndWriter.analyzeSentence(sentence.trim() ));
+        return CentralServer.morphoClassifier.classify( LVMorphologyReaderAndWriter.analyzeSentence(sentence.trim() ));
     }
 
     private void assertTag(List<CoreLabel> sentence, int word, String expectedTag) {

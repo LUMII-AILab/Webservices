@@ -20,6 +20,12 @@ import org.restlet.representation.StringRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
+/**
+ * General inflection service: provide a lemma (and optionally paradigm and
+ * stems) and get all forms.
+ * TODO: split in two – general one providing all inflection variants and paradigm/stem-based for tezaurs.
+ * TODO: xml + en is not actually English
+ */
 public class InflectResource extends ServerResource {
 	@Get
 	public Representation retrieve() {
@@ -52,7 +58,7 @@ public class InflectResource extends ServerResource {
 				List<String> wordJSON = new LinkedList<>();
 				for (Wordform wf : token) {
 					if ("EN".equalsIgnoreCase(language))
-						wordJSON.add(MorphoServer.tagset.toEnglish(wf).toJSON());
+						wordJSON.add(CentralServer.tagset.toEnglish(wf).toJSON());
 					else
 						wordJSON.add(wf.toJSON());
 				}
@@ -89,7 +95,7 @@ public class InflectResource extends ServerResource {
     public List<Collection<Wordform>> inflect(String query, String paradigm_param, String guess_param, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
-		Analyzer analyzer = MorphoServer.getAnalyzer();
+		Analyzer analyzer = CentralServer.getAnalyzer();
 		Paradigm paradigm = null;
 		if (paradigm_param != null) {
 			try {
@@ -98,7 +104,7 @@ public class InflectResource extends ServerResource {
 			} catch (NumberFormatException e) {
 				// Using paradigm names
 				if (paradigm_param.endsWith("ltg")) {
-					analyzer = MorphoServer.getLatgalian_analyzer();
+					analyzer = CentralServer.getLatgalian_analyzer();
 				}
 				paradigm = analyzer.paradigmByName(paradigm_param);
 			}

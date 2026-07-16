@@ -13,7 +13,10 @@ import org.restlet.resource.ServerResource;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.AttributeValues;
 
-public class WordResource extends ServerResource {
+/**
+ * Service providing wordform analysis.
+ */
+public class WordformAnalyzeResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
@@ -21,7 +24,7 @@ public class WordResource extends ServerResource {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
 
-		Word w = MorphoServer.getAnalyzer().analyze(query);
+		Word w = CentralServer.getAnalyzer().analyze(query);
 		return toJSON(w.wordforms, language);
 	}
 	
@@ -31,7 +34,7 @@ public class WordResource extends ServerResource {
 		while (i.hasNext()) {
 			AttributeValues av = i.next();
 			if ("EN".equalsIgnoreCase(language))
-				av = MorphoServer.tagset.toEnglish(av);
+				av = CentralServer.tagset.toEnglish(av);
 			out += av.toJSON();
 			if (i.hasNext()) out += ", ";
 		}
@@ -42,7 +45,7 @@ public class WordResource extends ServerResource {
 	//@Get("xml")
 	public String retrieveXML() {  
 		String query = (String) getRequest().getAttributes().get("word");
-		Wordform w = MorphoServer.getAnalyzer().analyze(query).wordforms.getFirst();
+		Wordform w = CentralServer.getAnalyzer().analyze(query).wordforms.getFirst();
 		
 		StringWriter s = new StringWriter();
 		

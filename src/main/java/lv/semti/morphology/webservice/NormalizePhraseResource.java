@@ -9,6 +9,10 @@ import org.restlet.resource.ServerResource;
 
 import lv.lumii.expressions.Expression;
 
+/**
+ * Generate "lemma" for nominal phrases.
+ * Future work: augument for verbal phrases?
+ */
 public class NormalizePhraseResource extends ServerResource {
 	@Get
 	public String retrieve() {
@@ -18,7 +22,7 @@ public class NormalizePhraseResource extends ServerResource {
 
 		String category = getQuery().getValues("category");
 
-		Analyzer analyzer = MorphoServer.getAnalyzer();
+		Analyzer analyzer = CentralServer.getAnalyzer();
 		analyzer.enableGuessing = true;
 		analyzer.enableVocative = true;
 		analyzer.guessVerbs = false;

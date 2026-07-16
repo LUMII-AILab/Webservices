@@ -19,6 +19,9 @@ import lv.semti.morphology.attributes.AttributeValues;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
+/**
+ * Specialized inflection service meant for inflecting human names.
+ */
 public class InflectPeopleResource extends ServerResource {
 	@Get
 	public String retrieve() {
@@ -54,7 +57,7 @@ public class InflectPeopleResource extends ServerResource {
 	private synchronized List<List<Wordform>> inflect(String query, String gender) {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
-		Analyzer analyzer = MorphoServer.getAnalyzer();
+		Analyzer analyzer = CentralServer.getAnalyzer();
 		analyzer.enableGuessing = true;
 		analyzer.enableVocative = true;
 		analyzer.guessVerbs = false;

@@ -17,13 +17,14 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
-public class MorphoServer {
+public class CentralServer
+{
 	static private Analyzer analyzer;
-    static synchronized Analyzer getAnalyzer() { return MorphoServer.analyzer; }
-    static synchronized void setAnalyzer(Analyzer analyzer) { MorphoServer.analyzer = analyzer; }
+    static synchronized Analyzer getAnalyzer() { return CentralServer.analyzer; }
+    static synchronized void setAnalyzer(Analyzer analyzer) { CentralServer.analyzer = analyzer; }
     static private Analyzer latgalian_analyzer;
-    static synchronized Analyzer getLatgalian_analyzer() { return MorphoServer.latgalian_analyzer; }
-    static synchronized void setLatgalian_analyzer(Analyzer analyzer) { MorphoServer.latgalian_analyzer = analyzer; }
+    static synchronized Analyzer getLatgalian_analyzer() { return CentralServer.latgalian_analyzer; }
+    static synchronized void setLatgalian_analyzer(Analyzer analyzer) { CentralServer.latgalian_analyzer = analyzer; }
 	static TagSet tagset;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
     static public boolean enableTagger = true;
@@ -101,19 +102,20 @@ public class MorphoServer {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
 				System.out.println("\nCommand line options:");
                 System.out.println("\t-tagger & -notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
-                //System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
+                System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
                 System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
 				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
                 System.out.println("http://localhost:8182/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
-				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
 				System.out.println("http://localhost:8182/inflect/json/[query] : generate all inflectional forms of a lemma");
 				System.out.println("http://localhost:8182/inflect_people/json/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
                 System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
+				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
 				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
+				System.out.println("http://localhost:8182/v1/transcriptions/[query] : generate phonetic transcription of the phrase");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -132,24 +134,27 @@ public class MorphoServer {
         component.getServers().add(Protocol.HTTP, port);
 
         // Then attach it to the local host
-        component.getDefaultHost().attach("/", RootResource.class);
-        component.getDefaultHost().attach("/{tail}", RootResource.class);
+        component.getDefaultHost().attach("/", InfoResource.class);
+        component.getDefaultHost().attach("/{tail}", InfoResource.class);
+        //component.getDefaultHost().attach("/version", VersionResource.class);
 
-        component.getDefaultHost().attach("/version", VersionResource.class);
+        component.getDefaultHost().attach("/analyze/{word}", WordformAnalyzeResource.class);
+        component.getDefaultHost().attach("/analyze/{language}/{word}", WordformAnalyzeResource.class);
+
+        component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
+		component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
+        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class); // pārtaisīt homonīmiem
+
+		component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
+
+		component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize", TokenResource.class);
+
 		if (enableLexiconReloader) {
 			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;
 			component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
 			component.getDefaultHost().attach("/reload_lexicon/{lexicon}/{wait}", ReloadLexiconResource.class);
 		}
-        component.getDefaultHost().attach("/analyze/{word}", WordResource.class);
-        component.getDefaultHost().attach("/analyze/{language}/{word}", WordResource.class);
-        component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
-        component.getDefaultHost().attach("/tokenize", TokenResource.class);
-        component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
-        component.getDefaultHost().attach("/inflect/{format}/{query}", InflectResource.class);
-        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class); // pārtaisīt homonīmiem
-        component.getDefaultHost().attach("/inflect/{format}/{language}/{query}", InflectResource.class);
-
         if (enableTagger) {
             component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
             component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);

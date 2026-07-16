@@ -18,6 +18,52 @@ import java.util.concurrent.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Resource for exporting Tēzaurs DB data as a morphological analyzer lexicon.
+ */
+public class ReloadLexiconResource extends ServerResource{
+	@Post()
+	public String reload() {
+		getResponse().setAccessControlAllowOrigin("*");
+		String query = (String) getRequest().getAttributes().get("lexicon");
+		String wait = (String) getRequest().getAttributes().get("wait");
+		for (String key: getRequest().getAttributes().keySet()) {
+			System.out.println(key);
+		}
+		System.out.println(query);
+		System.out.println(wait);
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+		if (query.equalsIgnoreCase("latgalian") && !CentralServer.enableLatgalian) {
+			this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
+			return "Latgalian corpus not enabled on this server";
+		}
+
+		if (wait == null) {
+			System.out.println("Not waiting");
+			Date status = Reloader.getReloader(query).attempt_reload();
+			// FIXME TODO - atgriezt statusu
+		} else {
+			System.out.println("Waiting until completion");
+			Reloader.getReloader(query).reload();
+		}
+
+		return "";
+	}
+
+	@Options()
+	public String cors() {
+		getResponse().setAccessControlAllowOrigin("*");
+		HashSet<String> headersHashSet = new HashSet<>();
+		headersHashSet.add("*");
+		getResponse().setAccessControlAllowHeaders(headersHashSet);
+		HashSet<Method> methodHashSet = new HashSet<>();
+		methodHashSet.add(Method.POST);
+		getResponse().setAccessControlAllowMethods(methodHashSet);
+		return "";
+	}
+}
+
+
 class Reloader {
 	static Path TEZAURS_DUMP_PATH = Paths.get("../TezaursMorphoDump/");
 
@@ -144,10 +190,10 @@ class Reloader {
 			Analyzer analyzer = new Analyzer(lexiconFileName,false);
 			if (this.latgalian) {
 				analyzer.setCacheSize(100);
-				MorphoServer.setLatgalian_analyzer(analyzer);
+				CentralServer.setLatgalian_analyzer(analyzer);
 			} else {
 				analyzer.setCacheSize(1000);
-				MorphoServer.setAnalyzer(analyzer);
+				CentralServer.setAnalyzer(analyzer);
 			}
 
 		} catch (Exception e) {
@@ -183,47 +229,4 @@ class Reloader {
 			outputStream.write(buffer, 0, bytesRead);
 		}
 	}
-}
-
-public class ReloadLexiconResource extends ServerResource{
-	@Post()
-	public String reload() {
-		getResponse().setAccessControlAllowOrigin("*");
-		String query = (String) getRequest().getAttributes().get("lexicon");
-		String wait = (String) getRequest().getAttributes().get("wait");
-		for (String key: getRequest().getAttributes().keySet()) {
-			System.out.println(key);
-		}
-		System.out.println(query);
-		System.out.println(wait);
-		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
-		if (query.equalsIgnoreCase("latgalian") && !MorphoServer.enableLatgalian) {
-			this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
-			return "Latgalian corpus not enabled on this server";
-		}
-
-		if (wait == null) {
-			System.out.println("Not waiting");
-			Date status = Reloader.getReloader(query).attempt_reload();
-			// FIXME TODO - atgriezt statusu
-		} else {
-			System.out.println("Waiting until completion");
-			Reloader.getReloader(query).reload();
-		}
-
-		return "";
-	}
-
-	@Options()
-	public String cors() {
-		getResponse().setAccessControlAllowOrigin("*");
-		HashSet<String> headersHashSet = new HashSet<>();
-		headersHashSet.add("*");
-		getResponse().setAccessControlAllowHeaders(headersHashSet);
-		HashSet<Method> methodHashSet = new HashSet<>();
-		methodHashSet.add(Method.POST);
-		getResponse().setAccessControlAllowMethods(methodHashSet);
-		return "";
-	}
-
 }

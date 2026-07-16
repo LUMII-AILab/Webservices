@@ -12,6 +12,10 @@ import phonetic_character_converter.IPACharacterConverter;
 import phonetic_character_converter.PhoneticCharacterConverter;
 import phonetic_transcriber.PhoneticTranscriber;
 
+/**
+ * Wrapper for old phonetic transcriber.
+ * TODO: update with new transcriber.
+ */
 public class PhoneticTranscriberResource extends ServerResource {
 	@Get
 	public String retrieve() {

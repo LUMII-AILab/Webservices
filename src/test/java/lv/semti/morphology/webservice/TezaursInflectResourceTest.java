@@ -17,14 +17,14 @@ import static org.junit.Assert.*;
  */
 public class TezaursInflectResourceTest {
     private static InflectResource inflectResource;
-    private static WordResource wordResource;
+    //private static WordformAnalyzeResource wordformResource;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception{
-        MorphoServer.enableTagger = false;
-        MorphoServer.initResources();
+        CentralServer.enableTagger = false;
+        CentralServer.initResources();
         inflectResource = new InflectResource();
-        wordResource = new WordResource();
+        //wordformResource = new WordformAnalyzeResource();
     }
 
     private void assertFormExists(List<Collection<Wordform>> wordforms, String form) {
@@ -230,10 +230,10 @@ public class TezaursInflectResourceTest {
     @Test
     public void ticket_125() {
         // nez kāpēc nestrādā atpazīšana atsevišķiem vārdiem, ja tos padod ar lielo burtu
-        Word w = MorphoServer.getAnalyzer().analyze("krūšu");
+        Word w = CentralServer.getAnalyzer().analyze("krūšu");
         assertTrue(w.isRecognized());
 
-        w = MorphoServer.getAnalyzer().analyze("Krūšu");
+        w = CentralServer.getAnalyzer().analyze("Krūšu");
         assertTrue(w.isRecognized());
         w.describe(System.out);
 //        System.out.println(wordResource.toJSON(w.wordforms, null) );

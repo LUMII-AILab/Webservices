@@ -11,6 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Resource for finding all appropriate paradigmas for given lemma.
+ */
 public class SuitableParadigmResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
@@ -18,7 +21,7 @@ public class SuitableParadigmResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("lemma");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
-		Analyzer analyzer = MorphoServer.getAnalyzer();
+		Analyzer analyzer = CentralServer.getAnalyzer();
 		analyzer.guessAllParadigms = true;
 		analyzer.enableAllGuesses = true;
 		List<Paradigm> paradigms = analyzer.suitableParadigms(query);
