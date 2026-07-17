@@ -34,10 +34,12 @@ public class InfoResource extends ServerResource {
         addGetLink(sb, "analyze/doma", "/analyze/[word]", "morphological analysis of the word (JSON)");
         addGetLink(sb, "analyze/zzzzzs&guess=false", "/analyze/[word]&guess=[true/false]", "morphological analysis of the word with or without guessing(JSON)");
         addGetLink(sb, "analyze/en/doma", "/analyze/en/[word]", "morphological analysis of the word, attribute names in English (JSON)");
-        addGetLink(sb, "inflect/rakt", "/inflect/[query]", "generate all inflectional forms of a lemma (JSON)");
-        addGetLink(sb, "inflect/aita?paradigm=noun-4f", "inflect/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
-        addGetLink(sb, "inflect/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
-        addGetLink(sb, "inflect/en/rakt", "/inflect/en/[query]", "generate all inflectional forms of a lemma, attribute names in English (JSON)");
+        addGetLink(sb, "inflect_general_lvs/rakt", "/inflect_general_lvs/[query]", "generate all inflectional forms of a lemma for standard Latvian (JSON)");
+        addGetLink(sb, "inflect_general_lvs/en/rakt", "/inflect_general_lvs/en/[query]", "generate all inflectional forms of a lemma for standard Latvian, attribute names in English (JSON)");
+        addGetLink(sb, "inflect_general_ltg/muosa", "/inflect_general_ltg/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON)");
+        addGetLink(sb, "inflect_general_ltg/en/muosa", "/inflect_general_ltg/en/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON), attribute names in English (JSON)");
+        addGetLink(sb, "inflect_with_data/aita?paradigm=noun-4f", "inflect_with_data/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
+        addGetLink(sb, "inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_with_data/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
         addGetLink(sb, "suitable_paradigm/pokemonizators", "/suitable_paradigm/[lemma]", "provides a sorted lists of paradigms that may form the provided lemma (JSON)");
         addGetLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize", "tokenization of sentences (JSON)");
         addGetLink(sb, "tokenize/en/domāju%20es%20domas%20dziļas.", "/tokenize/[en]/[query]", "tokenization of sentences, attribute names in English (JSON)");

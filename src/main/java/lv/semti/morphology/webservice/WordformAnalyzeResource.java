@@ -20,6 +20,6 @@ public class WordformAnalyzeResource extends ServerResource {
 		String language = (String) getRequest().getAttributes().get("language");
 
 		Word w = CentralServer.getAnalyzer().analyze(query);
-		return Output.toJson(w, language);
+		return Output.toJson(w, language, true);
 	}
 }

@@ -110,7 +110,9 @@ public class CentralServer
 				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
 				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
                 System.out.println("http://localhost:8182/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
-				System.out.println("http://localhost:8182/inflect/[query] : generate all inflectional forms of a lemma");
+				System.out.println("http://localhost:8182/inflect_general_lvs/[query] : generate all inflectional forms of a lemma, standard Latvian");
+				System.out.println("http://localhost:8182/inflect_general_ltg/[query] : generate all inflectional forms of a lemma, Latgalian");
+				System.out.println("http://localhost:8182/inflect_with_data/[query] : generate all inflectional forms of a lemma, given paradigm as well as optional stems and attributes");
 				System.out.println("http://localhost:8182/inflect_people/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
                 System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
@@ -142,9 +144,12 @@ public class CentralServer
         component.getDefaultHost().attach("/analyze/{word}", WordformAnalyzeResource.class);
         component.getDefaultHost().attach("/analyze/{language}/{word}", WordformAnalyzeResource.class);
 
-        component.getDefaultHost().attach("/inflect/query}", InflectResource.class);
-		component.getDefaultHost().attach("/inflect/{language}/{query}", InflectResource.class);
-        component.getDefaultHost().attach("/v1/inflections/{query}", InflectResource.class); // pārtaisīt homonīmiem
+		component.getDefaultHost().attach("/inflect_general_{type}/{query}", InflectResource.class); // pārtaisīt homonīmiem
+		component.getDefaultHost().attach("/inflect_general_{type}/{language}/{query}", InflectResource.class);
+
+        component.getDefaultHost().attach("/inflect_with_data/{query}", InflectWithParadigmResource.class);
+		component.getDefaultHost().attach("/inflect_with_data/{language}/{query}", InflectWithParadigmResource.class);
+        component.getDefaultHost().attach("/v1/inflections/{query}", InflectWithParadigmResource.class);
 
 		component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
 

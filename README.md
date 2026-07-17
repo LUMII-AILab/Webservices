@@ -29,18 +29,29 @@ Servisiem, kam pieejama valodas izvēle atribūtu kodējumam, pieejamās valodas
 Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masīvs ar vienu vai vairākiem morfoloģiskās analīzes variantiem, kas atbilst šim vārdam.
 
 
-### Vārdformu ģenerēšana (JSON)
+### Vārdformu ģenerēšana bez papildinformācijas(JSON)
 
-- `http://localhost:8182/inflect/[vārds]`: http://localhost:8182/inflect/rakt
-- `http://localhost:8182/inflect/en/[vārds]`: http://localhost:8182/inflect/en/rakt
+- `http://localhost:8182/inflect_general_lvs/[vārds]`: http://localhost:8182/inflect_general_lvs/rakt
+- `http://localhost:8182/inflectinflect_general_lvs/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/rakt
+- `http://localhost:8182/inflect_general_ltg/[vārds]`: http://localhost:8182/inflect_general_lvs/muosa
+- `http://localhost:8182/inflectinflect_general_ltg/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/muosa
 
 Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi.
 
-Parmetra `[vārds]` vietā var būt vairāk norāžu par vārda paradigmu un locīšanu (šo informāciju ņem no Tēzaura un lieto Tēzauram):
-- `http://localhost:8182/inflect/[vārds]&guess=[true/false]`: http://localhost:8182/inflect/zzzs?guess=false (minēt vai neminēt leksikonā neesošo vārdu locīšanu, pēc noklusējuma min)
-- `http://localhost:8182/inflect/[vārds]&paradigm=[paradigma]`: http://localhost:8182/inflect/aita?paradigm=noun-4f
-- `http://localhost:8182/inflect/[vārds]&paradigm=[paradigma]&stem1=[nenoteiksmes celms]&stem2=[tagadnes celms]&stem3=[pagātnes celms]`: http://localhost:8182/inflect/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus (pirmās konjugācijas verbiem vajag celmus, lai pareizi locītu)
-- `http://localhost:8182/inflect/[vārds]&paradigm=[paradigma]&inflmisc=[papildus informācija]`: https://localhost:8182/inflect/%C4%BCaudis?paradigm=noun-6a&inflmisc=Daudzskaitlis%2CV%C4%ABrie%C5%A1u_dzimte (atpazītās papildinformācijas vienības ir: `Vīriešu_dzimte`, `Sieviešu_dzimte`, `Daudzskaitlis`, `Vienskaitlis`, `Noliegums`)
+Minēt vai neminēt leksikonā neesošo vārdu locīšanu, pēc noklusējuma ???
+- `http://localhost:8182/inflect_general_lvs/[vārds]&guess=[true/false]`: http://localhost:8182/inflect_general_lvs/zzza?guess=false
+- `http://localhost:8182/inflect_general_ltg/[vārds]&guess=[true/false]`: http://localhost:8182/inflect_general_ltg/zzza?guess=false
+
+Zināmās problēmas: homonīmiem atdod vienu variantu.
+
+
+### Vārdformu ģenerēšana ar papildinformāciju(JSON)
+
+- `http://localhost:8182/inflect_with_data/[vārds]&paradigm=[paradigma]`: http://localhost:8182/inflect_with_data/aita?paradigm=noun-4f
+- `http://localhost:8182/inflect_with_data/[vārds]&paradigm=[paradigma]&stem1=[nenoteiksmes celms]&stem2=[tagadnes celms]&stem3=[pagātnes celms]`: http://localhost:8182/inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus (pirmās konjugācijas verbiem vajag celmus, lai pareizi locītu)
+- `http://localhost:8182/inflect_with_data/[vārds]&paradigm=[paradigma]&inflmisc=[papildus informācija]`: https://localhost:8182/inflect_with_data/%C4%BCaudis?paradigm=noun-6a&inflmisc=Daudzskaitlis%2CV%C4%ABrie%C5%A1u_dzimte (atpazītās papildinformācijas vienības ir: `Vīriešu_dzimte`, `Sieviešu_dzimte`, `Daudzskaitlis`, `Vienskaitlis`, `Noliegums`)
+
+Šo informāciju ņem no Tēzaura un lieto Tēzauram, šim servisam paradigmu norādīt ir **obligāti**.
 
 
 ### Pieļaujamo paradigmu piemeklētājs (JSON)

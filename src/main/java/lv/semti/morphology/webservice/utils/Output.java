@@ -13,14 +13,15 @@ import java.util.List;
 
 public class Output
 {
-	public static <T extends Iterable<? extends Iterable<Wordform>>> String toJsonGeneric(
-			T wordforms, String language){
+	public static <T extends Iterable<? extends Iterable<Wordform>>> String toJsonDoubleGeneric(
+			T wordforms, String language, boolean useDefaultAttributeFilter){
 		List<String> topLevelJSON = new LinkedList<>();
 		for (Iterable<Wordform> wordformSubset : wordforms) {
 			List<String> subJSON = new LinkedList<>();
 			for (Wordform wf : wordformSubset) {
+				if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
 				if ("EN".equalsIgnoreCase(language))
-					subJSON.add(CentralServer.tagset.toEnglish(wf).toJSON());
+					subJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
 				else
 					subJSON.add(wf.toJSON());
 			}
@@ -30,26 +31,40 @@ public class Output
 		return toJson(topLevelJSON, "\n");
 	}
 
-	public static <T extends Iterable<Word>> String toJson(T words, String language){
+	public static <T extends Iterable<Wordform>> String toJsonGeneric(
+			T wordforms, String language, boolean useDefaultAttributeFilter) {
+		List<String> topLevelJSON = new LinkedList<>();
+		for (Wordform wf : wordforms) {
+			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
+			if ("EN".equalsIgnoreCase(language))
+				topLevelJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
+			else
+				topLevelJSON.add(wf.toJSON());
+		}
+		return toJson(topLevelJSON, "\n");
+	}
+
+	public static <T extends Iterable<Word>> String toJson(
+			T words, String language,boolean useDefaultAttributeFilter){
 		List<String> topLevelJSON = new LinkedList<>();
 		for (Word word : words) {
-			topLevelJSON.add(toJson(word, language));
+			topLevelJSON.add(toJson(word, language, useDefaultAttributeFilter));
 		}
 		return toJson(topLevelJSON, "\n");
 	}
 
 	public static String toJson(
-			Word word, String language) {
+			Word word, String language, boolean useDefaultAttributeFilter) {
 		List<String> topLevelJSON = new LinkedList<>();
 		for (Wordform wf : word.wordforms) {
+			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
 			if ("EN".equalsIgnoreCase(language))
-				topLevelJSON.add(CentralServer.tagset.toEnglish(wf).toJSON());
+				topLevelJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
 			else
 				topLevelJSON.add(wf.toJSON());
 		}
 		return toJson(topLevelJSON, " ");
 	}
-
 
 	public static String toJson(Collection<String> tags, String afterComma) {
 		Iterator<String> i = tags.iterator();

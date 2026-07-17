@@ -49,7 +49,7 @@ public class TokenResource extends ServerResource {
 
 	private String analyze(String query, String language) {
 		List<Word> tokens = Splitting.tokenize(CentralServer.getAnalyzer(), query);
-		return Output.toJson(tokens, language);
+		return Output.toJson(tokens, language, true);
 	}
 
 }
