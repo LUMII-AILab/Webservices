@@ -44,19 +44,19 @@ public class CentralServer
                 enableTagger = true;
                 System.out.println("Tagger functionality enabled");
             }
-			if (args[i].equalsIgnoreCase("-notagger")) {
+			else if (args[i].equalsIgnoreCase("-notagger")) {
 				enableTagger = false;
 				System.out.println("Tagger functionality disabled");
 			}
-            if (args[i].equalsIgnoreCase("-transcription")) {
+            else if (args[i].equalsIgnoreCase("-transcription")) {
                 enableTranscription = true;
                 System.out.println("Transcription service enabled");
             }
-            if (args[i].equalsIgnoreCase("-notranscription")) {
+            else if (args[i].equalsIgnoreCase("-notranscription")) {
                 enableTranscription = false;
                 System.out.println("Transcription service disabled");
             }
-			if (args[i].equalsIgnoreCase("-lexreloader")) {
+			else if (args[i].equalsIgnoreCase("-lexreloader")) {
 				if (Files.exists(MORPHO_DUMPER_PATH)) {
 					enableLexiconReloader = true;
 					System.out.println("Lexicon reloading service enabled with path " + MORPHO_DUMPER_PATH);
@@ -67,11 +67,11 @@ public class CentralServer
 					System.out.println("Lexicon reloading service is turned of because of lacking dumper script.\n");
 				}
 			}
-			if (args[i].equalsIgnoreCase("-nolexreloader")) {
+			else if (args[i].equalsIgnoreCase("-nolexreloader")) {
 				enableLexiconReloader = false;
 				System.out.println("Lexicon reloading service disabled");
 			}
-			if (args[i].length() >= "-lexreloader=".length()
+			else if (args[i].length() >= "-lexreloader=".length()
 					&& args[i].substring(0, "-lexreloader=".length()).equalsIgnoreCase("-lexreloader="))
 			{
 				MORPHO_DUMPER_PATH = Paths.get(args[i].substring("-lexreloader=".length()));
@@ -85,7 +85,7 @@ public class CentralServer
 					System.out.println("Lexicon reloading service is turned of because of lacking dumper script.\n");
 				}
 			}
-			if (args[i].equalsIgnoreCase("-port")) {
+			else if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
 					try {
 						port = Integer.parseInt(args[i+1]);
@@ -97,6 +97,7 @@ public class CentralServer
 					}
 				}
 			}
+			else System.err.println ("Parameter " + args[i] + " was not recognised!");
 			
 			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
