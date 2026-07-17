@@ -2,7 +2,7 @@ package lv.semti.morphology.webservice;
 
 import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.lexicon.Paradigm;
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -25,7 +25,7 @@ public class SuitableParadigmResource extends ServerResource {
 		analyzer.enableAllGuesses = true;
 		List<Paradigm> paradigms = analyzer.suitableParadigms(query);
 		analyzer.defaultSettings();
-		return Output.toJson(paradigms);
+		return JsonOutput.toJson(paradigms);
 	}
 
 }

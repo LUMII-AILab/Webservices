@@ -5,7 +5,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.ext.json.JsonRepresentation;
@@ -49,7 +49,7 @@ public class TokenResource extends ServerResource {
 
 	private String analyze(String query, String language) {
 		List<Word> tokens = Splitting.tokenize(CentralServer.getAnalyzer(), query);
-		return Output.toJson(tokens, language, true);
+		return JsonOutput.toJson(tokens, language, true);
 	}
 
 }

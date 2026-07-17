@@ -12,7 +12,7 @@ import lv.semti.morphology.attributes.AttributeNames;
 
 import lv.semti.morphology.lexicon.StemType;
 import lv.semti.morphology.webservice.utils.AttributeFilter;
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -30,7 +30,7 @@ public class InflectResource extends ServerResource {
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		boolean guess = !"false".equalsIgnoreCase(getQuery().getValues("guess"));
 		List<Collection<Wordform>> processedTokens = inflect(query, guess, latgalian);
-		return Output.toJsonDoubleGeneric(processedTokens, language, false);
+		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);
 	}
 
     public List<Collection<Wordform>> inflect(String query, boolean guess, boolean latgalian) {

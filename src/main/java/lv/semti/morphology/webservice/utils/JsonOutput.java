@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Output
+public class JsonOutput
 {
 	public static <T extends Iterable<? extends Iterable<Wordform>>> String toJsonDoubleGeneric(
 			T wordforms, String language, boolean useDefaultAttributeFilter){

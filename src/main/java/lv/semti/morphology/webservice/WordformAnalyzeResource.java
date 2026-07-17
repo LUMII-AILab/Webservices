@@ -1,7 +1,7 @@
 package lv.semti.morphology.webservice;
 
 import lv.semti.morphology.analyzer.Word;
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -20,6 +20,6 @@ public class WordformAnalyzeResource extends ServerResource {
 		String language = (String) getRequest().getAttributes().get("language");
 
 		Word w = CentralServer.getAnalyzer().analyze(query);
-		return Output.toJson(w, language, true);
+		return JsonOutput.toJson(w, language, true);
 	}
 }

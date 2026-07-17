@@ -8,7 +8,7 @@ import lv.semti.morphology.attributes.AttributeValues;
 import lv.semti.morphology.lexicon.Paradigm;
 import lv.semti.morphology.lexicon.StemType;
 import lv.semti.morphology.webservice.utils.AttributeFilter;
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.restlet.data.Status;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
@@ -42,7 +42,7 @@ public class InflectWithParadigmResource extends ServerResource
 		List<Wordform> processedTokens = inflect(query, paradigm, guess,
 				getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"), decodeInflMisc(inflmisc));
 
-		return Output.toJsonGeneric(processedTokens, language, false);
+		return JsonOutput.toJsonGeneric(processedTokens, language, false);
 	}
 
 	public List<Wordform> inflect(String query, Paradigm paradigm, Boolean guess, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {

@@ -13,7 +13,7 @@ import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
 
 import lv.semti.morphology.webservice.utils.AttributeFilter;
-import lv.semti.morphology.webservice.utils.Output;
+import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -27,7 +27,7 @@ public class InflectPeopleResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		List<List<Wordform>> processedTokens = inflect(query, getQuery().getValues("gender"));
-		return Output.toJsonDoubleGeneric(processedTokens, language, false);
+		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);
 	}
 
 	private synchronized List<List<Wordform>> inflect(String query, String gender) {

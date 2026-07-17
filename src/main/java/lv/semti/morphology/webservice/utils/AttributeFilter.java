@@ -1,19 +1,13 @@
 package lv.semti.morphology.webservice.utils;
 
 import lv.semti.morphology.attributes.AttributeNames;
-
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 public class AttributeFilter
 {
 	public static final Set<String> showableAttributes = initFilter();
 
-	static Set<String> initFilter ()
-	{
-
-
+	static Set<String> initFilter () {
 		return Set.of(
 				// General
 				AttributeNames.i_Word,
@@ -43,5 +37,4 @@ public class AttributeFilter
 				AttributeNames.i_PositionInParagraph,
 				AttributeNames.i_SpaceBefore);
 	}
-
 }
