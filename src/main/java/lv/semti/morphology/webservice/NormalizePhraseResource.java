@@ -14,7 +14,7 @@ import lv.lumii.expressions.Expression;
  * Future work: augument for verbal phrases?
  */
 public class NormalizePhraseResource extends ServerResource {
-	@Get
+	@Get("text")
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
@@ -32,8 +32,8 @@ public class NormalizePhraseResource extends ServerResource {
 		analyzer.enableAllGuesses = true;
 		
     	Expression e = new Expression(query, category, false);
-    	String pamatforma = e.normalize();
+    	String lemma = e.normalize();
     	analyzer.defaultSettings();
-		return pamatforma;		
+		return lemma;
 	}
 }

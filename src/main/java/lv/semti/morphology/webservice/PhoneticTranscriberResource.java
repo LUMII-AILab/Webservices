@@ -17,7 +17,7 @@ import phonetic_transcriber.PhoneticTranscriber;
  * TODO: update with new transcriber.
  */
 public class PhoneticTranscriberResource extends ServerResource {
-	@Get
+	@Get("text")
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String phrase = (String) getRequest().getAttributes().get("phrase");

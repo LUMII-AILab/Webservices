@@ -31,31 +31,34 @@ public class InfoResource extends ServerResource {
         sb.append("<html><head><title>Latvian morphology web services</title></head><body><h3>Version ");
         sb.append(CentralServer.getAnalyzer().getRevision());
         sb.append("</h3>\n<ul>\n");
-        addGetLink(sb, "analyze/doma", "/analyze/[word]", "morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
-        addGetLink(sb, "analyze/en/doma", "/analyze/en/[word]", "morphological analysis of the word with attribute names in English");
-        addGetLink(sb, "v1/inflections/rakt", "/v1/inflections/[query]", "generate all inflectional forms of a lemma");
-        addGetLink(sb, "v1/inflections/aita?paradigm=noun-4f", "/v1/inflections/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm");
-        addGetLink(sb, "v1/inflections/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "/v1/inflections/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction");
-        addGetLink(sb, "inflect/xml/rakt", "/inflect/[format]/[query]", "generate all inflectional forms of a lemma");
-        addGetLink(sb, "inflect/json/en/rakt", "/inflect/[format]/[language]/[query]", "generate all inflectional forms of a lemma");
-        addGetLink(sb, "suitable_paradigm/pokemonizators", "/suitable_paradigm/[lemma]", "provides a sorted lists of paradigms that may form the provided lemma");
-        addGetLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize", "tokenization of sentences");
+        addGetLink(sb, "analyze/doma", "/analyze/[word]", "morphological analysis of the word (JSON)");
+        addGetLink(sb, "analyze/zzzzzs&guess=false", "/analyze/[word]&guess=[true/false]", "morphological analysis of the word with or without guessing(JSON)");
+        addGetLink(sb, "analyze/en/doma", "/analyze/en/[word]", "morphological analysis of the word, attribute names in English (JSON)");
+        addGetLink(sb, "inflect/rakt", "/inflect/[query]", "generate all inflectional forms of a lemma (JSON)");
+        addGetLink(sb, "inflect/aita?paradigm=noun-4f", "inflect/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
+        addGetLink(sb, "inflect/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
+        addGetLink(sb, "inflect/en/rakt", "/inflect/en/[query]", "generate all inflectional forms of a lemma, attribute names in English (JSON)");
+        addGetLink(sb, "suitable_paradigm/pokemonizators", "/suitable_paradigm/[lemma]", "provides a sorted lists of paradigms that may form the provided lemma (JSON)");
+        addGetLink(sb, "tokenize/domāju%20es%20domas%20dziļas.", "/tokenize/[query] or POST to /tokenize", "tokenization of sentences (JSON)");
+        addGetLink(sb, "tokenize/en/domāju%20es%20domas%20dziļas.", "/tokenize/[en]/[query]", "tokenization of sentences, attribute names in English (JSON)");
         sb.append("</ul>\n");
 
         if (CentralServer.enableTagger) {
             sb.append("<p>Morphotagger is turned on and provides following:</p>\n<ul>\n");
             addGetLink(sb, "morphotagger/vīrs%20ar%20cirvi.", "/morphotagger/[query]", "do statistical morphological disambiguation of a sentence");
-            addGetLink(sb, "inflect_people/json/Baraks%20Obama?gender=m", "/inflect_people/json/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names");
-            addGetLink(sb, "inflect_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/[phrase]?category=[person/org/loc]", "try to inflect a multiword expression / named entity, given its category");
-            addGetLink(sb, "normalize_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūtam?category=org", "/normalize_phrase/[phrase]?category=[person/org/loc]", "try to transform a multiword expression / named entity to its base form, given its category");
+            addGetLink(sb, "inflect_people/Baraks%20Obama?gender=m", "/inflect_people/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
+            addGetLink(sb, "inflect_people/en/Baraks%20Obama?gender=m", "/inflect_people/en/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
+            addGetLink(sb, "inflect_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/[phrase]?category=[person/org/loc]", "try to inflect a multiword expression / named entity, given its category (JSON)");
+            addGetLink(sb, "inflect_phrase/en/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/en/[phrase]?category=[person/org/loc]", "try to inflect a multiword expression / named entity, given its category, attribute names to English (JSON)");
+            addGetLink(sb, "normalize_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūtam?category=org", "/normalize_phrase/[phrase]?category=[person/org/loc]", "try to transform a multiword expression / named entity to its base form, given its category (TEXT)");
             sb.append("</ul>\n");
         } else sb.append("<p>Morphotagger is turned off.</p>\n");
 
 
         if (CentralServer.enableTranscription) {
             sb.append("<p>Phonetic transcriber is turned on and provides following:</p>\n<ul>\n");
-            addGetLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi", "/v1/transcriptions/[phrase]", "phonetic transcription of the phrase");
-            addGetLink(sb, "v1/transcriptions/vīrs%20ar%20cirvi?phoneme_set=IPA", "/v1/transcriptions/[phrase]?phoneme_set=IPA", "IPA phonetic transcription of the phrase");
+            addGetLink(sb, "transcribe/vīrs%20ar%20cirvi", "/transcribe/[phrase]", "phonetic transcription of the phrase (TEXT)");
+            addGetLink(sb, "transcribe/vīrs%20ar%20cirvi?phoneme_set=IPA", "/transcribe/[phrase]?phoneme_set=IPA", "IPA phonetic transcription of the phrase (TEXT)");
             sb.append("</ul>\n");
         } else sb.append("<p>Phonetic transcriber is turned off.</p>\n");
 

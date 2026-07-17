@@ -1,11 +1,7 @@
 package lv.semti.morphology.webservice;
 
-import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,6 +12,7 @@ import lv.semti.morphology.analyzer.Wordform;
 import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
 
+import lv.semti.morphology.webservice.utils.Output;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -23,35 +20,16 @@ import org.restlet.resource.ServerResource;
  * Specialized inflection service meant for inflecting human names.
  */
 public class InflectPeopleResource extends ServerResource {
-	@Get
+	@Get("json")
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
+		String language = (String) getRequest().getAttributes().get("language");
 
-		List<List<Wordform>> processedtokens = inflect(query, getQuery().getValues("gender"));
-				
-		String format = (String) getRequest().getAttributes().get("format");
-		if (format.equalsIgnoreCase("xml")) {
-			StringWriter s = new StringWriter();					
-			try {
-				s.write("<Elements>\n");
-				for (List<Wordform> token : processedtokens) {
-					s.write("<Locījumi>\n");
-					for (Wordform wf : token) wf.toXML(s);	
-					s.write("</Locījumi>\n");
-				}		
-				s.write("</Elements>\n");
-			} catch (IOException e) { e.printStackTrace(); }
-			return s.toString();
-		} else {
-			List<String> tokenJSON = new LinkedList<>();
-			for (List<Wordform> token : processedtokens) {
-				List<String> wordJSON = new LinkedList<>();
-				for (Wordform wf : token) wordJSON.add(wf.toJSON());
-				tokenJSON.add(formatJSON(wordJSON));
-			}		
-			return formatJSON(tokenJSON);			
-		}
+		List<List<Wordform>> processedTokens = inflect(query, getQuery().getValues("gender"));
+
+		return Output.toJsonGeneric(processedTokens, language);
+
 	}
 
 	private synchronized List<List<Wordform>> inflect(String query, String gender) {
@@ -67,8 +45,13 @@ public class InflectPeopleResource extends ServerResource {
 		analyzer.enableAllGuesses = true;
 		
 		LinkedList<String> showAttrs = new LinkedList<>();
-		showAttrs.add("Vārds"); showAttrs.add("Locījums"); showAttrs.add("Skaitlis"); showAttrs.add("Dzimte"); showAttrs.add("Deklinācija");
-		
+		showAttrs.add("Vārds");
+		showAttrs.add(AttributeNames.i_Case);
+		showAttrs.add(AttributeNames.i_Number);
+		showAttrs.add(AttributeNames.i_Gender);
+		showAttrs.add(AttributeNames.i_Declension);
+		showAttrs.add(AttributeNames.i_PartOfSpeech); // Without part of speech we can't properly transform attribute names to other languages.
+
 		AttributeValues filter = new AttributeValues();
 		if (gender != null) {
 			if (gender.equalsIgnoreCase("m")) filter.addAttribute(AttributeNames.i_Gender, AttributeNames.v_Masculine);
@@ -80,28 +63,17 @@ public class InflectPeopleResource extends ServerResource {
 		LinkedList<List<Wordform>> processedTokens = new LinkedList<>();
 		
 		for (Word word : tokens) {
-			List<Wordform> formas = analyzer.generateInflections(word.getToken(), true, filter);
-			for (Wordform wf : formas) {
+			List<Wordform> forms = analyzer.generateInflections(word.getToken(), true, filter);
+			for (Wordform wf : forms) {
 				wf.filterAttributes(showAttrs);
 				String name = wf.getValue(AttributeNames.i_Word);
 				name = name.substring(0, 1).toUpperCase() + name.substring(1);
 				wf.addAttribute(AttributeNames.i_Word, name);
 			}
-			processedTokens.add(formas);
+			processedTokens.add(forms);
 		}
 		
 		analyzer.defaultSettings();
 		return processedTokens;
-	}
-	
-	private String formatJSON(Collection<String> tags) {
-		Iterator<String> i = tags.iterator();
-		String out = "[";
-		while (i.hasNext()) {
-			out += i.next();
-			if (i.hasNext()) out += ",\n";
-		}
-		out += "]";
-		return out;
 	}
 }

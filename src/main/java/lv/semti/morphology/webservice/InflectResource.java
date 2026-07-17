@@ -1,6 +1,5 @@
 package lv.semti.morphology.webservice;
 
-import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -14,9 +13,7 @@ import lv.semti.morphology.attributes.AttributeNames;
 import lv.semti.morphology.attributes.AttributeValues;
 import lv.semti.morphology.lexicon.Paradigm;
 import lv.semti.morphology.lexicon.StemType;
-import org.restlet.data.MediaType;
-import org.restlet.representation.Representation;
-import org.restlet.representation.StringRepresentation;
+import lv.semti.morphology.webservice.utils.Output;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -24,49 +21,19 @@ import org.restlet.resource.ServerResource;
  * General inflection service: provide a lemma (and optionally paradigm and
  * stems) and get all forms.
  * TODO: split in two – general one providing all inflection variants and paradigm/stem-based for tezaurs.
- * TODO: xml + en is not actually English
  */
 public class InflectResource extends ServerResource {
-	@Get
-	public Representation retrieve() {
+	@Get("json")
+	public String retrieve() {
         getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 
         String inflmisc = getQuery().getValues("inflmisc");
-		List<Collection<Wordform>> processedtokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
+		List<Collection<Wordform>> processedTokens = inflect(query, getQuery().getValues("paradigm"), getQuery().getValues("guess"),
                 getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"), decodeInflMisc(inflmisc));
-		
-		String format = (String) getRequest().getAttributes().get("format");
-		if (format == null) format = "json";
-		if (format.equalsIgnoreCase("xml")) {
-			StringWriter s = new StringWriter();					
-			try {
-				s.write("<Elements>\n");
-				for (Collection<Wordform> token : processedtokens) {
-					s.write("<Locījumi>\n");
-					for (Wordform wf : token) wf.toXML(s);	
-					s.write("</Locījumi>\n");
-				}		
-				s.write("</Elements>\n");
-			} catch (IOException e) { e.printStackTrace(); }
 
-			return new StringRepresentation(s.toString(), MediaType.APPLICATION_XML);
-		} else {
-			List<String> tokenJSON = new LinkedList<>();
-			for (Collection<Wordform> token : processedtokens) {
-				List<String> wordJSON = new LinkedList<>();
-				for (Wordform wf : token) {
-					if ("EN".equalsIgnoreCase(language))
-						wordJSON.add(CentralServer.tagset.toEnglish(wf).toJSON());
-					else
-						wordJSON.add(wf.toJSON());
-				}
-				tokenJSON.add(formatJSON(wordJSON));
-			}
-
-			return new StringRepresentation(formatJSON(tokenJSON), MediaType.APPLICATION_JSON);
-		}
+		return Output.toJsonGeneric(processedTokens, language);
 	}
 
     private static AttributeValues decodeInflMisc(String inflmisc) {
@@ -220,13 +187,8 @@ public class InflectResource extends ServerResource {
 
 
 	/**
-	 * Generates wordforms with the assumption that "stemX" may contain multiple alternate stem options separated by a comma
-	 * @param token
-	 * @param paradigmID
-	 * @param stem1
-	 * @param stem2
-	 * @param stem3
-	 * @return
+	 * Generates wordforms with the assumption that "stemX" may contain multiple
+	 * alternate stem options separated by a comma
 	 */
     private List<Wordform> multistem_generate(Analyzer analyzer, String token, Integer paradigmID, String stem1, String stem2, String stem3) {
         if (stem2 != null && stem2.contains(",")) {
@@ -252,14 +214,5 @@ public class InflectResource extends ServerResource {
         return analyzer.generateInflectionsFromParadigm(token, paradigmID, stem1, stem2, stem3);
     }
 
-    private String formatJSON(Collection<String> tags) {
-		Iterator<String> i = tags.iterator();
-		String out = "[";
-		while (i.hasNext()) {
-			out += i.next();
-			if (i.hasNext()) out += ",\n";
-		}
-		out += "]";
-		return out;
-	}
+
 }

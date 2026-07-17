@@ -3,11 +3,9 @@ package lv.semti.morphology.webservice;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
+import lv.semti.morphology.webservice.utils.Output;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.ext.json.JsonRepresentation;
@@ -25,8 +23,9 @@ public class TokenResource extends ServerResource {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+		String language = (String) getRequest().getAttributes().get("language");
 
-		return analyze(query);
+		return analyze(query, language);
 	}
 	
 	@Post("json")
@@ -34,37 +33,23 @@ public class TokenResource extends ServerResource {
 
 		JSONObject json;
 		String query = null;
+		String language = null;
 		try {
 			json = entity.getJsonObject();
 			query = json.getString("query");
+			language = json.has("language") ? json.getString("language") : "lv";
 		} catch (JSONException e) {
 			
 			e.printStackTrace();
 		}
 
 		System.out.println(query);
-		return analyze(query);
+		return analyze(query, language);
 	}
 
-	private String analyze(String query) {
+	private String analyze(String query, String language) {
 		List<Word> tokens = Splitting.tokenize(CentralServer.getAnalyzer(), query);
-		LinkedList<String> tokenJSON = new LinkedList<>();
-		
-		for (Word word : tokens) {
-			tokenJSON.add(word.toJSONsingle());
-		}
-		
-		return formatJSON(tokenJSON);
+		return Output.toJson(tokens, language);
 	}
-	
-	private String formatJSON(Collection<String> tags) {
-		Iterator<String> i = tags.iterator();
-		String out = "[";
-		while (i.hasNext()) {
-			out += i.next();
-			if (i.hasNext()) out += ", ";
-		}
-		out += "]";
-		return out;
-	}
+
 }
