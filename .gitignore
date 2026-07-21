@@ -10,3 +10,4 @@ src/main/resources/tezaurs/
 webservices.iml
 attributes.txt
 resources/
+*.kate-swp

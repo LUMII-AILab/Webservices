@@ -107,17 +107,15 @@ public class CentralServer
                 System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
-				System.out.println("http://localhost:8182/analyze/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
-				System.out.println("http://localhost:8182/analyze/en/[word] : morphological analysis of the word, but with the attributes described in english terms");
-                System.out.println("http://localhost:8182/analyzesentence/[query] : JSON format of analysis for each token in a sentence for tagger needs");
-				System.out.println("http://localhost:8182/inflect_general_lvs/[query] : generate all inflectional forms of a lemma, standard Latvian");
-				System.out.println("http://localhost:8182/inflect_general_ltg/[query] : generate all inflectional forms of a lemma, Latgalian");
+				System.out.println("http://localhost:8182/analyze_[lvs/ltg]]/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
+				System.out.println("http://localhost:8182/analyze_[lvs/ltg]/en/[word] : morphological analysis of the word, but with the attributes described in English terms");
+				System.out.println("http://localhost:8182/inflect_general_[lvs/ltg]/lvs/[query] : generate all inflectional forms of a lemma");
 				System.out.println("http://localhost:8182/inflect_with_data/[query] : generate all inflectional forms of a lemma, given paradigm as well as optional stems and attributes");
+				System.out.println("http://localhost:8182/suitable_paradigm_[lvs/ltg]/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
+				System.out.println("http://localhost:8182/tokenize_[lvs/ltg]/[query] or POST to http://localhost:8182/tokenize_[lvs/ltg] : tokenization of sentences");
+				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
 				System.out.println("http://localhost:8182/inflect_people/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
-                System.out.println("http://localhost:8182/suitable_paradigm/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
-				System.out.println("http://localhost:8182/tokenize/[query] or POST to http://localhost:8182/tokenize : tokenization of sentences");
-				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
 				System.out.println("http://localhost:8182/transcribe/[query] : generate phonetic transcription of the phrase");
 				System.out.flush();
 				System.exit(0);
@@ -141,8 +139,8 @@ public class CentralServer
         component.getDefaultHost().attach("/{tail}", InfoResource.class);
         //component.getDefaultHost().attach("/version", VersionResource.class);
 
-        component.getDefaultHost().attach("/analyze/{word}", WordformAnalyzeResource.class);
-        component.getDefaultHost().attach("/analyze/{language}/{word}", WordformAnalyzeResource.class);
+        component.getDefaultHost().attach("/analyze_{type}/{word}", WordformAnalyzeResource.class);
+        component.getDefaultHost().attach("/analyze_{type}/{language}/{word}", WordformAnalyzeResource.class);
 
 		component.getDefaultHost().attach("/inflect_general_{type}/{query}", InflectResource.class); // pārtaisīt homonīmiem
 		component.getDefaultHost().attach("/inflect_general_{type}/{language}/{query}", InflectResource.class);
@@ -151,11 +149,11 @@ public class CentralServer
 		component.getDefaultHost().attach("/inflect_with_data/{language}/{query}", InflectWithParadigmResource.class);
         component.getDefaultHost().attach("/v1/inflections/{query}", InflectWithParadigmResource.class);
 
-		component.getDefaultHost().attach("/suitable_paradigm/{lemma}", SuitableParadigmResource.class);
+		component.getDefaultHost().attach("/suitable_paradigm_{type}/{lemma}", SuitableParadigmResource.class);
 
-		component.getDefaultHost().attach("/tokenize/{query}", TokenResource.class);
-		component.getDefaultHost().attach("/tokenize/{language}/{query}", TokenResource.class);
-		component.getDefaultHost().attach("/tokenize", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/{query}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/{language}/{query}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}", TokenResource.class);
 
 		if (enableLexiconReloader) {
 			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;

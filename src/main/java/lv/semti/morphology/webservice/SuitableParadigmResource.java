@@ -19,8 +19,10 @@ public class SuitableParadigmResource extends ServerResource {
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("lemma");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
+		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 
-		Analyzer analyzer = CentralServer.getAnalyzer();
+		Analyzer analyzer = latgalian
+				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
 		analyzer.guessAllParadigms = true;
 		analyzer.enableAllGuesses = true;
 		List<Paradigm> paradigms = analyzer.suitableParadigms(query);

@@ -21,10 +21,14 @@ Servisiem, kam pieejama valodas izvēle atribūtu kodējumam, pieejamās valodas
 
 ## Vienmēr pieejamie servisi
 
+Jārēķinās, ka latgaliešu valodas servisi ir izstrādes procesā un leksikons un paradigmu kopa ir nepilnīgi.
+
 ### Informācija par vārda morfoloģiju (JSON)
 
-- `http://localhost:8182/analyze/[vārds]`: http://localhost:8182/analyze/roku
-- `http://localhost:8182/analyze/en/[vārds]`: http://localhost:8182/analyze/en/roku
+- `http://localhost:8182/analyze_lvs/[vārds]`: http://localhost:8182/analyze_lvs/roku
+- `http://localhost:8182/analyze_lvs/en/[vārds]`: http://localhost:8182/analyze_lvs/en/roku
+- `http://localhost:8182/analyze_ltg/[vārds]`: http://localhost:8182/analyze_ltg/muosys
+- `http://localhost:8182/analyze_ltg/en/[vārds]`: http://localhost:8182/analyze_ltg/en/muosys
 
 Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masīvs ar vienu vai vairākiem morfoloģiskās analīzes variantiem, kas atbilst šim vārdam.
 
@@ -39,8 +43,8 @@ Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masī
 Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi.
 
 Minēt vai neminēt leksikonā neesošo vārdu locīšanu, pēc noklusējuma ???
-- `http://localhost:8182/inflect_general_lvs/[vārds]&guess=[true/false]`: http://localhost:8182/inflect_general_lvs/zzza?guess=false
-- `http://localhost:8182/inflect_general_ltg/[vārds]&guess=[true/false]`: http://localhost:8182/inflect_general_ltg/zzza?guess=false
+- `http://localhost:8182/inflect_general_lvs/[vārds]?guess=[true/false]`: http://localhost:8182/inflect_general_lvs/zzza?guess=false
+- `http://localhost:8182/inflect_general_ltg/[vārds]?guess=[true/false]`: http://localhost:8182/inflect_general_ltg/zzza?guess=false
 
 Zināmās problēmas: homonīmiem atdod vienu variantu.
 
@@ -56,14 +60,17 @@ Zināmās problēmas: homonīmiem atdod vienu variantu.
 
 ### Pieļaujamo paradigmu piemeklētājs (JSON)
 
-- `http://localhost:8182/suitable_paradigm/[lemma]`: http://localhost:8182/suitable_paradigm/desmaizels
+- `http://localhost:8182/suitable_paradigm_lvs/[lemma]`: http://localhost:8182/suitable_paradigm_lvs/desmaizels
+- `http://localhost:8182/suitable_paradigm_ltg/[lemma]`: http://localhost:8182/suitable_paradigm_ltg/desmaizels
 
 
 ### Teikuma sadalīšana vienībās (JSON)
 
-- `http://localhost:8182/tokenize/[teikums]`: http://localhost:8182/tokenize/Šis%20žagaru%20saišķis
-- `http://localhost:8182/tokenize/en[teikums]`: http://localhost:8182/tokenize/en/Šis%20žagaru%20saišķis
-- POST `http://localhost:8182/tokenize/`
+- `http://localhost:8182/tokenize_lvs/[teikums]`: http://localhost:8182/tokenize_lvs/Šis%20žagaru%20saišķis
+- `http://localhost:8182/tokenize_lvs/en[teikums]`: http://localhost:8182/tokenize_lvs/en/Šis%20žagaru%20saišķis
+- `http://localhost:8182/tokenize_ltg/[teikums]`: http://localhost:8182/tokenize_ltg/meitine%20laseja%20viestuli
+- `http://localhost:8182/tokenize_ltg/en[teikums]`: http://localhost:8182/tokenize_ltg/en/meitine%20laseja%20viestuli
+- POST `http://localhost:8182/tokenize_lvs/` un `http://localhost:8182/tokenize_ltg/`
 
 Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
 
@@ -71,7 +78,7 @@ Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. NB!
 
 ## Ar tagotāju pieejamie servisi
 
-Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-morphotagger`, kas ieslēdz morfoloģiskā tagotāja lietošanu.
+Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-morphotagger`, kas ieslēdz morfoloģiskā tagotāja lietošanu. Tie nav pieejami Latgaliešu valodai.
 
 
 ### Teikuma morfoloģiskā analīze
@@ -116,7 +123,7 @@ Neatbalsta verbālas frāzes. Vislabākā rezultāta sasniegšanai ir ļoti iete
 
 ## Ar transkribētāju pieejamie servisi
 
-Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-transcription`, kas ieslēdz fonētiskā transkribētāja lietošanu. Jārēķinās, ka šobrīd lietotais transkribētājs ir novecojis, un tiks nākotnē aizvietots ar jaunāku.
+Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-transcription`, kas ieslēdz fonētiskā transkribētāja lietošanu. Jārēķinās, ka šobrīd lietotais transkribētājs ir novecojis, un tiks nākotnē aizvietots ar jaunāku. Tie nav pieejami latgaliešu valodai.
 
 
 ### Fonētiskā transkripcija (TEKSTS)

@@ -24,12 +24,14 @@ public class TokenResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
+		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 
-		return analyze(query, language);
+		return analyze(query, language, latgalian);
 	}
 	
 	@Post("json")
 	public String postquery(JsonRepresentation entity) throws JSONException {
+		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 
 		JSONObject json;
 		String query = null;
@@ -44,11 +46,13 @@ public class TokenResource extends ServerResource {
 		}
 
 		System.out.println(query);
-		return analyze(query, language);
+		return analyze(query, language, latgalian);
 	}
 
-	private String analyze(String query, String language) {
-		List<Word> tokens = Splitting.tokenize(CentralServer.getAnalyzer(), query);
+	private String analyze(String query, String language, boolean latgalian) {
+		Analyzer analyzer = latgalian
+				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
+		List<Word> tokens = Splitting.tokenize(analyzer, query);
 		return JsonOutput.toJson(tokens, language, true);
 	}
 
