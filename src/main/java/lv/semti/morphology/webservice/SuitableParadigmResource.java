@@ -26,7 +26,7 @@ public class SuitableParadigmResource extends ServerResource {
 		analyzer.guessAllParadigms = true;
 		analyzer.enableAllGuesses = true;
 		List<Paradigm> paradigms = analyzer.suitableParadigms(query);
-		analyzer.defaultSettings();
+		CentralServer.defaultAnalyzersSettings();
 		return JsonOutput.toJson(paradigms);
 	}
 

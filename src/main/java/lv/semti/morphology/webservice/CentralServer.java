@@ -17,6 +17,13 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * This is centeral server handling various morphological services. To reduce
+ * memory required, it shares the same morphological analyzer between all
+ * services. Tagger-related services are turning on analysis result caching,
+ * which can lead to unexpected results in analysis, thus, it is important for
+ * each service to carefully set their guessing and chaching settings.
+ */
 public class CentralServer
 {
 	static private Analyzer analyzer;
@@ -202,6 +209,24 @@ public class CentralServer
             morphoClassifier = CMMClassifier.getClassifier(morphoClassifierLocation);
             Expression.setClassifier(morphoClassifier);
         }
+
+		analyzer.enableAnalysisCache = false;
+		latgalian_analyzer.enableAnalysisCache = false;
     }
+
+	/**
+	 * Default settings for webservice purposes include disabled caching.
+	 */
+	public static void defaultAnalyzersSettings()
+	{
+		if (analyzer != null) {
+			analyzer.defaultSettings();
+			analyzer.enableAnalysisCache = false;
+		}
+		if (latgalian_analyzer != null) {
+			latgalian_analyzer.defaultSettings();
+			latgalian_analyzer.enableAnalysisCache = false;
+		}
+	}
 
 }

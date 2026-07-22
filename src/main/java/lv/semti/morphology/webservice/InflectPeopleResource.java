@@ -63,7 +63,7 @@ public class InflectPeopleResource extends ServerResource {
 			processedTokens.add(forms);
 		}
 
-		analyzer.defaultSettings();
+		CentralServer.defaultAnalyzersSettings();
 		return processedTokens;
 	}
 }

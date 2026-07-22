@@ -28,7 +28,8 @@ public class InflectResource extends ServerResource {
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
-		boolean guess = !"false".equalsIgnoreCase(getQuery().getValues("guess"));
+		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
+		//boolean guess = !"false".equalsIgnoreCase(getQuery().getValues("guess"));
 		List<Collection<Wordform>> processedTokens = inflect(query, guess, latgalian);
 		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);
 	}
@@ -91,8 +92,8 @@ public class InflectResource extends ServerResource {
 
 			processedTokens.add(new LinkedHashSet<>(formas));
 		}
-		
-		analyzer.defaultSettings();
+
+		CentralServer.defaultAnalyzersSettings();
 		return processedTokens;
 	}
 

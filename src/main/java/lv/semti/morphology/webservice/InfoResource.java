@@ -9,7 +9,7 @@ import org.restlet.resource.ServerResource;
 
 /**
  * General info about all services: main page, morphology version and returning
- * 404 for unkonwn GETs.
+ * 404 for unknown GETs.
  */
 public class InfoResource extends ServerResource {
 	@Get
@@ -31,22 +31,22 @@ public class InfoResource extends ServerResource {
         sb.append("<html><head><title>Latvian morphology web services</title></head><body><h3>Version ");
         sb.append(CentralServer.getAnalyzer().getRevision());
         sb.append("</h3>\n<ul>\n");
-        addGetLink(sb, "analyze_lvs/doma", "/analyze_lvs/[word]", "morphological analysis of the word, with &guess=[true/false] can regulate guessing (JSON)");
-        addGetLink(sb, "analyze_lvs/en/doma", "/analyze_lvs/en/[word]", "morphological analysis of the word, attribute names in English, with &guess=[true/false] can regulate guessing (JSON)");
-        addGetLink(sb, "analyze_ltg/muosys", "/analyze_ltg/[word]", "morphological analysis of the word, with &guess=[true/false] can regulate guessing (JSON)");
-        addGetLink(sb, "analyze_ltg/en/muosys", "/analyze_ltg/en/[word]", "morphological analysis of the word, with &guess=[true/false] can regulate guessing (JSON)");
-        addGetLink(sb, "inflect_general_lvs/rakt", "/inflect_general_lvs/[query]", "generate all inflectional forms of a lemma for standard Latvian (JSON)");
-        addGetLink(sb, "inflect_general_lvs/en/rakt", "/inflect_general_lvs/en/[query]", "generate all inflectional forms of a lemma for standard Latvian, attribute names in English (JSON)");
-        addGetLink(sb, "inflect_general_ltg/muosa", "/inflect_general_ltg/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON)");
-        addGetLink(sb, "inflect_general_ltg/en/muosa", "/inflect_general_ltg/en/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON), attribute names in English (JSON)");
-        addGetLink(sb, "inflect_with_data/aita?paradigm=noun-4f", "inflect_with_data/[query]&amp;paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
-        addGetLink(sb, "inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_with_data/[query]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
-        addGetLink(sb, "suitable_paradigm_lvs/pokemonizators", "/suitable_paradigm_lvs/[lemma]", "provides a list of paradigms that may form the provided lemma from standard Latvian set(JSON)");
-        addGetLink(sb, "suitable_paradigm_ltg/pokemonizators", "/suitable_paradigm_ltg/[lemma]", "provides a list of paradigms that may form the provided lemma from Latgalian set(JSON)");
-        addGetLink(sb, "tokenize_lvs/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[query] or POST to /tokenize_lvs", "tokenization of sentences (JSON)");
-        addGetLink(sb, "tokenize_lvs/en/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[en]/[query]", "tokenization of sentences, attribute names in English (JSON)");
-        addGetLink(sb, "tokenize_ltg/meitine%20laseja%20viestuli.", "/tokenize_ltg/[query] or POST to /tokenize_ltg", "tokenization of sentences (JSON)");
-        addGetLink(sb, "tokenize_ltg/en/meitine%20laseja%20viestuli.", "/tokenize_ltg/[en]/[query]", "tokenization of sentences, attribute names in English (JSON)");
+        addGetLink(sb, "analyze_lvs/doma", "/analyze_lvs/[word]", "morphological analysis of the word, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "analyze_lvs/en/doma", "/analyze_lvs/en/[word]", "morphological analysis of the word, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "analyze_ltg/muosys", "/analyze_ltg/[word]", "morphological analysis of the word, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "analyze_ltg/en/muosys", "/analyze_ltg/en/[word]", "morphological analysis of the word, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "inflect_general_lvs/rakt", "/inflect_general_lvs/[query]", "generate all inflectional forms of a lemma for standard Latvian, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "inflect_general_lvs/en/rakt", "/inflect_general_lvs/en/[query]", "generate all inflectional forms of a lemma for standard Latvian, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "inflect_general_ltg/muosa", "/inflect_general_ltg/[query]", "generate all inflectional forms of a lemma for Latgalian, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "inflect_general_ltg/en/muosa", "/inflect_general_ltg/en/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON), attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "inflect_with_data/aita?paradigm=noun-4f", "inflect_with_data/[query]?paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
+        addGetLink(sb, "inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_with_data/[query]?paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
+        addGetLink(sb, "suitable_paradigm_lvs/pokemonizators", "/suitable_paradigm_lvs/[lemma]", "provides a list of paradigms that may form the provided lemma from standard Latvian set (JSON)");
+        addGetLink(sb, "suitable_paradigm_ltg/pokemonizators", "/suitable_paradigm_ltg/[lemma]", "provides a list of paradigms that may form the provided lemma from Latgalian set (JSON)");
+        addGetLink(sb, "tokenize_lvs/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[query] or POST to /tokenize_lvs", "tokenization of sentences, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "tokenize_lvs/en/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "tokenize_ltg/meitine%20laseja%20viestuli.", "/tokenize_ltg/[query] or POST to /tokenize_ltg", "tokenization of sentences, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+        addGetLink(sb, "tokenize_ltg/en/meitine%20laseja%20viestuli.", "/tokenize_ltg/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
 
         sb.append("</ul>\n");
 

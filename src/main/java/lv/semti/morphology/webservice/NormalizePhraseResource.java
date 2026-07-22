@@ -33,7 +33,7 @@ public class NormalizePhraseResource extends ServerResource {
 		
     	Expression e = new Expression(query, category, false);
     	String lemma = e.normalize();
-    	analyzer.defaultSettings();
+		CentralServer.defaultAnalyzersSettings();
 		return lemma;
 	}
 }

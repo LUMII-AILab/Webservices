@@ -40,7 +40,7 @@ public class InflectPhraseResource extends ServerResource {
 
 		JSONObject oInflections = new JSONObject();
     	Expression e = new Expression(query, category, true); // Pieņemam, ka klients padod pamatformu
-    	e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis
+    	//e.describe(new PrintWriter(System.err)); // ko tad tageris šim ir sadomājis
     	Map<String,String> inflections= e.getInflections();
     	for (String i_case : inflections.keySet()) {
 			System.err.println(i_case + " " + inflections.get(i_case));
@@ -62,7 +62,7 @@ public class InflectPhraseResource extends ServerResource {
 				oInflections.put(AttributeNames.i_Gender, gender);
 		}
 
-    	analyzer.defaultSettings();
+		CentralServer.defaultAnalyzersSettings();
 		return oInflections.toJSONString();
 	}
 }

@@ -11,20 +11,38 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Service providing wordform analysis.
+ * As of 2026-07-21, analyzer is not correctly reacting guessing variables for,
+ * analysis side, thus, guesswork currently cannot be properly turned off for
+ * this service. But guessed forms can be filtered off by "Minēšana"/"Guesswork"
+ * property in JSON result.
  */
 public class WordformAnalyzeResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
 		getResponse().setAccessControlAllowOrigin("*");
+		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
+		String language = (String) getRequest().getAttributes().get("language");
 		String query = (String) getRequest().getAttributes().get("word");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
-		String language = (String) getRequest().getAttributes().get("language");
-		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
+		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
+		System.out.println("Guessing: " + guess);
 
 		Analyzer analyzer = latgalian
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
 
+		analyzer.enableGuessing = guess;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = guess;
+		analyzer.guessParticiples = guess;
+		analyzer.guessAdjectives = guess;
+		analyzer.guessInflexibleNouns = guess;
+		analyzer.enableAllGuesses = guess;
+
 		Word w = analyzer.analyze(query);
-		return JsonOutput.toJson(w, language, true);
+		//System.err.println("W ir:" + w);
+		//w.describe(System.err);
+		String result = JsonOutput.toJson(w, language, true);
+		CentralServer.defaultAnalyzersSettings();
+		return result;
 	}
 }

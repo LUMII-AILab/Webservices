@@ -31,6 +31,7 @@ public class MorphoTaggerResource extends ServerResource {
 
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
+		// This turn's cache on.
 		LVMorphologyReaderAndWriter.setAnalyzerDefaults();
 		List<CoreLabel> sentence = LVMorphologyReaderAndWriter.analyzeSentence(query);
 		sentence = CentralServer.morphoClassifier.classify(sentence); // runs the actual morphotagging system
@@ -41,7 +42,10 @@ public class MorphoTaggerResource extends ServerResource {
 			outputType = outputTypes.JSON;
 
 		String out = output(sentence, outputType);
-		CentralServer.getAnalyzer().defaultSettings(); // FIXME - nesapratu, kāpēc un vai tas ir vajadzīgs
+		// This is needed because the analyzers are reused between tagger and
+		// other services and tagger works better with analysis cache on, while
+		// other services can get confused by that.
+		CentralServer.defaultAnalyzersSettings();
 		return out;
 	}
 	

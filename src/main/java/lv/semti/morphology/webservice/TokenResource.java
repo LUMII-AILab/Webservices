@@ -25,13 +25,15 @@ public class TokenResource extends ServerResource {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
+		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 
-		return analyze(query, language, latgalian);
+		return analyze(query, language, latgalian, guess);
 	}
 	
 	@Post("json")
 	public String postquery(JsonRepresentation entity) throws JSONException {
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
+		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 
 		JSONObject json;
 		String query = null;
@@ -46,13 +48,23 @@ public class TokenResource extends ServerResource {
 		}
 
 		System.out.println(query);
-		return analyze(query, language, latgalian);
+		return analyze(query, language, latgalian, guess);
 	}
 
-	private String analyze(String query, String language, boolean latgalian) {
+	private String analyze(String query, String language, boolean latgalian, boolean guess) {
 		Analyzer analyzer = latgalian
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
+
+		analyzer.enableGuessing = guess;
+		analyzer.enableVocative = true;
+		analyzer.guessVerbs = guess;
+		analyzer.guessParticiples = guess;
+		analyzer.guessAdjectives = guess;
+		analyzer.guessInflexibleNouns = guess;
+		analyzer.enableAllGuesses = guess;
+
 		List<Word> tokens = Splitting.tokenize(analyzer, query);
+		CentralServer.defaultAnalyzersSettings();
 		return JsonOutput.toJson(tokens, language, true);
 	}
 

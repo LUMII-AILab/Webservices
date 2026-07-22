@@ -31,7 +31,6 @@ public class InflectWithParadigmResource extends ServerResource
 		String language = (String) getRequest().getAttributes().get("language");
 		String inflmisc = getQuery().getValues("inflmisc");
 		Paradigm paradigm = decodeParadigm(getQuery().getValues("paradigm"));
-		boolean guess = !"false".equalsIgnoreCase(getQuery().getValues("guess"));
 
 		if (paradigm == null)
 		{
@@ -39,25 +38,28 @@ public class InflectWithParadigmResource extends ServerResource
 			return null;
 		}
 
-		List<Wordform> processedTokens = inflect(query, paradigm, guess,
+		List<Wordform> processedTokens = inflect(query, paradigm,
 				getQuery().getValues("stem1"), getQuery().getValues("stem2"), getQuery().getValues("stem3"), decodeInflMisc(inflmisc));
 
 		return JsonOutput.toJsonGeneric(processedTokens, language, false);
 	}
 
-	public List<Wordform> inflect(String query, Paradigm paradigm, Boolean guess, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
+	public List<Wordform> inflect(String query, Paradigm paradigm, String stem1, String stem2, String stem3, AttributeValues lemmaAttrs) {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		if (paradigm == null || query == null || query.isEmpty()) return null;
 		Analyzer analyzer = paradigm.name.endsWith("-ltg")
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
 
-		analyzer.enableGuessing = guess;
+		// 2026-07-21: I'm not completely sure, if and when guess parameter
+		// influences inflection generation with given paradigm. More research
+		// needed.
+		analyzer.enableGuessing = true;
 		analyzer.enableVocative = true;
 		analyzer.guessVerbs = false;
 		analyzer.guessParticiples = false;
 		analyzer.guessAdjectives = false;
-		analyzer.guessInflexibleNouns = guess;
-		analyzer.enableAllGuesses = guess;
+		analyzer.guessInflexibleNouns = true;
+		analyzer.enableAllGuesses = true;
 
 		Word word = new Word(query);
 		List<Wordform> forms;
@@ -96,7 +98,7 @@ public class InflectWithParadigmResource extends ServerResource
 			wf.lexeme = null; // so that identical forms would compare as equal
 		}
 
-		analyzer.defaultSettings();
+		CentralServer.defaultAnalyzersSettings();
 		return forms;
 	}
 

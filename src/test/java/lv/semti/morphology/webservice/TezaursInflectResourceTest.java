@@ -67,7 +67,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void testMultipleStems() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "jaust", inflectParRes.decodeParadigm("15"), true, "jaus", "jauš,jauž", "jaut,jaud", new AttributeValues());
+                "jaust", inflectParRes.decodeParadigm("15"), "jaus", "jauš,jauž", "jaut,jaud", new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
         filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
@@ -83,7 +83,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void testMultipleStemsWithSpace() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "jaust", inflectParRes.decodeParadigm("15"), true, "jaus", "jauš, jauž", "jaut, jaud", new AttributeValues());
+                "jaust", inflectParRes.decodeParadigm("15"), "jaus", "jauš, jauž", "jaut, jaud", new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
         filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
@@ -100,7 +100,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void turpms() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "turpmāks", inflectParRes.decodeParadigm("13"), true, "turpmāk", null, null, new AttributeValues());
+                "turpmāks", inflectParRes.decodeParadigm("13"), "turpmāk", null, null, new AttributeValues());
         for (Wordform wf : wordforms) {
             assertNotEquals("turpms", wf.getToken());
         }
@@ -109,14 +109,14 @@ public class TezaursInflectResourceTest {
     @Test
     public void nelokāmie() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "augstpapēžu", inflectParRes.decodeParadigm("49"), true, "", null, null, new AttributeValues());
+                "augstpapēžu", inflectParRes.decodeParadigm("49"), "", null, null, new AttributeValues());
         assertNotEquals(0, wordforms.size());
     }
 
     @Test
     public void pirms() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "pirmāks", inflectParRes.decodeParadigm("13"), true, "", null, null, new AttributeValues());
+                "pirmāks", inflectParRes.decodeParadigm("13"), "", null, null, new AttributeValues());
         for (Wordform wf : wordforms) {
             assertNotEquals("pirms", wf.getToken());
         }
@@ -125,7 +125,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void negationGeneration() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "prātot", inflectParRes.decodeParadigm("16"), true, "", null, null, new AttributeValues());
+                "prātot", inflectParRes.decodeParadigm("16"), "", null, null, new AttributeValues());
         assertFormExists(wordforms, "neprātoju");
         for (Wordform wf : wordforms) {
             if (wf.getToken().equalsIgnoreCase("neprātoju"))
@@ -139,11 +139,11 @@ public class TezaursInflectResourceTest {
     public void secondThirdConjStems() {
         // aizmirdzēt?paradigm=verb-3a&stem1=&stem2=&stem3=mirdz
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "aizmirdzēt", inflectParRes.decodeParadigm("17"), true, "", "", "mirdz", new AttributeValues());
+                "aizmirdzēt", inflectParRes.decodeParadigm("17"), "", "", "mirdz", new AttributeValues());
         assertFormExists(wordforms, "aizmirdzu");
         assertFormDoesNotExist(wordforms, "nu");
         wordforms = inflectParRes.inflect(
-                "aizmirdzēt", inflectParRes.decodeParadigm("17"), true, "", null, "mirdz", new AttributeValues());
+                "aizmirdzēt", inflectParRes.decodeParadigm("17"), "", null, "mirdz", new AttributeValues());
         assertFormExists(wordforms, "aizmirdzu");
         assertFormDoesNotExist(wordforms, "nu");
     }
@@ -154,7 +154,7 @@ public class TezaursInflectResourceTest {
         av.addAttribute(AttributeNames.i_NounType, AttributeNames.v_ProperNoun);
         av.addAttribute(AttributeNames.i_ProperNounType, AttributeNames.v_Toponym);
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "Rīga", inflectParRes.decodeParadigm("7"), false, "", null, null, av);
+                "Rīga", inflectParRes.decodeParadigm("7"), "", null, null, av);
         assertTrue(wordforms.size() >= 10);
         // Kādreiz šeit bija filtrs, lai nebūtu daudzskaitļu, bet tagad tas ir izspīdināšnas pusē
         //for (Wordform wf : wordforms.get(0)) {
@@ -169,18 +169,18 @@ public class TezaursInflectResourceTest {
         // Tātad visiem vietniekvārdiem ir jābūt formām.
         // Gan "viņš", ko loka pēc lietvārda parauga bez specformām:
         Collection<Wordform> viņš = inflectParRes.inflect(
-                "viņš", inflectParRes.decodeParadigm("noun-1b"), false, "", null, null, new AttributeValues());
+                "viņš", inflectParRes.decodeParadigm("noun-1b"), "", null, null, new AttributeValues());
         assertTrue(viņš.size() > 1);
         // Gan "jebkas", kam būtu jābūt specformām:
         Collection<Wordform> jebkas = inflectParRes.inflect(
-                "jebkas", inflectParRes.decodeParadigm("pron"), false, "", null, null, new AttributeValues());
+                "jebkas", inflectParRes.decodeParadigm("pron"), "", null, null, new AttributeValues());
         assertTrue(jebkas.size() > 1);
     }
 
     @Test
     public void pabija() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "pabūt", inflectParRes.decodeParadigm("50"), false, "pabū", "", "pabij", new AttributeValues());
+                "pabūt", inflectParRes.decodeParadigm("50"), "pabū", "", "pabij", new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Verb);
         filtrs.addAttribute(AttributeNames.i_Mood, AttributeNames.v_Indicative);
@@ -199,7 +199,7 @@ public class TezaursInflectResourceTest {
         AttributeValues av = new AttributeValues();
         av.addAttribute(AttributeNames.i_Noliegums, AttributeNames.v_Yes);
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "nebēdņot", inflectParRes.decodeParadigm("16"), true, "", null, null, av);
+                "nebēdņot", inflectParRes.decodeParadigm("16"), "", null, null, av);
         assertFormExists(wordforms, "nebēdņot");
         assertFormDoesNotExist(wordforms, "jānebēdņo");
         assertFormDoesNotExist(wordforms, "nejābēdņo");
@@ -210,7 +210,7 @@ public class TezaursInflectResourceTest {
         // Ticket 100
         AttributeValues av = new AttributeValues();
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "varēt", inflectParRes.decodeParadigm("17"), true, "", null, null, av);
+                "varēt", inflectParRes.decodeParadigm("17"), "", null, null, av);
         for (Wordform wf : wordforms) {
             if (wf.getToken().equalsIgnoreCase("varēšana")) {
                 assertEquals(AttributeNames.v_Yes, wf.getValue(AttributeNames.i_Derivative));
@@ -224,18 +224,18 @@ public class TezaursInflectResourceTest {
         AttributeValues av = new AttributeValues();
         av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_SingulareTantum);
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "Rīga", inflectParRes.decodeParadigm("7"), true, "", null, null, av);
+                "Rīga", inflectParRes.decodeParadigm("7"), "", null, null, av);
         assertFormExists(wordforms, "Rīgai");
         // assertFormDoesNotExist(wordforms, "Rīgām");
         // Tagad šis filtrs ir morfotabulu zīmēšanas JavaScript atbilstoši karodziņam par morfotabulas īpatnībām
 
         wordforms = inflectParRes.inflect(
-                "Foboss", inflectParRes.decodeParadigm("1"), false, "", null, null, new AttributeValues());
+                "Foboss", inflectParRes.decodeParadigm("1"), "", null, null, new AttributeValues());
         assertFormExists(wordforms, "Fobosiem");
         // Mēs gribam lai webserviss šo formu atgriež, bet tēzaura tabulu zīmētājs pēc tam to ignorē
 
         wordforms = inflectParRes.inflect(
-                "miers", inflectParRes.decodeParadigm("1"), true, "", null, null, av);
+                "miers", inflectParRes.decodeParadigm("1"), "", null, null, av);
         assertFormExists(wordforms, "mieram");
         assertFormDoesNotExist(wordforms, "mieriem");
     }
@@ -245,7 +245,7 @@ public class TezaursInflectResourceTest {
         AttributeValues av = new AttributeValues();
         av.addAttribute(AttributeNames.i_NumberSpecial, AttributeNames.v_PlurareTantum);
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "abēji", inflectParRes.decodeParadigm("13"), false, "", null, null, av);
+                "abēji", inflectParRes.decodeParadigm("13"), "", null, null, av);
         assertFormExists(wordforms, "abējiem");
     }
 
@@ -262,7 +262,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void paradigmNames() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "ceļš", inflectParRes.decodeParadigm( "noun-1b"), true, null, null, null, new AttributeValues());
+                "ceļš", inflectParRes.decodeParadigm( "noun-1b"), null, null, null, new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
@@ -277,7 +277,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void ticket_132() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "paģisties", inflectParRes.decodeParadigm("verb-1r"), true, "paģis", "paģied", "paģid", new AttributeValues());
+                "paģisties", inflectParRes.decodeParadigm("verb-1r"), "paģis", "paģied", "paģid", new AttributeValues());
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.size()>1);
     }
 
@@ -286,7 +286,7 @@ public class TezaursInflectResourceTest {
         AttributeValues av = new AttributeValues();
         av.addAttribute(AttributeNames.i_Noliegums, AttributeNames.v_Yes);
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "P.S.", inflectParRes.decodeParadigm("abbr"), true, "", null, null, av);
+                "P.S.", inflectParRes.decodeParadigm("abbr"), "", null, null, av);
         /*for (Collection<Wordform> wfs : wordforms) {
             for (Wordform wf : wfs)
                 wf.describe();
@@ -300,7 +300,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void connectionBroken() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "paaut", inflectParRes.decodeParadigm("verb-1"), true, "paau", "paauj,paaun", "paāv", new AttributeValues());
+                "paaut", inflectParRes.decodeParadigm("verb-1"), "paau", "paauj,paaun", "paāv", new AttributeValues());
         assertTrue("Jābūt vairāk kā vienai formai", wordforms.size()>1);
     }
 
@@ -308,7 +308,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void latgalian() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "kuorklys", inflectParRes.decodeParadigm("noun-1b-ltg"), true, null, null, null, new AttributeValues());
+                "kuorklys", inflectParRes.decodeParadigm("noun-1b-ltg"), null, null, null, new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Dative);
@@ -322,7 +322,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void latgalian_pasauļs() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "pasauļs", inflectParRes.decodeParadigm("noun-2a-ltg"), false, null, null, null, new AttributeValues());
+                "pasauļs", inflectParRes.decodeParadigm("noun-2a-ltg"), null, null, null, new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Accusative);
@@ -337,7 +337,7 @@ public class TezaursInflectResourceTest {
     @Test
     public void latgalian_vargani() {
         Collection<Wordform> wordforms = inflectParRes.inflect(
-                "vargani", inflectParRes.decodeParadigm("noun-1a-ltg"), false, "vargan", null, null, new AttributeValues());
+                "vargani", inflectParRes.decodeParadigm("noun-1a-ltg"), "vargan", null, null, new AttributeValues());
         AttributeValues filtrs = new AttributeValues();
         filtrs.addAttribute(AttributeNames.i_PartOfSpeech, AttributeNames.v_Noun);
         filtrs.addAttribute(AttributeNames.i_Case, AttributeNames.v_Genitive);
@@ -352,13 +352,13 @@ public class TezaursInflectResourceTest {
     public void latgalian_pronouns()
     {
         Collection<Wordform> es = inflectParRes.inflect(
-                "es", inflectParRes.decodeParadigm("pron-ltg"), false, "", null, null, new AttributeValues());
+                "es", inflectParRes.decodeParadigm("pron-ltg"), "", null, null, new AttributeValues());
         // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
         // šīm formām jānāk no tēzaura.
         assertTrue(es.size() > 4);
 
         Collection<Wordform> šys = inflectParRes.inflect(
-                "šys", inflectParRes.decodeParadigm("pron-ltg"), false, "", null, null, new AttributeValues());
+                "šys", inflectParRes.decodeParadigm("pron-ltg"), "", null, null, new AttributeValues());
         // Jābūt vismaz nominatīvam, ģenitīvam, datīvam, akuzatīvam un lokatīvam,
         // šīm formām jānāk no tēzaura.
         assertTrue(šys.size() > 4);

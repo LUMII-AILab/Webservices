@@ -16,12 +16,12 @@ Java 1.25
 
 HTTP pieprasījumi, parametri caur URL; ne-ascii burtus, atstarpes un simbolus kodējot atbilstoši [standartam](http://en.wikipedia.org/wiki/Percent-encoding)
 
-Servisiem, kam pieejama valodas izvēle atribūtu kodējumam, pieejamās valodas ir noklusētā latviešu un `en` (angļu).
+Servisiem, kuru atbildes ir JSON formātā, ir pieejama valodas izvēle atribūtu kodējumam – noklusētā latviešu un `en` (angļu). Servisiem `analyze_*`, `inflect_general_*` un `tokenize_*` ir pieejama leksikonā neiekļauto vārdu minēšanas funkcionalitāte, kas ieslēdzama ar parametru `guess=true` un izslēdzama ar parametru `guess=false`. Ieslēgta minēšana dod papildu variantus neatpazītiem vārdiem, taču nedod jaunus variantus leksikonā iekļautiem vārdiem.
+
+Latviešu standartvalodas servisi par leksonu izmanto tezaurs.lv. Latgaliešu valodas servisi šobrīd tiek aktīvi izstrādāti un pilnveidoti. Tie izmanto ltg.tezaurs.lv un to pašreizējais paradigmu pārklājums ir nepilnīgs (trūkst vairāku svarīgu darbības vārdu grupu).
 
 
 ## Vienmēr pieejamie servisi
-
-Jārēķinās, ka latgaliešu valodas servisi ir izstrādes procesā un leksikons un paradigmu kopa ir nepilnīgi.
 
 ### Informācija par vārda morfoloģiju (JSON)
 
@@ -30,7 +30,7 @@ Jārēķinās, ka latgaliešu valodas servisi ir izstrādes procesā un leksikon
 - `http://localhost:8182/analyze_ltg/[vārds]`: http://localhost:8182/analyze_ltg/muosys
 - `http://localhost:8182/analyze_ltg/en/[vārds]`: http://localhost:8182/analyze_ltg/en/muosys
 
-Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masīvs ar vienu vai vairākiem morfoloģiskās analīzes variantiem, kas atbilst šim vārdam.
+Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masīvs ar vienu vai vairākiem morfoloģiskās analīzes variantiem, kas atbilst šim vārdam. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin.
 
 
 ### Vārdformu ģenerēšana bez papildinformācijas(JSON)
@@ -40,11 +40,7 @@ Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masī
 - `http://localhost:8182/inflect_general_ltg/[vārds]`: http://localhost:8182/inflect_general_lvs/muosa
 - `http://localhost:8182/inflectinflect_general_ltg/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/muosa
 
-Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi.
-
-Minēt vai neminēt leksikonā neesošo vārdu locīšanu, pēc noklusējuma ???
-- `http://localhost:8182/inflect_general_lvs/[vārds]?guess=[true/false]`: http://localhost:8182/inflect_general_lvs/zzza?guess=false
-- `http://localhost:8182/inflect_general_ltg/[vārds]?guess=[true/false]`: http://localhost:8182/inflect_general_ltg/zzza?guess=false
+Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin.
 
 Zināmās problēmas: homonīmiem atdod vienu variantu.
 
@@ -72,13 +68,13 @@ Zināmās problēmas: homonīmiem atdod vienu variantu.
 - `http://localhost:8182/tokenize_ltg/en[teikums]`: http://localhost:8182/tokenize_ltg/en/meitine%20laseja%20viestuli
 - POST `http://localhost:8182/tokenize_lvs/` un `http://localhost:8182/tokenize_ltg/`
 
-Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
+Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
 
 
 
 ## Ar tagotāju pieejamie servisi
 
-Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-morphotagger`, kas ieslēdz morfoloģiskā tagotāja lietošanu. Tie nav pieejami Latgaliešu valodai.
+Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-morphotagger`, kas ieslēdz morfoloģiskā tagotāja lietošanu. Tie nav pieejami latgaliešu valodai.
 
 
 ### Teikuma morfoloģiskā analīze
