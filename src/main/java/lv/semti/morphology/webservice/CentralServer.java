@@ -166,6 +166,9 @@ public class CentralServer
 			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;
 			component.getDefaultHost().attach("/reload_lexicon/{lexicon}", ReloadLexiconResource.class);
 			component.getDefaultHost().attach("/reload_lexicon/{lexicon}/{wait}", ReloadLexiconResource.class);
+			// Instantly get newest
+			component.getDefaultHost().handle(new Request(Method.POST, "/reload_lexicon/latgalian"));
+			component.getDefaultHost().handle(new Request(Method.POST, "/reload_lexicon/latvian"));
 		}
         if (enableTagger) {
             component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
