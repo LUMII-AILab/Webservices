@@ -3,6 +3,7 @@ package lv.semti.morphology.webservice;
 import lv.semti.morphology.analyzer.Analyzer;
 import lv.semti.morphology.lexicon.Paradigm;
 import lv.semti.morphology.webservice.utils.JsonOutput;
+import org.restlet.data.Status;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
@@ -19,11 +20,17 @@ public class SuitableParadigmResource extends ServerResource {
 		if (CentralServer.debug)
 			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
-		String query = (String) getRequest().getAttributes().get("lemma");
-		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
-		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
+		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("type"));
+		if (latgalian == null)
+		{
+			doError(Status.CLIENT_ERROR_NOT_FOUND);
+			return null;
+		}
 		if (CentralServer.debug)
 			System.out.println("Latgalian: " + latgalian);
+
+		String query = (String) getRequest().getAttributes().get("lemma");
+		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 
 		Analyzer analyzer = latgalian
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();

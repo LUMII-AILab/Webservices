@@ -9,9 +9,10 @@ import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
-import org.restlet.routing.Template;
 import org.restlet.service.CorsService;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,7 @@ import java.util.List;
  * memory required, it shares the same morphological analyzer between all
  * services. Tagger-related services are turning on analysis result caching,
  * which can lead to unexpected results in analysis, thus, it is important for
- * each service to carefully set their guessing and chaching settings.
+ * each service to carefully set their guessing and caching settings.
  */
 public class CentralServer
 {
@@ -237,6 +238,17 @@ public class CentralServer
 			latgalian_analyzer.defaultSettings();
 			latgalian_analyzer.enableAnalysisCache = false;
 		}
+	}
+
+	public static Boolean isTypeLatgalian(String type)
+	{
+		String decodedType = URLDecoder.decode(type, StandardCharsets.UTF_8);
+		if ("ltg".equalsIgnoreCase(decodedType) || "latgalian".equalsIgnoreCase(decodedType))
+			return true;
+		if ("lv".equalsIgnoreCase(decodedType) || "lvs".equalsIgnoreCase(decodedType)
+				|| "lva".equalsIgnoreCase(decodedType) || "latvian".equalsIgnoreCase(decodedType))
+			return false;
+		return null;
 	}
 
 }

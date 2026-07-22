@@ -27,27 +27,32 @@ public class ReloadLexiconResource extends ServerResource{
 		if (CentralServer.debug)
 			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
-		String query = (String) getRequest().getAttributes().get("lexicon");
+		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("lexicon"));
+		if (latgalian == null)
+		{
+			doError(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+			return null;
+		}
+		//String query = (String) getRequest().getAttributes().get("lexicon");
 		String wait = (String) getRequest().getAttributes().get("wait");
 		if (CentralServer.debug) {
 			System.out.println("Request keys: " +
 					getRequest().getAttributes().keySet().stream().reduce((a, b) -> a + ", " + b).orElse("null"));
 		}
-		System.out.println("Requested lexicon: " + query + ", already loading: " + wait);
+		System.out.println("Requested lexicon: " + (latgalian ? "Latgalian" : "Latvian") + ", already loading: " + wait);
 
-		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
-		if (query.equalsIgnoreCase("latgalian") && !CentralServer.enableLatgalian) {
+		if (latgalian && !CentralServer.enableLatgalian) {
 			this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);
 			return "Latgalian corpus not enabled on this server";
 		}
 
 		if (wait == null) {
 			System.out.println("Not waiting");
-			Date status = Reloader.getReloader(query).attempt_reload();
+			Date status = Reloader.getReloader(latgalian).attempt_reload();
 			// FIXME TODO - atgriezt statusu
 		} else {
 			System.out.println("Waiting until completion");
-			Reloader.getReloader(query).reload();
+			Reloader.getReloader(latgalian).reload();
 		}
 
 		return "";
@@ -73,8 +78,9 @@ class Reloader {
 	private static Reloader latvian_reloader = null;
 	private static Reloader latgalian_reloader = null;
 
-	public static Reloader getReloader(String lexicon) {
-		if (lexicon.equalsIgnoreCase("latgalian")) {
+	public static Reloader getReloader(boolean latgalian) {
+		//if (lexicon.equalsIgnoreCase("latgalian")) {
+		if (latgalian) {
 			if (latgalian_reloader == null) {
 				latgalian_reloader = new Reloader();
 				latgalian_reloader.latgalian = true;

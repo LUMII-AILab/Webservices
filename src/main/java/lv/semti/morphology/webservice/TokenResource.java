@@ -1,6 +1,5 @@
 package lv.semti.morphology.webservice;
 
-
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -10,6 +9,7 @@ import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.restlet.data.Method;
+import org.restlet.data.Status;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Get;
 import org.restlet.resource.Options;
@@ -26,10 +26,15 @@ public class TokenResource extends ServerResource {
 		if (CentralServer.debug)
 			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
+		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("type"));
+		if (latgalian == null)
+		{
+			doError(Status.CLIENT_ERROR_NOT_FOUND);
+			return null;
+		}
 		String query = (String) getRequest().getAttributes().get("query");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
-		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 		if (CentralServer.debug)
 			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
@@ -42,8 +47,12 @@ public class TokenResource extends ServerResource {
 		getResponse().setAccessControlAllowOrigin("*");
 		if (CentralServer.debug)
 			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
-		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
-
+		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("type"));
+		if (latgalian == null)
+		{
+			doError(Status.CLIENT_ERROR_NOT_FOUND);
+			return null;
+		}
 		JSONObject json;
 		String query = null;
 		String language = null;

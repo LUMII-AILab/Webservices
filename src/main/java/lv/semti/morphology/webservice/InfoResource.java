@@ -4,8 +4,7 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Status;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
-import org.restlet.resource.Get;
-import org.restlet.resource.ServerResource;
+import org.restlet.resource.*;
 
 /**
  * General info about all services: main page, morphology version and returning
@@ -92,6 +91,14 @@ public class InfoResource extends ServerResource {
         sb.append(String.format("<li> <form method=\"post\" action=\"%s\" style=\"display:inline\">" +
                 " <button type=\"submit\">%s</button>: %s\n" +
                 " </form></li>", url, urlText, description));
+    }
+
+    @Post
+    @Delete
+    @Put
+    public void notFound ()
+    {
+        doError(Status.CLIENT_ERROR_NOT_FOUND);
     }
 
     /*private void addPostLink(
