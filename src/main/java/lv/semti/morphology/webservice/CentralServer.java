@@ -9,6 +9,7 @@ import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
 import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
+import org.restlet.routing.Template;
 import org.restlet.service.CorsService;
 
 import java.nio.file.Files;
@@ -166,7 +167,7 @@ public class CentralServer
 
 		component.getDefaultHost().attach("/tokenize_{type}/{query}", TokenResource.class);
 		component.getDefaultHost().attach("/tokenize_{type}/{language}/{query}", TokenResource.class);
-		component.getDefaultHost().attach("/tokenize_{type}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/", TokenResource.class); // for POST (trailing slash is important)
 
 		if (enableLexiconReloader) {
 			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;

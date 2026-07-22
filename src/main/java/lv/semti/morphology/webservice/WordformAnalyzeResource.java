@@ -20,7 +20,7 @@ public class WordformAnalyzeResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
 		if (CentralServer.debug)
-			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		String language = (String) getRequest().getAttributes().get("language");

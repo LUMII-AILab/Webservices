@@ -37,7 +37,6 @@ public class TokenResource extends ServerResource {
 		return analyze(query, language, latgalian, guess);
 	}
 
-	// TODO: saprast, kāpēc šis nereāģē uz POST pieprasījumiem
 	@Post("json")
 	public String postquery(JsonRepresentation entity) throws JSONException {
 		getResponse().setAccessControlAllowOrigin("*");
@@ -54,9 +53,7 @@ public class TokenResource extends ServerResource {
 			query = json.getString("query");
 			language = json.has("language") ? json.getString("language") : "lv";
 			guess = json.has("guess") && "true".equalsIgnoreCase(json.getString("guess"));
-
 		} catch (JSONException e) {
-			
 			e.printStackTrace();
 		}
 		if (CentralServer.debug)

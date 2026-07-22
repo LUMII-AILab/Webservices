@@ -66,9 +66,15 @@ Zināmās problēmas: homonīmiem atdod vienu variantu.
 - `http://localhost:8182/tokenize_lvs/en[teikums]`: http://localhost:8182/tokenize_lvs/en/Šis%20žagaru%20saišķis
 - `http://localhost:8182/tokenize_ltg/[teikums]`: http://localhost:8182/tokenize_ltg/meitine%20laseja%20viestuli
 - `http://localhost:8182/tokenize_ltg/en[teikums]`: http://localhost:8182/tokenize_ltg/en/meitine%20laseja%20viestuli
-- POST `http://localhost:8182/tokenize_lvs/` un `http://localhost:8182/tokenize_ltg/`
+- POST `http://localhost:8182/tokenize_lvs/` un `http://localhost:8182/tokenize_ltg/`, dati JSON formātā kā izsaukuma piemērā (NB: pēdējā slīpsvītra pieprasījuma adresē ir obligāta):
+```
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"query": "vīrs ar cirvi", "guess": "true", "language": "en"}' \
+  http://localhost:8182/tokenize_lvs/
+```
 
-Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
+Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. Ar `?guess=[true/false]` GET parametros vai `"guess": "true"` / `"guess": "false"` POST datos var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
 
 
 
