@@ -24,14 +24,17 @@ import java.nio.file.Paths;
 public class ReloadLexiconResource extends ServerResource{
 	@Post()
 	public String reload() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("lexicon");
 		String wait = (String) getRequest().getAttributes().get("wait");
-		for (String key: getRequest().getAttributes().keySet()) {
-			System.out.println(key);
+		if (CentralServer.debug) {
+			System.out.println("Request keys: " +
+					getRequest().getAttributes().keySet().stream().reduce((a, b) -> a + ", " + b).orElse("null"));
 		}
-		System.out.println(query);
-		System.out.println(wait);
+		System.out.println("Requested lexicon: " + query + ", already loading: " + wait);
+
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		if (query.equalsIgnoreCase("latgalian") && !CentralServer.enableLatgalian) {
 			this.getResponse().setStatus(Status.SERVER_ERROR_SERVICE_UNAVAILABLE);

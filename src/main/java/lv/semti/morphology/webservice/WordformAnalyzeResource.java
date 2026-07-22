@@ -19,13 +19,16 @@ import java.nio.charset.StandardCharsets;
 public class WordformAnalyzeResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		String language = (String) getRequest().getAttributes().get("language");
 		String query = (String) getRequest().getAttributes().get("word");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
-		System.out.println("Guessing: " + guess);
+		if (CentralServer.debug)
+			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
 
 		Analyzer analyzer = latgalian
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();

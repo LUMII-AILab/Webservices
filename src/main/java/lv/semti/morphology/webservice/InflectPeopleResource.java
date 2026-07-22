@@ -23,9 +23,13 @@ import org.restlet.resource.ServerResource;
 public class InflectPeopleResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
+		if (CentralServer.debug)
+			System.out.println("English: " + "EN".equalsIgnoreCase(language));
 		List<List<Wordform>> processedTokens = inflect(query, getQuery().getValues("gender"));
 		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);
 	}

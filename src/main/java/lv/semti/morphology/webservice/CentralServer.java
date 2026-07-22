@@ -43,6 +43,7 @@ public class CentralServer
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
 	static public Path MORPHO_DUMPER_PATH = Paths.get("../TezaursMorphoDump/");
+	static public boolean debug = false;
 	static private int port = 8182;
 
 	public static void main(String[] args) throws Exception {
@@ -92,6 +93,10 @@ public class CentralServer
 					System.out.println("Lexicon reloading service is turned of because of lacking dumper script.\n");
 				}
 			}
+			else if (args[i].equalsIgnoreCase("-debug")){
+				debug = true;
+				System.out.println("Verbose output enabled.");
+			}
 			else if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
 					try {
@@ -112,6 +117,7 @@ public class CentralServer
                 System.out.println("\t-tagger & -notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
                 System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
                 System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
+				System.out.println("\t-debug : more verbose info about service calls");
                 System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
 				System.out.println("\nWebservice access:");
 				System.out.println("http://localhost:8182/analyze_[lvs/ltg]]/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");

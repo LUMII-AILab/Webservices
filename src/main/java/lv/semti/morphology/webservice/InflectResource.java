@@ -24,11 +24,15 @@ import org.restlet.resource.ServerResource;
 public class InflectResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
         getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
+		if (CentralServer.debug)
+			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
 		//boolean guess = !"false".equalsIgnoreCase(getQuery().getValues("guess"));
 		List<Collection<Wordform>> processedTokens = inflect(query, guess, latgalian);
 		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);

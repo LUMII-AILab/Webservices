@@ -16,6 +16,8 @@ import lv.lumii.expressions.Expression;
 public class NormalizePhraseResource extends ServerResource {
 	@Get("text")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);

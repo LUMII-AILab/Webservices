@@ -14,6 +14,8 @@ import org.restlet.resource.ServerResource;
 public class InfoResource extends ServerResource {
 	@Get
 	public Representation retrieve() {
+        if (CentralServer.debug)
+            System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 
         String tail = (String) getRequest().getAttributes().get("tail");
         if (tail != null && (tail.equals("version") || tail.equals("versions"))) {
@@ -47,7 +49,6 @@ public class InfoResource extends ServerResource {
         addGetLink(sb, "tokenize_lvs/en/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "tokenize_ltg/meitine%20laseja%20viestuli.", "/tokenize_ltg/[query] or POST to /tokenize_ltg", "tokenization of sentences, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "tokenize_ltg/en/meitine%20laseja%20viestuli.", "/tokenize_ltg/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
-
         sb.append("</ul>\n");
 
         if (CentralServer.enableTagger) {

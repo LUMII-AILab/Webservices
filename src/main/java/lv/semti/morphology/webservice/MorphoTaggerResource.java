@@ -26,6 +26,8 @@ public class MorphoTaggerResource extends ServerResource {
 	
 	@Get
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 

@@ -19,6 +19,8 @@ import phonetic_transcriber.PhoneticTranscriber;
 public class PhoneticTranscriberResource extends ServerResource {
 	@Get("text")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String phrase = (String) getRequest().getAttributes().get("phrase");
 		phrase = URLDecoder.decode(phrase, StandardCharsets.UTF_8);

@@ -26,11 +26,15 @@ public class InflectWithParadigmResource extends ServerResource
 {
 	@Get("json")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		String inflmisc = getQuery().getValues("inflmisc");
 		Paradigm paradigm = decodeParadigm(getQuery().getValues("paradigm"));
+		if (CentralServer.debug)
+			System.out.println("Paradigm: " + (paradigm == null ? "null" : paradigm.name) + ", English: " + "EN".equalsIgnoreCase(language));
 
 		if (paradigm == null)
 		{

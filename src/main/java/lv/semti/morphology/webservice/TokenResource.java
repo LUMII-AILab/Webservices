@@ -3,13 +3,16 @@ package lv.semti.morphology.webservice;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 import java.util.List;
 
 import lv.semti.morphology.webservice.utils.JsonOutput;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.restlet.data.Method;
 import org.restlet.ext.json.JsonRepresentation;
 import org.restlet.resource.Get;
+import org.restlet.resource.Options;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import lv.semti.morphology.analyzer.*;
@@ -20,32 +23,44 @@ import lv.semti.morphology.analyzer.*;
 public class TokenResource extends ServerResource {
 	@Get("json")
 	public String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("query");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String language = (String) getRequest().getAttributes().get("language");
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
+		if (CentralServer.debug)
+			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
 
 		return analyze(query, language, latgalian, guess);
 	}
-	
+
+	// TODO: saprast, kāpēc šis nereāģē uz POST pieprasījumiem
 	@Post("json")
 	public String postquery(JsonRepresentation entity) throws JSONException {
+		getResponse().setAccessControlAllowOrigin("*");
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service" + this.getClass().getName());
 		boolean latgalian = "ltg".equalsIgnoreCase((String) getRequest().getAttributes().get("type"));
-		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 
 		JSONObject json;
 		String query = null;
 		String language = null;
+		boolean guess = false;
 		try {
 			json = entity.getJsonObject();
 			query = json.getString("query");
 			language = json.has("language") ? json.getString("language") : "lv";
+			guess = json.has("guess") && "true".equalsIgnoreCase(json.getString("guess"));
+
 		} catch (JSONException e) {
 			
 			e.printStackTrace();
 		}
+		if (CentralServer.debug)
+			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
 
 		System.out.println(query);
 		return analyze(query, language, latgalian, guess);
@@ -66,6 +81,18 @@ public class TokenResource extends ServerResource {
 		List<Word> tokens = Splitting.tokenize(analyzer, query);
 		CentralServer.defaultAnalyzersSettings();
 		return JsonOutput.toJson(tokens, language, true);
+	}
+
+	@Options()
+	public String cors() {
+		getResponse().setAccessControlAllowOrigin("*");
+		HashSet<String> headersHashSet = new HashSet<>();
+		headersHashSet.add("*");
+		getResponse().setAccessControlAllowHeaders(headersHashSet);
+		HashSet<Method> methodHashSet = new HashSet<>();
+		methodHashSet.add(Method.POST);
+		getResponse().setAccessControlAllowMethods(methodHashSet);
+		return "";
 	}
 
 }

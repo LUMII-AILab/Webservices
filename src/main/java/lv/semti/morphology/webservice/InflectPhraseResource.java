@@ -23,11 +23,15 @@ import lv.semti.morphology.attributes.AttributeNames;
 public class InflectPhraseResource extends ServerResource {
 	@Get("json")
 	public synchronized String retrieve() {
+		if (CentralServer.debug)
+			System.out.println(getRequest().getMethod().getName() + " call handled by service " + this.getClass().getName());
 		getResponse().setAccessControlAllowOrigin("*");
 		String query = (String) getRequest().getAttributes().get("phrase");
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		String category = getQuery().getValues("category");
 		String language = (String) getRequest().getAttributes().get("language");
+		if (CentralServer.debug)
+			System.out.println("English: " + "EN".equalsIgnoreCase(language));
 
 		Analyzer analyzer = CentralServer.getAnalyzer();
 		analyzer.enableGuessing = true;
