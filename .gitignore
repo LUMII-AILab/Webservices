@@ -1,13 +1,17 @@
+# Webservice resources and outputs
+/resources/
+attributes.txt
+
+# Maven & Ant build
 bin/
 build/
 dist/
-.DS_Store
-src/main/resources/morpho/
-src/main/resources/corpora/
-src/main/resources/tezaurs/
 /target/
+
+# IntelliJ & Kate
 .idea/
 webservices.iml
-attributes.txt
-resources/
 *.kate-swp
+
+# MacOS
+.DS_Store
