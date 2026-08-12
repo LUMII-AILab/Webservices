@@ -97,7 +97,7 @@ public class CentralServer
 			}
 			else if (args[i].equalsIgnoreCase("-debug")){
 				debug = true;
-				System.out.println("Verbose output enabled.");
+				System.out.println("Verbose output enabled");
 			}
 			else if (args[i].equalsIgnoreCase("-port")) {
 				if (i+1 < args.length && !args[i+1].startsWith("-")) {
@@ -162,7 +162,7 @@ public class CentralServer
 
         component.getDefaultHost().attach("/inflect_with_data/{query}", InflectWithParadigmResource.class);
 		component.getDefaultHost().attach("/inflect_with_data/{language}/{query}", InflectWithParadigmResource.class);
-        component.getDefaultHost().attach("/v1/inflections/{query}", InflectWithParadigmResource.class);
+        //component.getDefaultHost().attach("/v1/inflections/{query}", InflectWithParadigmResource.class);
 
 		component.getDefaultHost().attach("/suitable_paradigm_{type}/{lemma}", SuitableParadigmResource.class);
 
