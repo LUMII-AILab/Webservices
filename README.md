@@ -7,9 +7,9 @@ Java 1.25
 
 ## Palaišana
 
-- `./webservice.sh`
-- `./webservice.sh -port 1234` lai norādītu citu web servisa portu (pēc noklusējuma lieto 8182)
-- `./webservice.sh -h` or `./webservice.sh --help` informācijai par pieejamiem servisiem
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer`
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer -port 1234` lai norādītu citu web servisa portu (pēc noklusējuma lieto 8182)
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer -h` or `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer --help` informācijai par pieejamiem servisiem
 
 	
 ## Piekļūšana
