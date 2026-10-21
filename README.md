@@ -7,9 +7,9 @@ Java 1.25
 
 ## Palaišana
 
-- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer`
-- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer -port 1234` lai norādītu citu web servisa portu (pēc noklusējuma lieto 8182)
-- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer -h` or `java -mx6g -cp "/ceļš/uz/mapi/ar/jar" lv.semti.morphology.webservice.MorphoServer --help` informācijai par pieejamiem servisiem
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar/*" lv.semti.morphology.webservice.CentralServer`
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar/*" lv.semti.morphology.webservice.CentralServer -port 1234` lai norādītu citu web servisa portu (pēc noklusējuma lieto 8182)
+- `java -mx6g -cp "/ceļš/uz/mapi/ar/jar/*" lv.semti.morphology.webservice.CentralServer -h` or `java -mx6g -cp "/ceļš/uz/mapi/ar/jar/*" lv.semti.morphology.webservice.CentralServer --help` informācijai par pieejamiem servisiem
 
 	
 ## Piekļūšana
@@ -33,19 +33,19 @@ Latviešu standartvalodas servisi par leksonu izmanto tezaurs.lv. Latgaliešu va
 Tiek pieņemts, ka parametrs ir viena vienība/vārds. Rezultātā ir JSON masīvs ar vienu vai vairākiem morfoloģiskās analīzes variantiem, kas atbilst šim vārdam. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin.
 
 
-### Vārdformu ģenerēšana bez papildinformācijas(JSON)
+### Vārdformu ģenerēšana bez papildinformācijas (JSON)
 
 - `http://localhost:8182/inflect_general_lvs/[vārds]`: http://localhost:8182/inflect_general_lvs/rakt
-- `http://localhost:8182/inflectinflect_general_lvs/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/rakt
+- `http://localhost:8182/inflect_general_lvs/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/rakt
 - `http://localhost:8182/inflect_general_ltg/[vārds]`: http://localhost:8182/inflect_general_lvs/muosa
-- `http://localhost:8182/inflectinflect_general_ltg/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/muosa
+- `http://localhost:8182/inflect_general_ltg/en/[vārds]`: http://localhost:8182/inflect_general_lvs/en/muosa
 
 Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin.
 
 Zināmās problēmas: homonīmiem atdod vienu variantu.
 
 
-### Vārdformu ģenerēšana ar papildinformāciju(JSON)
+### Vārdformu ģenerēšana ar papildinformāciju (JSON)
 
 - `http://localhost:8182/inflect_with_data/[vārds]&paradigm=[paradigma]`: http://localhost:8182/inflect_with_data/aita?paradigm=noun-4f
 - `http://localhost:8182/inflect_with_data/[vārds]&paradigm=[paradigma]&stem1=[nenoteiksmes celms]&stem2=[tagadnes celms]&stem3=[pagātnes celms]`: http://localhost:8182/inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus (pirmās konjugācijas verbiem vajag celmus, lai pareizi locītu)
@@ -125,13 +125,29 @@ Neatbalsta verbālas frāzes. Vislabākā rezultāta sasniegšanai ir ļoti iete
 
 ## Ar transkribētāju pieejamie servisi
 
-Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-transcription`, kas ieslēdz fonētiskā transkribētāja lietošanu. Jārēķinās, ka šobrīd lietotais transkribētājs ir novecojis, un tiks nākotnē aizvietots ar jaunāku. Tie nav pieejami latgaliešu valodai.
+Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-transcription`, kas ieslēdz fonētiskā transkribētāja lietošanu. Jārēķinās, ka šobrīd lietotais transkribētājs ir izstrādes stadijā un daudziem vārdiem vēl nedod jēgpilnas izrunas. Tas nav pieejami latgaliešu valodai.
 
 
-### Fonētiskā transkripcija (TEKSTS)
+### Fonētiskā transkripcija, izmantojot vārdformu ģenerēšanu bez papildinformācijas (JSON)
 
-- `http://localhost:8182/transcribe/[frāze]`: http://localhost:8182/phonetic_transcriber/vīrs%20ar%20
-- `http://localhost:8182/transcribe/[frāze]?phoneme_set=IPA`: http://localhost:8182/phonetic_transcriber/vīrs%20ar%20?phoneme_set=IPA IPA transkripcijām
+- `http://localhost:8182/inflect_pronounce_general_lvs/[vārds]?pronunc=[izruna]`: http://localhost:8182/inflect_pronounce_general_lvs/rēgs?pronunc=rĒ%3Dks
+- `http://localhost:8182/inflect_pronounce_general_lvs/en/[vārds]?pronunc=[izruna]`: http://localhost:8182/inflect_pronounce_general_lvs/en/rēgs?pronunc=rĒ%3Dks
+
+Tiek pieņemts, ka parametrs ir viens vārds pamatformā, tiek izvadīti visi vārdformas locījumi. Ar `?guess=[true/false]` var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin.
+
+Zināmās problēmas: homonīmiem atdod vienu variantu.
+
+
+### Fonētiskā transkripcija, izmantojot vārdformu ģenerēšanu ar papildinformāciju (JSON)
+
+Izruna jānorāda LVSMT formātā.
+
+- `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]`: http://localhost:8182/inflect_pronounce_with_data/rēgs?pronunc=rĒ%3Dks&paradigm=noun-1a
+- `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]&stem1=[nenoteiksmes celms]&stem2=[tagadnes celms]&stem3=[pagātnes celms]`: http://localhost:8182/inflect_pronounce_with_data/aust?pronunc=a_ust&paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus (pirmās konjugācijas verbiem vajag celmus, lai pareizi locītu)
+- `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]&inflmisc=[papildus informācija]`: https://localhost:8182/inflect_pronounce_with_data/%C4%BCaudis?pronunc=%C4%BCa_udis&paradigm=noun-6a&inflmisc=Daudzskaitlis%2CV%C4%ABrie%C5%A1u_dzimte (atpazītās papildinformācijas vienības ir: `Vīriešu_dzimte`, `Sieviešu_dzimte`, `Daudzskaitlis`, `Vienskaitlis`, `Noliegums`)
+
+Šo informāciju ņem no Tēzaura un lieto Tēzauram, šim servisam paradigmu norādīt ir **obligāti**.
+
 
 
 ## Specializētie šaura lietojuma servisi

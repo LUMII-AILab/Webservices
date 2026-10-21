@@ -18,11 +18,12 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 /**
- * General inflection service: provide a lemma (and optionally paradigm and
- * stems) and get all forms.
- * TODO: split in two – general one providing all inflection variants and paradigm/stem-based for tezaurs.
+ * General inflection service: provide a lemma and optionally pronunciation
+ * and get all forms (and optionally their pronunciations).
  */
-public class InflectResource extends ServerResource {
+public class InflectWithHeuristicsGeneric extends ServerResource {
+	Boolean doPronunciations = null;
+
 	@Get("json")
 	public String retrieve() {
 		if (CentralServer.debug)
@@ -36,15 +37,25 @@ public class InflectResource extends ServerResource {
 		}
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
+		String pronunc = getQuery().getValues("pronunc");
+		if (doPronunciations && (pronunc == null || pronunc.isEmpty()))
+			pronunc = query;
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 		if (CentralServer.debug)
 			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
 
-		List<Collection<Wordform>> processedTokens = inflect(query, guess, latgalian);
+		List<Collection<Wordform>> processedTokens = inflect(query, pronunc, guess, latgalian);
+
+		if (processedTokens == null)
+		{
+			doError(Status.CLIENT_ERROR_NOT_FOUND);
+			return null;
+		}
+
 		return JsonOutput.toJsonDoubleGeneric(processedTokens, language, false);
 	}
 
-    public List<Collection<Wordform>> inflect(String query, boolean guess, boolean latgalian) {
+    public List<Collection<Wordform>> inflect(String query, String queryPronunciation, boolean guess, boolean latgalian) {
 		query = URLDecoder.decode(query, StandardCharsets.UTF_8);
 		Analyzer analyzer = latgalian
 				? CentralServer.getLatgalian_analyzer() : CentralServer.getAnalyzer();
@@ -92,6 +103,15 @@ public class InflectResource extends ServerResource {
 				formas.addAll(analyzer.generateInflectionsFromParadigm(word.getToken(), 10));
 			} else
 				formas = analyzer.generateInflections(word.getToken()); // normal case of building just from the token
+
+			if (formas == null || formas.isEmpty())
+				continue;
+
+			if (doPronunciations)
+			{
+				formas = CentralServer.getTranscriber().transcribe(
+						formas, query, queryPronunciation, formas.getFirst().lexeme.getParadigm());
+			}
 
 			for (Wordform wf : formas) {
 				wf.filterAttributes(AttributeFilter.showableAttributes);

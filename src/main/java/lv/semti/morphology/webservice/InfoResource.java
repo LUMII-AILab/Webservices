@@ -64,8 +64,16 @@ public class InfoResource extends ServerResource {
 
         if (CentralServer.enableTranscription) {
             sb.append("<p>Phonetic transcriber is turned on and provides following:</p>\n<ul>\n");
-            addGetLink(sb, "transcribe/vīrs%20ar%20cirvi", "/transcribe/[phrase]", "phonetic transcription of the phrase (TEXT)");
-            addGetLink(sb, "transcribe/vīrs%20ar%20cirvi?phoneme_set=IPA", "/transcribe/[phrase]?phoneme_set=IPA", "IPA phonetic transcription of the phrase (TEXT)");
+            addGetLink(sb, "inflect_pronounce_general_lvs/rēgs?pronunc=rĒ%3Dks", "/inflect_pronounce_general_lvs/[query]?pronunc=[pronunciation]", "generate all inflectional forms (with pronunciations) of a lemma for standard Latvian, with <em>&guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+            addGetLink(sb, "inflect_pronounce_general_lvs/en/rēgs?pronunc=rĒ%3Dks", "/inflect_pronounce_general_lvs/en/[query]?pronunc=[pronunciation]", "generate all inflectional forms (with pronunciations) of a lemma for standard Latvian, attribute names in English, with <em>&guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+            //addGetLink(sb, "inflect_pronounce_general_ltg/muosa", "/inflect_pronounce_general_ltg/[query]", "generate all inflectional forms (with pronunciations) of a lemma for Latgalian, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+            //addGetLink(sb, "inflect_pronounce_general_ltg/en/muosa", "/inflect_pronounce_general_ltg/en/[query]", "generate all inflectional forms (with pronunciations) of a lemma for Latgalian (JSON), attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
+
+            addGetLink(sb, "inflect_pronounce_with_data/rēgs?pronunc=rĒ%3Dks&paradigm=noun-1a", "inflect_pronounce_with_data/[query]?pronunc=[pronunciation]&amp;paradigm=[paradigm name]", "generate all inflectional forms (with pronunciations) of a lemma according to the given paradigm (JSON)");
+            addGetLink(sb, "inflect_pronounce_with_data/aust?pronunc=a_ust&paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_pronounce_with_data/[query]?pronunc=[pronunciation]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms (with pronunciations) of a verb from a 1st conjunction (JSON)");
+
+            //addGetLink(sb, "transcribe/vīrs%20ar%20cirvi", "/transcribe/[phrase]", "phonetic transcription of the phrase (TEXT)");
+            //addGetLink(sb, "transcribe/vīrs%20ar%20cirvi?phoneme_set=IPA", "/transcribe/[phrase]?phoneme_set=IPA", "IPA phonetic transcription of the phrase (TEXT)");
             sb.append("</ul>\n");
         } else sb.append("<p>Phonetic transcriber is turned off.</p>\n");
 

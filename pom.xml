@@ -5,7 +5,7 @@
 	<groupId>lv.ailab.morphology</groupId>
 	<artifactId>webservices</artifactId>
 	<packaging>jar</packaging>
-	<version>2.202604.0</version>
+	<version>2.202604.1</version>
 	<name>Tēzaurs.lv Webservice API</name>
 	<description>Webservice API for Tēzaurs.lv and other ailab.lv Latvian computational linguistic tools</description>
 	<url>https://github.com/LUMII-AILab/Webservices</url>
@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
 			<artifactId>morphology</artifactId>
-			<version>2.202604.0</version>
+			<version>2.202604.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>lv.ailab.morphology</groupId>
@@ -89,9 +89,9 @@
 			<version>2.202604.0</version>
 		</dependency>
 		<dependency>
-			<groupId>lv.ailab.morphology</groupId>
-			<artifactId>phonetictranscriber</artifactId>
-			<version>1.0.1</version>
+			<groupId>lv.ailab.morphotranscriber</groupId>
+			<artifactId>MorphoTranscriber</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>

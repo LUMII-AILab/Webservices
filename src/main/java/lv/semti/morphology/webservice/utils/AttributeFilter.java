@@ -35,6 +35,8 @@ public class AttributeFilter
 				AttributeNames.i_Normative,
 				// Tokenization results
 				AttributeNames.i_PositionInParagraph,
-				AttributeNames.i_SpaceBefore);
+				AttributeNames.i_SpaceBefore,
+				// Pronunciation
+				AttributeNames.i_Pronunciation);
 	}
 }

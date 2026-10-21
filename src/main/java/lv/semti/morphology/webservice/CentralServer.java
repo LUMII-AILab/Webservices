@@ -1,4 +1,5 @@
 package lv.semti.morphology.webservice;
+import lv.ailab.parruna.transcriber.Morphotranscriber;
 import org.restlet.*;
 import org.restlet.data.*;
 
@@ -34,13 +35,11 @@ public class CentralServer
     static private Analyzer latgalian_analyzer;
     static synchronized Analyzer getLatgalian_analyzer() { return CentralServer.latgalian_analyzer; }
     static synchronized void setLatgalian_analyzer(Analyzer analyzer) { CentralServer.latgalian_analyzer = analyzer; }
+	static private Morphotranscriber transcriber;
+	static synchronized Morphotranscriber getTranscriber() {return CentralServer.transcriber; }
 	static public TagSet tagset;
 	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
     static public boolean enableTagger = true;
-	/**
-	 * Transcription service is very old.
-	 * Planned future work: integrate the new, python based transcription service.
-	 */
     static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
@@ -128,10 +127,10 @@ public class CentralServer
 				System.out.println("http://localhost:8182/inflect_with_data/[query] : generate all inflectional forms of a lemma, given paradigm as well as optional stems and attributes");
 				System.out.println("http://localhost:8182/suitable_paradigm_[lvs/ltg]/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
 				System.out.println("http://localhost:8182/tokenize_[lvs/ltg]/[query] or POST to http://localhost:8182/tokenize_[lvs/ltg] : tokenization of sentences");
-				System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
+				//System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
 				System.out.println("http://localhost:8182/inflect_people/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
 				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
-				System.out.println("http://localhost:8182/transcribe/[query] : generate phonetic transcription of the phrase");
+				//System.out.println("http://localhost:8182/transcribe/[query] : generate phonetic transcription of the phrase");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -157,12 +156,19 @@ public class CentralServer
         component.getDefaultHost().attach("/analyze_{type}/{word}", WordformAnalyzeResource.class);
         component.getDefaultHost().attach("/analyze_{type}/{language}/{word}", WordformAnalyzeResource.class);
 
-		component.getDefaultHost().attach("/inflect_general_{type}/{query}", InflectResource.class); // pārtaisīt homonīmiem
-		component.getDefaultHost().attach("/inflect_general_{type}/{language}/{query}", InflectResource.class);
+		component.getDefaultHost().attach("/inflect_general_{type}/{query}", InflectWithHeuristicsResource.class); // pārtaisīt homonīmiem
+		component.getDefaultHost().attach("/inflect_general_{type}/{language}/{query}", InflectWithHeuristicsResource.class);
 
         component.getDefaultHost().attach("/inflect_with_data/{query}", InflectWithParadigmResource.class);
 		component.getDefaultHost().attach("/inflect_with_data/{language}/{query}", InflectWithParadigmResource.class);
-        //component.getDefaultHost().attach("/v1/inflections/{query}", InflectWithParadigmResource.class);
+
+		if (enableTranscription) {
+			component.getDefaultHost().attach("/inflect_pronounce_general_{type}/{query}", InflectPronounceWithHeuristicsResource.class); // pārtaisīt homonīmiem
+			component.getDefaultHost().attach("/inflect_pronounce_general_{type}/{language}/{query}", InflectPronounceWithHeuristicsResource.class);
+			component.getDefaultHost().attach("/inflect_pronounce_with_data/{query}", InflectPronounceWithParadigmResource.class);
+			component.getDefaultHost().attach("/inflect_pronounce_with_data/{language}/{query}", InflectPronounceWithParadigmResource.class);
+		}
+
 
 		component.getDefaultHost().attach("/suitable_paradigm_{type}/{lemma}", SuitableParadigmResource.class);
 
@@ -187,9 +193,6 @@ public class CentralServer
             component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
             component.getDefaultHost().attach("/inflect_phrase/{language}/{phrase}", InflectPhraseResource.class);
             component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
-        }
-        if (enableTranscription) { // aizstāt ar viestura risinājumu
-            component.getDefaultHost().attach("/transcribe/{phrase}", PhoneticTranscriberResource.class);
         }
 
         // Set up CORS
@@ -223,6 +226,8 @@ public class CentralServer
 
 		analyzer.enableAnalysisCache = false;
 		latgalian_analyzer.enableAnalysisCache = false;
+
+		transcriber = new Morphotranscriber();
     }
 
 	/**
