@@ -140,13 +140,21 @@ Zināmās problēmas: homonīmiem atdod vienu variantu.
 
 ### Fonētiskā transkripcija, izmantojot vārdformu ģenerēšanu ar papildinformāciju (JSON)
 
-Izruna jānorāda LVSMT formātā.
+Izruna jānorāda LVFMAT formātā.
 
 - `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]`: http://localhost:8182/inflect_pronounce_with_data/rēgs?pronunc=rĒ%3Dks&paradigm=noun-1a
 - `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]&stem1=[nenoteiksmes celms]&stem2=[tagadnes celms]&stem3=[pagātnes celms]`: http://localhost:8182/inflect_pronounce_with_data/aust?pronunc=a_ust&paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus (pirmās konjugācijas verbiem vajag celmus, lai pareizi locītu)
-- `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]&inflmisc=[papildus informācija]`: https://localhost:8182/inflect_pronounce_with_data/%C4%BCaudis?pronunc=%C4%BCa_udis&paradigm=noun-6a&inflmisc=Daudzskaitlis%2CV%C4%ABrie%C5%A1u_dzimte (atpazītās papildinformācijas vienības ir: `Vīriešu_dzimte`, `Sieviešu_dzimte`, `Daudzskaitlis`, `Vienskaitlis`, `Noliegums`)
+- `http://localhost:8182/inflect_pronounce_with_data/[vārds]?pronunc=[izruna]&paradigm=[paradigma]&inflmisc=[papildus informācija]`: https://localhost:8182/inflect_pronounce_with_data/%C4%BCaudis?pronunc=%C4%BCa_udixs&paradigm=noun-6a&inflmisc=Daudzskaitlis%2CV%C4%ABrie%C5%A1u_dzimte (atpazītās papildinformācijas vienības ir: `Vīriešu_dzimte`, `Sieviešu_dzimte`, `Daudzskaitlis`, `Vienskaitlis`, `Noliegums`)
 
 Šo informāciju ņem no Tēzaura un lieto Tēzauram, šim servisam paradigmu norādīt ir **obligāti**.
+
+
+### Fonētiskās transkripcijas pārveidotāji
+
+- `http://localhost:8182/lvfma_to_ipa/[lvfma izruna]`: http://localhost:8182/lvfma_to_ipa/rĒ%3Dks pārveidošanai no LVFMA (latviešu valodas mašīnlasāmā fonētiskā alfabēta) transkripcijas uz IPA (International Phonetic Alphabet) transkripciju
+- `http://localhost:8182/lvfma_to_lfa/[lvfma izruna]`: http://localhost:8182/lvfma_to_lfa/rĒ%3Dks pārveidošanai no LVFMA (latviešu valodas mašīnlasāmā fonētiskā alfabēta) transkripcijas uz LFA (latviešu fonētiskā alfabēta) transkripciju
+
+Abi pārveidojumi ir ar informācijas zudumiem, LVFMA transkripcijas satur visvairāk informācijas, taču IPA un LFA ir plašāk atpazīstamas.
 
 
 

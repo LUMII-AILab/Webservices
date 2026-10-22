@@ -22,6 +22,8 @@ public class InfoResource extends ServerResource {
             return new StringRepresentation(CentralServer.getAnalyzer().getRevision(), MediaType.TEXT_HTML);
         } else if (tail != null && !tail.isEmpty()) {
             // 404 for unknown
+            if (CentralServer.debug)
+                System.out.println("Generally unknown adress.");
             doError(Status.CLIENT_ERROR_NOT_FOUND);
             return null;
         }
@@ -71,6 +73,9 @@ public class InfoResource extends ServerResource {
 
             addGetLink(sb, "inflect_pronounce_with_data/rēgs?pronunc=rĒ%3Dks&paradigm=noun-1a", "inflect_pronounce_with_data/[query]?pronunc=[pronunciation]&amp;paradigm=[paradigm name]", "generate all inflectional forms (with pronunciations) of a lemma according to the given paradigm (JSON)");
             addGetLink(sb, "inflect_pronounce_with_data/aust?pronunc=a_ust&paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_pronounce_with_data/[query]?pronunc=[pronunciation]&amp;paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms (with pronunciations) of a verb from a 1st conjunction (JSON)");
+
+            addGetLink(sb, "lvfma_to_ipa/rĒ%3Dks", "lvfma_to_ipa/[query]", "convert LVFMA (Latvian machine readable fonetic alphabet, internal use) transcription to IPA transcription (TEXT)");
+            addGetLink(sb, "lvfma_to_lfa/rĒ%3Dks", "lvfma_to_lfa/[query]", "convert LVFMA (Latvian machine readable fonetic alphabet, internal use) transcription to LFA transcription (TEXT)");
 
             //addGetLink(sb, "transcribe/vīrs%20ar%20cirvi", "/transcribe/[phrase]", "phonetic transcription of the phrase (TEXT)");
             //addGetLink(sb, "transcribe/vīrs%20ar%20cirvi?phoneme_set=IPA", "/transcribe/[phrase]?phoneme_set=IPA", "IPA phonetic transcription of the phrase (TEXT)");

@@ -167,6 +167,7 @@ public class CentralServer
 			component.getDefaultHost().attach("/inflect_pronounce_general_{type}/{language}/{query}", InflectPronounceWithHeuristicsResource.class);
 			component.getDefaultHost().attach("/inflect_pronounce_with_data/{query}", InflectPronounceWithParadigmResource.class);
 			component.getDefaultHost().attach("/inflect_pronounce_with_data/{language}/{query}", InflectPronounceWithParadigmResource.class);
+			component.getDefaultHost().attach("/lvfma_to_{type}/{query}", TranscriptionConversionResource.class);
 		}
 
 
