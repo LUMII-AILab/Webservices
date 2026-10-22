@@ -19,7 +19,10 @@ public class InfoResource extends ServerResource {
         String tail = (String) getRequest().getAttributes().get("tail");
         if (tail != null && (tail.equals("version") || tail.equals("versions"))) {
             // Version info
-            return new StringRepresentation(CentralServer.getAnalyzer().getRevision(), MediaType.TEXT_HTML);
+            return new StringRepresentation(
+                    "Software version: " + CentralServer.getAnalyzer().getRevision() +
+                            "; data version: " + CentralServer.getAnalyzer().getSecondaryRevisions(),
+                    MediaType.TEXT_HTML);
         } else if (tail != null && !tail.isEmpty()) {
             // 404 for unknown
             if (CentralServer.debug)
@@ -29,10 +32,13 @@ public class InfoResource extends ServerResource {
         }
 
         // Main page
-
         StringBuilder sb = new StringBuilder();
         sb.append("<html><head><title>Latvian morphology web services</title></head><body><h3>Version ");
         sb.append(CentralServer.getAnalyzer().getRevision());
+        if (CentralServer.debug || CentralServer.enableLexiconReloader) {
+            sb.append(" &mdash; ");
+            sb.append(CentralServer.getAnalyzer().getSecondaryRevisions());
+        }
         sb.append("</h3>\n<ul>\n");
         addGetLink(sb, "analyze_lvs/doma", "/analyze_lvs/[word]", "morphological analysis of the word, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "analyze_lvs/en/doma", "/analyze_lvs/en/[word]", "morphological analysis of the word, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
