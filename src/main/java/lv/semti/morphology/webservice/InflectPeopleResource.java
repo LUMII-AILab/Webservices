@@ -59,7 +59,7 @@ public class InflectPeopleResource extends ServerResource {
 		for (Word word : tokens) {
 			List<Wordform> forms = analyzer.generateInflections(word.getToken(), true, filter);
 			for (Wordform wf : forms) {
-				wf.filterAttributes(AttributeFilter.showableAttributes);
+				wf.filterAttributes(AttributeFilter.showableAttributesAlways);
 				String name = wf.getValue(AttributeNames.i_Word);
 				name = name.substring(0, 1).toUpperCase() + name.substring(1);
 				wf.addAttribute(AttributeNames.i_Word, name);

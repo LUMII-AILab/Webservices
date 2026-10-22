@@ -1,13 +1,17 @@
 package lv.semti.morphology.webservice.utils;
 
 import lv.semti.morphology.attributes.AttributeNames;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class AttributeFilter
 {
-	public static final Set<String> showableAttributes = initFilter();
+	public static final Set<String> showableAttributesAlways = initAlwaysFilter();
+	public static final Set<String> showableAttributesWithPron = initFilterWithPron();
 
-	static Set<String> initFilter () {
+	static Set<String> initAlwaysFilter() {
 		return Set.of(
 				// General
 				AttributeNames.i_Word,
@@ -35,8 +39,12 @@ public class AttributeFilter
 				AttributeNames.i_Normative,
 				// Tokenization results
 				AttributeNames.i_PositionInParagraph,
-				AttributeNames.i_SpaceBefore,
-				// Pronunciation
-				AttributeNames.i_Pronunciation);
+				AttributeNames.i_SpaceBefore);
+	}
+
+	static Set<String> initFilterWithPron() {
+		List<String> result = new ArrayList<>(showableAttributesAlways);
+		result.add(AttributeNames.i_Pronunciation);
+		return Set.copyOf(result);
 	}
 }

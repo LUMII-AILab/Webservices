@@ -19,7 +19,7 @@ public class JsonOutput
 		for (Iterable<Wordform> wordformSubset : wordforms) {
 			List<String> subJSON = new LinkedList<>();
 			for (Wordform wf : wordformSubset) {
-				if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
+				if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributesAlways);
 				if ("EN".equalsIgnoreCase(language))
 					subJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
 				else
@@ -35,7 +35,7 @@ public class JsonOutput
 			T wordforms, String language, boolean useDefaultAttributeFilter) {
 		List<String> topLevelJSON = new LinkedList<>();
 		for (Wordform wf : wordforms) {
-			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
+			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributesAlways);
 			if ("EN".equalsIgnoreCase(language))
 				topLevelJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
 			else
@@ -57,7 +57,7 @@ public class JsonOutput
 			Word word, String language, boolean useDefaultAttributeFilter) {
 		List<String> topLevelJSON = new LinkedList<>();
 		for (Wordform wf : word.wordforms) {
-			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributes);
+			if (useDefaultAttributeFilter) wf.filterAttributes(AttributeFilter.showableAttributesAlways);
 			if ("EN".equalsIgnoreCase(language))
 				topLevelJSON.add(CentralServer.tagset.toEnglish(wf, true).toJSON());
 			else

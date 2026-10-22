@@ -112,14 +112,16 @@ public class InflectWithHeuristicsGeneric extends ServerResource {
 			if (formas == null || formas.isEmpty())
 				continue;
 
+			Set<String> filter = AttributeFilter.showableAttributesAlways;
 			if (doPronunciations)
 			{
 				formas = CentralServer.getTranscriber().transcribe(
 						formas, query, queryPronunciation, formas.getFirst().lexeme.getParadigm());
+				filter = AttributeFilter.showableAttributesWithPron;
 			}
 
 			for (Wordform wf : formas) {
-				wf.filterAttributes(AttributeFilter.showableAttributes);
+				wf.filterAttributes(filter);
 				wf.addAttribute(StemType.FORM_STEM.descriptionLV, wf.lexeme.getStem(wf.getEnding().stemType));
 				wf.addAttribute(StemType.STEM1.descriptionLV, wf.lexeme.getStem(StemType.STEM1));
 				wf.lexeme = null; // so that identical forms would compare as equal

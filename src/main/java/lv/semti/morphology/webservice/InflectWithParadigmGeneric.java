@@ -111,13 +111,16 @@ public class InflectWithParadigmGeneric extends ServerResource
 			// if a specific paradigm is passed, inflect according to that
 			forms = analyzer.generateInflectionsFromParadigm(word.getToken(), paradigm.getID(), lemmaAttrs);
 		}
+
+		Set<String> filter = AttributeFilter.showableAttributesAlways;
 		if (doPronunciations)
 		{
 			forms = CentralServer.getTranscriber().transcribe(forms, query, queryPronunciation, paradigm);
+			filter = AttributeFilter.showableAttributesWithPron;
 		}
 
 		if (forms != null) for (Wordform wf : forms) {
-			wf.filterAttributes(AttributeFilter.showableAttributes);
+			wf.filterAttributes(filter);
 			wf.addAttribute(StemType.FORM_STEM.descriptionLV, wf.lexeme.getStem(wf.getEnding().stemType));
 			wf.addAttribute(StemType.STEM1.descriptionLV, wf.lexeme.getStem(StemType.STEM1));
 			wf.lexeme = null; // so that identical forms would compare as equal
