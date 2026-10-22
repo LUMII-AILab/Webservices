@@ -46,7 +46,7 @@ public class InflectWithParadigmGeneric extends ServerResource
 		if (paradigm == null)
 		{
 			if (CentralServer.debug)
-				System.out.println("Invalid paradigm recieved.");
+				System.out.println("Invalid paradigm received.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}
@@ -56,6 +56,8 @@ public class InflectWithParadigmGeneric extends ServerResource
 
 		if (processedTokens == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("Inflection or transcription result is empty.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}

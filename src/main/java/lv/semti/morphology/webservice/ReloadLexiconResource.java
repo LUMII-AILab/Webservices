@@ -30,6 +30,8 @@ public class ReloadLexiconResource extends ServerResource{
 		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("lexicon"));
 		if (latgalian == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("No parameter for LVS/LTG distinction received.");
 			doError(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
 			return null;
 		}

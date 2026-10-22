@@ -36,7 +36,7 @@ public class InflectWithHeuristicsGeneric extends ServerResource {
 		if (latgalian == null)
 		{
 			if (CentralServer.debug)
-				System.out.println("No parameter for LVS/LTG distingtion recieved.");
+				System.out.println("No parameter for LVS/LTG distinction received.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}
@@ -52,7 +52,7 @@ public class InflectWithHeuristicsGeneric extends ServerResource {
 		if (processedTokens == null)
 		{
 			if (CentralServer.debug)
-				System.out.println("Inflection or transcription results empty.");
+				System.out.println("Inflection or transcription result is empty.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}

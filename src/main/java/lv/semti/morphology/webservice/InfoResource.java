@@ -23,7 +23,7 @@ public class InfoResource extends ServerResource {
         } else if (tail != null && !tail.isEmpty()) {
             // 404 for unknown
             if (CentralServer.debug)
-                System.out.println("Generally unknown adress.");
+                System.out.println("Generally unknown address for GET request.");
             doError(Status.CLIENT_ERROR_NOT_FOUND);
             return null;
         }
@@ -111,6 +111,8 @@ public class InfoResource extends ServerResource {
     @Put
     public void notFound ()
     {
+        if (CentralServer.debug)
+            System.out.println("Generally unknown address for POST, DELETE or PUT request.");
         doError(Status.CLIENT_ERROR_NOT_FOUND);
     }
 

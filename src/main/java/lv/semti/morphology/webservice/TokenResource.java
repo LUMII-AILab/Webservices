@@ -50,6 +50,8 @@ public class TokenResource extends ServerResource {
 		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("type"));
 		if (latgalian == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("No parameter for LVS/LTG distinction received.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}
