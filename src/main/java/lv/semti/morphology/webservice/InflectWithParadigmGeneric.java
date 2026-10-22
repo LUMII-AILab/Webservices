@@ -22,6 +22,9 @@ import java.util.*;
  * stems and lemma pronunciation) and get all forms and optionally form
  * pronunciations. Returns 404 for lacking paradigm to facilitate separation for
  * general inflection service.
+ * Note on contract: ParRuna transcriber is willing to accept null
+ * transcriptions when the user wants to have transcription guess without
+ * providing input hints.
  */
 public class InflectWithParadigmGeneric extends ServerResource
 {
@@ -36,14 +39,14 @@ public class InflectWithParadigmGeneric extends ServerResource
 		String inflmisc = getQuery().getValues("inflmisc");
 		String pronunc = getQuery().getValues("pronunc");
 		Paradigm paradigm = decodeParadigm(getQuery().getValues("paradigm"));
-		if (doPronunciations && (pronunc == null || pronunc.isEmpty()))
-			pronunc = query;
 
 		if (CentralServer.debug)
 			System.out.println("Paradigm: " + (paradigm == null ? "null" : paradigm.name) + ", English: " + "EN".equalsIgnoreCase(language));
 
 		if (paradigm == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("Invalid paradigm recieved.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}

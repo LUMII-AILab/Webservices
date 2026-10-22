@@ -20,6 +20,9 @@ import org.restlet.resource.ServerResource;
 /**
  * General inflection service: provide a lemma and optionally pronunciation
  * and get all forms (and optionally their pronunciations).
+ * Note on contract: ParRuna transcriber is willing to accept null
+ * transcriptions when the user wants to have transcription guess without
+ * providing input hints.
  */
 public class InflectWithHeuristicsGeneric extends ServerResource {
 	Boolean doPronunciations = null;
@@ -32,14 +35,14 @@ public class InflectWithHeuristicsGeneric extends ServerResource {
 		Boolean latgalian = CentralServer.isTypeLatgalian((String) getRequest().getAttributes().get("type"));
 		if (latgalian == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("No parameter for LVS/LTG distingtion recieved.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}
 		String query = (String) getRequest().getAttributes().get("query");
 		String language = (String) getRequest().getAttributes().get("language");
 		String pronunc = getQuery().getValues("pronunc");
-		if (doPronunciations && (pronunc == null || pronunc.isEmpty()))
-			pronunc = query;
 		boolean guess = "true".equalsIgnoreCase(getQuery().getValues("guess"));
 		if (CentralServer.debug)
 			System.out.println("Latgalian: " + latgalian + ", guessing: " + guess + ", English: " + "EN".equalsIgnoreCase(language));
@@ -48,6 +51,8 @@ public class InflectWithHeuristicsGeneric extends ServerResource {
 
 		if (processedTokens == null)
 		{
+			if (CentralServer.debug)
+				System.out.println("Inflection or transcription results empty.");
 			doError(Status.CLIENT_ERROR_NOT_FOUND);
 			return null;
 		}
