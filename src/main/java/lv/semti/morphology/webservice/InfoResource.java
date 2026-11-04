@@ -50,25 +50,16 @@ public class InfoResource extends ServerResource {
         addGetLink(sb, "inflect_general_ltg/en/muosa", "/inflect_general_ltg/en/[query]", "generate all inflectional forms of a lemma for Latgalian (JSON), attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "inflect_with_data/aita?paradigm=noun-4f", "inflect_with_data/[query]?paradigm=[paradigm name]", "generate all inflectional forms of a lemma according to the given paradigm (JSON)");
         addGetLink(sb, "inflect_with_data/aust?paradigm=verb-1&stem1=aus&stem2=aust&stem3=aus", "inflect_with_data/[query]?paradigm=[paradigm name]&amp;stem1=[infinitive stem]&amp;stem2=[present stem]&amp;stem3=[past stem]", "generate all inflectional forms of a verb from a 1st conjunction (JSON)");
+
         addGetLink(sb, "suitable_paradigm_lvs/pokemonizators", "/suitable_paradigm_lvs/[lemma]", "provides a list of paradigms that may form the provided lemma from standard Latvian set (JSON)");
         addGetLink(sb, "suitable_paradigm_ltg/pokemonizators", "/suitable_paradigm_ltg/[lemma]", "provides a list of paradigms that may form the provided lemma from Latgalian set (JSON)");
+        addGetLink(sb, "inflect_people/Baraks%20Obama?gender=m", "/inflect_people/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
+        addGetLink(sb, "inflect_people/en/Baraks%20Obama?gender=m", "/inflect_people/en/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
         addGetLink(sb, "tokenize_lvs/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[query] or POST to /tokenize_lvs", "tokenization of sentences, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "tokenize_lvs/en/domāju%20es%20domas%20dziļas.", "/tokenize_lvs/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "tokenize_ltg/meitine%20laseja%20viestuli.", "/tokenize_ltg/[query] or POST to /tokenize_ltg", "tokenization of sentences, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         addGetLink(sb, "tokenize_ltg/en/meitine%20laseja%20viestuli.", "/tokenize_ltg/[en]/[query]", "tokenization of sentences, attribute names in English, with <em>?guess=[true/false]</em> can regulate out-of-lexicon guessing (JSON)");
         sb.append("</ul>\n");
-
-        if (CentralServer.enableTagger) {
-            sb.append("<p>Morphotagger is turned on and provides following:</p>\n<ul>\n");
-            addGetLink(sb, "morphotagger/vīrs%20ar%20cirvi.", "/morphotagger/[query]", "do statistical morphological disambiguation of a sentence");
-            addGetLink(sb, "inflect_people/Baraks%20Obama?gender=m", "/inflect_people/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
-            addGetLink(sb, "inflect_people/en/Baraks%20Obama?gender=m", "/inflect_people/en/[query]?gender=[m/f]", "generate all inflectional forms of words, assuming that they are person names (JSON)");
-            addGetLink(sb, "inflect_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/[phrase]?category=[person/org/loc]", "try to inflect a multiword expression / named entity, given its category (JSON)");
-            addGetLink(sb, "inflect_phrase/en/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūts?category=org", "/inflect_phrase/en/[phrase]?category=[person/org/loc]", "try to inflect a multiword expression / named entity, given its category, attribute names to English (JSON)");
-            addGetLink(sb, "normalize_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20Informātikas%20Institūtam?category=org", "/normalize_phrase/[phrase]?category=[person/org/loc]", "try to transform a multiword expression / named entity to its base form, given its category (TEXT)");
-            sb.append("</ul>\n");
-        } else sb.append("<p>Morphotagger is turned off.</p>\n");
-
 
         if (CentralServer.enableTranscription) {
             sb.append("<p>Phonetic transcriber is turned on and provides following:</p>\n<ul>\n");

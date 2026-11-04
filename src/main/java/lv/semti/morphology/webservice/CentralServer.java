@@ -1,15 +1,11 @@
 package lv.semti.morphology.webservice;
-import lv.ailab.parruna.transcriber.Morphotranscriber;
-import org.restlet.*;
-import org.restlet.data.*;
 
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.ner.CMMClassifier;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.sequences.LVMorphologyReaderAndWriter;
-import lv.lumii.expressions.Expression;
 import lv.semti.morphology.analyzer.*;
 import lv.semti.morphology.attributes.TagSet;
+import lv.ailab.parruna.transcriber.Morphotranscriber;
+
+import org.restlet.*;
+import org.restlet.data.*;
 import org.restlet.service.CorsService;
 
 import java.net.URLDecoder;
@@ -21,11 +17,11 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * This is centeral server handling various morphological services. To reduce
+ * This is central server handling various morphological services. To reduce
  * memory required, it shares the same morphological analyzer between all
- * services. Tagger-related services are turning on analysis result caching,
- * which can lead to unexpected results in analysis, thus, it is important for
- * each service to carefully set their guessing and caching settings.
+ * services. Turning on analysis result caching can speed up things but also
+ * can lead to unexpected results in analysis, thus, it is important for each
+ * service to carefully set their guessing and caching settings.
  */
 public class CentralServer
 {
@@ -38,8 +34,6 @@ public class CentralServer
 	static private Morphotranscriber transcriber;
 	static synchronized Morphotranscriber getTranscriber() {return CentralServer.transcriber; }
 	static public TagSet tagset;
-	static AbstractSequenceClassifier<CoreLabel> morphoClassifier;
-    static public boolean enableTagger = true;
     static public boolean enableTranscription = false;
     static public boolean enableLatgalian = true;
 	static public boolean enableLexiconReloader = false;
@@ -49,15 +43,7 @@ public class CentralServer
 
 	public static void main(String[] args) throws Exception {
 		for (int i=0; i<args.length; i++) {
-            if (args[i].equalsIgnoreCase("-tagger")) {
-                enableTagger = true;
-                System.out.println("Tagger functionality enabled");
-            }
-			else if (args[i].equalsIgnoreCase("-notagger")) {
-				enableTagger = false;
-				System.out.println("Tagger functionality disabled");
-			}
-            else if (args[i].equalsIgnoreCase("-transcription")) {
+            if (args[i].equalsIgnoreCase("-transcription")) {
                 enableTranscription = true;
                 System.out.println("Transcription service enabled");
             }
@@ -114,23 +100,32 @@ public class CentralServer
 			
 			if (args[i].equalsIgnoreCase("-h") || args[i].equalsIgnoreCase("--help") || args[i].equalsIgnoreCase("-?")) {
 				System.out.println("Webservice for LV morphological analysis&inflection, and morphological tagger");
-				System.out.println("\nCommand line options:");
-                System.out.println("\t-tagger & -notagger : enable/disable morphosyntactic tagger functionality to reduce memory usage");
-                System.out.println("\t-transcription & -notranscription : enable/disable phonetic transcription webservice");
-                System.out.println("\t-lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
-				System.out.println("\t-debug : more verbose info about service calls");
-                System.out.println("\t-port 1234 : sets the web server port to some other number than the default 8182");
-				System.out.println("\nWebservice access:");
-				System.out.println("http://localhost:8182/analyze_[lvs/ltg]]/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
-				System.out.println("http://localhost:8182/analyze_[lvs/ltg]/en/[word] : morphological analysis of the word, but with the attributes described in English terms");
-				System.out.println("http://localhost:8182/inflect_general_[lvs/ltg]/lvs/[query] : generate all inflectional forms of a lemma");
-				System.out.println("http://localhost:8182/inflect_with_data/[query] : generate all inflectional forms of a lemma, given paradigm as well as optional stems and attributes");
-				System.out.println("http://localhost:8182/suitable_paradigm_[lvs/ltg]/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
-				System.out.println("http://localhost:8182/tokenize_[lvs/ltg]/[query] or POST to http://localhost:8182/tokenize_[lvs/ltg] : tokenization of sentences");
-				//System.out.println("http://localhost:8182/morphotagger/[query] : do statistical morphological disambiguation of a sentence");
-				System.out.println("http://localhost:8182/inflect_people/[query]?gender=[m/f] : generate all inflectional forms of words, assuming that they are person names");
-				System.out.println("http://localhost:8182/inflect_phrase/[phrase]?category=[person/org/loc] : try to inflect a multiword expression / named entity, given its category");
-				//System.out.println("http://localhost:8182/transcribe/[query] : generate phonetic transcription of the phrase");
+				System.out.println();
+				System.out.println("Command line options:");
+                System.out.println("    -transcription & -notranscription : enable/disable phonetic transcription webservice");
+                System.out.println("    -lexreloader[=/path/to/TezaursMorphoDump] & -nolexreloader : enable/disable morphological lexicon reloading helper service (NB! python3, the extra script and DB connections config needs to be provided");
+				System.out.println("    -debug : more verbose info about service calls");
+                System.out.println("    -port 1234 : sets the web server port to some other number than the default 8182");
+				System.out.println();
+				System.out.println("Webservice access:");
+				System.out.println("    http://localhost:8182/analyze_[lvs/ltg]]/[word] : morphological analysis of the word (guessing of out-of-vocabulary words disabled by default)");
+				System.out.println("    http://localhost:8182/analyze_[lvs/ltg]/en/[word] : morphological analysis of the word, but with the attributes described in English terms");
+				System.out.println("    http://localhost:8182/inflect_general_[lvs/ltg]/[query] : generate all inflectional forms of a lemma");
+				System.out.println("    http://localhost:8182/inflect_general_[lvs/ltg]/en/[query] : generate all inflectional forms of a lemma (English attributes)");
+				System.out.println("    http://localhost:8182/inflect_with_data/[query] : generate all inflectional forms of a lemma, given paradigm as well as optional stems and attributes");
+				System.out.println("    http://localhost:8182/suitable_paradigm_[lvs/ltg]/[lemma] : provides a sorted lists of paradigms that may form the provided lemma");
+				System.out.println("    http://localhost:8182/inflect_people/[query]?gender=[m/f] : generate all inflectional forms of phrase, assuming that it is is a Latvianized person name");
+				System.out.println("    http://localhost:8182/inflect_people/en/[query]?gender=[m/f] : generate all inflectional forms of phrase, assuming that it is a Latvianized person name (English attributes)");
+				System.out.println("    http://localhost:8182/tokenize_[lvs/ltg]/[query] or POST to http://localhost:8182/tokenize_[lvs/ltg] : tokenization of sentences");
+				System.out.println(" -transcriber (currently WIP stubs)");
+				System.out.println("    http://localhost:8182/inflect_pronounce_general_lvs/[word]?pronunc=[pronunciation] : generate all inflectional forms with phonetic transcription from a lemma and lemma transcription");
+				System.out.println("    http://localhost:8182/inflect_pronounce_general_lvs/en/[word]?pronunc=[pronunciation] : generate all inflectional forms with their phonetic transcriptions from a lemma and lemma transcription (English attributes)");
+				System.out.println("    http://localhost:8182/inflect_pronounce_with_data/[query] : generate all inflectional forms with their phonetic transcriptions from a lemma, given paradigm, lemma transcription, as well as optional stems and attributes");
+				System.out.println("    http://localhost:8182/inflect_pronounce_with_data/en/[query] : generate all inflectional forms with their phonetic transcriptions from a lemma, given paradigm, lemma transcription, as well as optional stems and attributes (English attributes)");
+				System.out.println("    http://localhost:8182/lvfma_to_ipa/[query] : convert LVFMA pronunciation (used by services above) to IPA");
+				System.out.println("    http://localhost:8182/lvfma_to_lfa/[query] : convert LVFMA pronunciation (used by services above) to LFA");
+				System.out.println();
+				System.out.println("For details see README.md in included in jar or available in https://github.com/LUMII-AILab/Webservices.");
 				System.out.flush();
 				System.exit(0);
 			}
@@ -162,6 +157,13 @@ public class CentralServer
         component.getDefaultHost().attach("/inflect_with_data/{query}", InflectWithParadigmResource.class);
 		component.getDefaultHost().attach("/inflect_with_data/{language}/{query}", InflectWithParadigmResource.class);
 
+		component.getDefaultHost().attach("/suitable_paradigm_{type}/{lemma}", SuitableParadigmResource.class);
+		component.getDefaultHost().attach("/inflect_people/{query}", InflectPeopleResource.class);
+		component.getDefaultHost().attach("/inflect_people/{language}/{query}", InflectPeopleResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/{query}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/{language}/{query}", TokenResource.class);
+		component.getDefaultHost().attach("/tokenize_{type}/", TokenResource.class); // for POST (trailing slash is important)
+
 		if (enableTranscription) {
 			component.getDefaultHost().attach("/inflect_pronounce_general_{type}/{query}", InflectPronounceWithHeuristicsResource.class); // pārtaisīt homonīmiem
 			component.getDefaultHost().attach("/inflect_pronounce_general_{type}/{language}/{query}", InflectPronounceWithHeuristicsResource.class);
@@ -169,13 +171,6 @@ public class CentralServer
 			component.getDefaultHost().attach("/inflect_pronounce_with_data/{language}/{query}", InflectPronounceWithParadigmResource.class);
 			component.getDefaultHost().attach("/lvfma_to_{type}/{query}", TranscriptionConversionResource.class);
 		}
-
-
-		component.getDefaultHost().attach("/suitable_paradigm_{type}/{lemma}", SuitableParadigmResource.class);
-
-		component.getDefaultHost().attach("/tokenize_{type}/{query}", TokenResource.class);
-		component.getDefaultHost().attach("/tokenize_{type}/{language}/{query}", TokenResource.class);
-		component.getDefaultHost().attach("/tokenize_{type}/", TokenResource.class); // for POST (trailing slash is important)
 
 		if (enableLexiconReloader) {
 			Reloader.TEZAURS_DUMP_PATH = MORPHO_DUMPER_PATH;
@@ -185,16 +180,6 @@ public class CentralServer
 			component.getDefaultHost().handle(new Request(Method.POST, "/reload_lexicon/latgalian"));
 			component.getDefaultHost().handle(new Request(Method.POST, "/reload_lexicon/latvian"));
 		}
-        if (enableTagger) {
-            component.getDefaultHost().attach("/morphotagger/{query}", MorphoTaggerResource.class);
-            component.getDefaultHost().attach("/morphotagger/{format}/{query}", MorphoTaggerResource.class);
-
-            component.getDefaultHost().attach("/inflect_people/{query}", InflectPeopleResource.class);
-            component.getDefaultHost().attach("/inflect_people/{language}/{query}", InflectPeopleResource.class);
-            component.getDefaultHost().attach("/inflect_phrase/{phrase}", InflectPhraseResource.class);
-            component.getDefaultHost().attach("/inflect_phrase/{language}/{phrase}", InflectPhraseResource.class);
-            component.getDefaultHost().attach("/normalize_phrase/{phrase}", NormalizePhraseResource.class);
-        }
 
         // Set up CORS
         CorsService corsService = new CorsService();
@@ -217,17 +202,8 @@ public class CentralServer
         }
 
         tagset = TagSet.getTagSet();
-
-        if (enableTagger) {
-            LVMorphologyReaderAndWriter.setPreloadedAnalyzer(analyzer); // Lai nelādētu vēlreiz lieki
-            String morphoClassifierLocation = "models/lv-morpho-model.ser.gz";
-            morphoClassifier = CMMClassifier.getClassifier(morphoClassifierLocation);
-            Expression.setClassifier(morphoClassifier);
-        }
-
 		analyzer.enableAnalysisCache = false;
 		latgalian_analyzer.enableAnalysisCache = false;
-
 		transcriber = new Morphotranscriber();
     }
 

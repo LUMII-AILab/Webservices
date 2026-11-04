@@ -21,7 +21,6 @@ public class TezaursInflectResourceTest {
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception{
-        CentralServer.enableTagger = false;
         CentralServer.initResources();
         //inflectRes = new InflectResource();
         inflectParRes = new InflectWithParadigmResource();

@@ -60,6 +60,14 @@ Zināmās problēmas: homonīmiem atdod vienu variantu.
 - `http://localhost:8182/suitable_paradigm_ltg/[lemma]`: http://localhost:8182/suitable_paradigm_ltg/desmaizels
 
 
+### Personvārdu visu locījumformu ģenerēšana, uzrunu veidošanai (JSON)
+
+- `http://localhost:8182/inflect_people/[personas vārds]`: http://localhost:8182/inflect_people/Vaira%20Vīķe-Freiberga
+- `http://localhost:8182/inflect_people/en/[personas vārds]&gender=[dzimte]`: http://localhost:8182/inflect_people/en/Baraks%20Obama?gender=m
+
+Katrs vārds tiek locīts neatkarīgi, pieņemot ka tas ir pamatformā. Pieejamās dzimtes ir `m` (vīriešu) un `f` (sieviešu)
+
+
 ### Teikuma sadalīšana vienībās (JSON)
 
 - `http://localhost:8182/tokenize_lvs/[teikums]`: http://localhost:8182/tokenize_lvs/Šis%20žagaru%20saišķis
@@ -75,51 +83,6 @@ curl --header "Content-Type: application/json" \
 ```
 
 Pārveido teikumu par json masīvu ar vienībām, to pamatformām un tagiem. Ar `?guess=[true/false]` GET parametros vai `"guess": "true"` / `"guess": "false"` POST datos var regulēt leksikonā neesošo vārdu minēšanu, pēc noklusējuma nemin. NB! Šeit netiek lietots statistiskais tageris daudznozīmības nošķiršanai, tāpēc tā ir ar zemu precizitāti; šī vietā ieteicams lietot morphotagger servisu.
-
-
-
-## Ar tagotāju pieejamie servisi
-
-Lai lietotu šos servisus, ar serviss jāstartē ar karodziņu karodziņu `-morphotagger`, kas ieslēdz morfoloģiskā tagotāja lietošanu. Tie nav pieejami latgaliešu valodai.
-
-
-### Teikuma morfoloģiskā analīze
-
-- `http://localhost:8182/morphotagger/[teikums]`: http://localhost:8182/morphotagger/Šis%20žagaru%20saišķis
-
-Pārveido teikumu par tab-delimited tabulu, kur katrā rindiņā ir teksta vienība, tās pamatforma un tags, lietojot statistisko morfoloģisko analīzi ticamākās formas izvēlei.
-
-Zināmās problēmas: `http://localhost:8182/morphotagger/[formāts]/[teikums]` nereaģē uz formāta parametru.
-
-### Personvārdu visu locījumformu ģenerēšana, uzrunu veidošanai (JSON)
-
-- `http://localhost:8182/inflect_people/[personas vārds]`: http://localhost:8182/inflect_people/Vaira%20Vīķe-Freiberga
-- `http://localhost:8182/inflect_people/en/[personas vārds]&gender=[dzimte]`: http://localhost:8182/inflect_people/en/Baraks%20Obama?gender=m
-
-Katrs vārds tiek locīts neatkarīgi, pieņemot ka tas ir pamatformā. Pieejamās dzimtes ir `m` (vīriešu) un `f` (sieviešu)
-
-
-### Nosaukumfrāžu locīšana (JSON)
-
-- `http://localhost:8182/inflect_phrase/[frāze]`: http://localhost:8182/inflect_phrase/Latvijas%20Universitātes%20Matemātikas%20un%20informātikas%20institūts
-- `http://localhost:8182/inflect_phrase/en/[frāze]`: http://localhost:8182/inflect_phrase/en/Latvijas%20Universitātes%20Matemātikas%20un%20informātikas%20institūts
-- `http://localhost:8182/inflect_phrase/[frāze]/category=[kategorija]`: http://localhost:8182/inflect_phrase/prezidente%20Vaira%20Vīķe-Freiberga?category=person
-
-Lokāmajam nosaukumam jābūt pamatformā. Vislabākā rezultāta sasniegšanai ir ļoti ieteicams norādīt frāzes kategoriju:
-- `org`, `organization` organizācijām
-- `hum`, `person` personvārdiem un amatu nosaukumiem
-- `loc`, `location` vietu nosaukumiem
-
-
-### Nominālu frāžu pamatformu noteikšana (TEKSTS)
-
-- `http://localhost:8182/normalize_phrase/[frāze]`: http://localhost:8182/normalize_phrase/Latvijas%20Siera
-- `http://localhost:8182/normalize_phrase/[entītijas vārds]/category=[kategorija]`: http://localhost:8182/normalize_phrase/Andra%20Bērziņa?category=person
-
-Neatbalsta verbālas frāzes. Vislabākā rezultāta sasniegšanai ir ļoti ieteicams norādīt frāzes kategoriju:
-- `org`, `organization` organizācijām
-- `hum`, `person` personvārdiem un amatu nosaukumiem
-- `loc`, `location` vietu nosaukumiem
 
 
 
@@ -172,3 +135,8 @@ Tad ar POST pieprasījumu:
 - `http://localhost:8182/reload_lexicon/latvian` pārladē latviešu standartvalodas leksikonu (vajag Tēzaura datubāzi)
 - `http://localhost:8182/reload_lexicon/latgalian` pārladē latgaliešu valodas leksikonu (vajag LTG Tēzaura datubāzi)
 
+
+## Versiju informācija
+
+- Versijas otrā pozīcija norāda Tēzaura versiju (gadu un versijas numuru tajā gadā), ko izmanto iekļautais morfoloģijas serviss.
+- 3.x versijas (pirmā ir 3.202701.0) vairs neiekļauj morfoloģisko tagotāju kā servisu sakarā ar to, ka agrāk iekļautais tagotājs ir novecojis un izmanto novecojušu, LNKK nepiemērotu, tagseta versiju, bet jaunākais tagotājs vairs neizmanto Java un nav ērti integrējams Java infrastruktūrā. Ja vēlaties izmantot jaunāko tagotāju, sk. https://github.com/LUMII-AILab/lvnlp. Ja vēlaties izmantot veco tagotāju, sk. https://github.com/LUMII-AILab/LVTagger vai pēdējo Maven relīzi pkg:maven/lv.ailab.morphology/tagger@2.202604.1
